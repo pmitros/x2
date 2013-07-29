@@ -20,5 +20,10 @@
   * Student -> AID
   * Layout: AID, x, y, class, (geometry?)
   * Hierarchoy: AID, level, parent
+  * Class profile
+    * Image to classroom
+  * Student profile
+    * Image to student
+    * Name to student
 * XBlocks integration
 * Insights integration
