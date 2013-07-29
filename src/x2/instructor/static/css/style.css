@@ -1,0 +1,6 @@
+.student {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: solid #dddddd 1px;
+}
