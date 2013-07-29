@@ -27,3 +27,7 @@
     * Name to student
 * XBlocks integration
 * Insights integration
+* Authoring support
+  * Use Studio?
+  * Hack Studio?
+  * Hack our own quick-and-dirty system?
