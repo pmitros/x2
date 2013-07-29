@@ -1,0 +1,22 @@
+{% load staticfiles %}
+<script src="{% static "js/jquery-1.10.2.min.js" %}"></script>
+<script src="{% static "js/jquery-ui.min.js" %}"></script>
+<script src="{% static "js/student.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
+<link rel="stylesheet" href="{% static "css/style.css" %}" />
+<script>
+    $(document).ready(function(){
+        for (var i=0; i<20; i++){
+            var $student = create_student("student " + i);
+            $student.css("left", i*50);
+            $("body").append($student);
+            console.log(i)
+        }
+        $(".student").draggable();
+    });
+</script>
+<html>
+<body>
+    hello
+</body>
+</html>
