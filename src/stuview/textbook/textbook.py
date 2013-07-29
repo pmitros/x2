@@ -11,7 +11,7 @@ class TextbookBlock(InputBlock):
 
     def student_view(self, context):
 
-        self.title = "Chapter oooone"
+        self.title = "Chapter ednorrr"
 
         # Load the HTML fragment from within the package and fill in the template
         html_str = pkg_resources.resource_string(__name__, "static/html/textbook.html")
@@ -24,9 +24,6 @@ class TextbookBlock(InputBlock):
         return [
             ("two textbooks at once",
              """\
-                <vertical>
-                    <textbook/>
-                    <textbook/>
-                </vertical>
+                <textbook/>
              """)
         ]
