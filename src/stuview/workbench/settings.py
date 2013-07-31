@@ -115,6 +115,7 @@ WSGI_APPLICATION = 'workbench.wsgi.application'
 TEMPLATE_DIRS = (
     'workbench/templates',
     'xblock/templates',
+    'stuview'
 )
 
 INSTALLED_APPS = (
@@ -126,6 +127,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'workbench',
     'django_nose',
+    'stuview',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:

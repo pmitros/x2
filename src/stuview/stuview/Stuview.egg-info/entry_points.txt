@@ -1,0 +1,6 @@
+[xblock.v1]
+dproblem = dummyblocks:DummyProblemBlock
+dvideo = dummyblocks:DummyVideoBlock
+dtext = dummyblocks:DummyTextBlock
+blockqueue = blockqueue:BlockQueue
+

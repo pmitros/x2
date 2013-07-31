@@ -16,13 +16,13 @@ Scenario = namedtuple("Scenario", "description usage")  # pylint: disable=C0103
 
 SCENARIOS = {}
 
-print "Loading scenarios ", list(XBlock.load_classes())
-
 for class_name, cls in XBlock.load_classes():
     # Each XBlock class can provide scenarios to display in the workbench.
     if hasattr(cls, "workbench_scenarios"):
         for i, (desc, xml) in enumerate(cls.workbench_scenarios()):
             scname = "%s.%d" % (class_name, i)
+
+            print "scname", scname
             usage = parse_xml_string(xml, Usage)
             SCENARIOS[scname] = Scenario(desc, usage)
     else:

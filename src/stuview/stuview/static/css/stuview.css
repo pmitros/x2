@@ -1,0 +1,12 @@
+
+.thumb {
+    border: 1px solid black;
+    padding: 10px;
+    margin: 5px;
+}
+
+.active_page {
+    border: 1px solid black;
+    padding: 100px;
+    margin: 5px;
+}

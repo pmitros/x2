@@ -57,6 +57,74 @@ def index(_request):
     })
 
 
+def butler(request):
+
+    student_id = "student uno"
+    template = "block.html"
+    view_name = "student_view"
+    scenario_id = "textbook"
+
+    log.info("Start show_scenario %r for student %s", scenario_id, student_id)
+
+    usage = Usage(scenario_id, [])
+    scenario = Scenario("textbook sample", usage)
+    usage.store_initial_state()
+    block = create_xblock(usage, student_id)
+
+
+
+    frag = block.runtime.render(block, {}, view_name)
+    print "frag", frag.body_html()
+    log.info("End show_scenario %s", scenario_id)
+    return render_to_response(template, {
+        'scenario': scenario,
+        'block': block,
+        'body': frag.body_html(),
+        'database': MEMORY_KVS,
+        'head_html': frag.head_html(),
+        'foot_html': frag.foot_html(),
+        'log': LOG_STREAM.getvalue(),
+        'student_id': student_id,
+        'usage': usage,
+    })
+
+def queue(request):
+
+    student_id = "student uno"
+    template = "blockview.html"
+    view_name = "student_view"
+    scenario_id = "blockqueue"
+
+    log.info("Start show_scenario %r for student %s", scenario_id, student_id)
+
+    kida = Usage("dtext")
+    kidb = Usage("dvideo")
+    kidc = Usage("dproblem")
+
+    usage = Usage(scenario_id, [kida, kidb, kidc])
+    scenario = Scenario("Block Queue Example", usage)
+    usage.store_initial_state()
+    block = create_xblock(usage, student_id)
+
+
+
+    frag = block.runtime.render(block, {}, view_name)
+    print "frag", frag.body_html()
+    log.info("End show_scenario %s", scenario_id)
+    return render_to_response(template, {
+        'scenario': scenario,
+        'block': block,
+        'body': frag.body_html(),
+        'database': MEMORY_KVS,
+        'head_html': frag.head_html(),
+        'foot_html': frag.foot_html(),
+        'log': LOG_STREAM.getvalue(),
+        'student_id': student_id,
+        'usage': usage,
+    })
+
+
+
 @ensure_csrf_cookie
 def show_scenario(request, scenario_id, view_name='student_view', template='block.html'):
     """

@@ -16,6 +16,8 @@ from workbench.scenarios import SCENARIOS
 urlpatterns = patterns(
     'workbench.views',
     url(r'^$', 'index', name='index'),
+    url(r'^butler$', 'butler', name='butler'),
+    url(r'^queue', 'queue', name='queue'),
     url(r'^scenario/(?P<scenario_id>[^/]+)/(?P<view_name>[^/]+)/$', 'show_scenario', name='scenario'),
     url(r'^scenario/(?P<scenario_id>[^/]+)/$', 'show_scenario'),
 
