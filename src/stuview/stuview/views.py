@@ -100,8 +100,10 @@ def queue(request):
     kida = Usage("dtext")
     kidb = Usage("dvideo")
     kidc = Usage("dproblem")
+    kidd = Usage("dtext")
+    kide = Usage("dproblem")
 
-    usage = Usage(scenario_id, [kida, kidb, kidc])
+    usage = Usage(scenario_id, [kida, kidb, kidc, kidd, kide])
     scenario = Scenario("Block Queue Example", usage)
     usage.store_initial_state()
     block = create_xblock(usage, student_id)

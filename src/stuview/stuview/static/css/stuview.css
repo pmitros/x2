@@ -1,12 +1,34 @@
 
 .thumb {
-    border: 1px solid black;
+    border: 1px solid #aaa;
     padding: 10px;
     margin: 5px;
+    cursor: pointer;
+
+    background-color: #eee;
+}
+
+.active_thumb {
+    border: 1px solid #00f;
 }
 
 .active_page {
-    border: 1px solid black;
-    padding: 100px;
+    padding: 10px;
+    padding-left: 50px;
     margin: 5px;
+    width: 600px;
+}
+
+.queue_widget{
+    margin: 100px;
+}
+
+.thumb_caption{
+    font-size: 12px;
+    font-family: sans-serif;
+    padding-top: 10px;
+}
+
+.thumbs_container{
+    padding-top: 10px;
 }
