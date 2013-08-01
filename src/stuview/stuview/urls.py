@@ -7,14 +7,14 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # If it fails to import later, it's inside the url resolver, and we
 # don't see the actual errors.
 # pylint: disable=W0611
-from workbench.scenarios import SCENARIOS
+# from workbench.scenarios import SCENARIOS
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
 urlpatterns = patterns(
-    'workbench.views',
+    'stuview.views',
     url(r'^$', 'index', name='index'),
     url(r'^butler$', 'butler', name='butler'),
     url(r'^queue', 'queue', name='queue'),

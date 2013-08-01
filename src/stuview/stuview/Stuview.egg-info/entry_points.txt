@@ -1,6 +1,8 @@
 [xblock.v1]
-dproblem = dummyblocks:DummyProblemBlock
+verticalqueue = blockqueue:VerticalQueue
 dvideo = dummyblocks:DummyVideoBlock
 dtext = dummyblocks:DummyTextBlock
-blockqueue = blockqueue:BlockQueue
+blockqueuebase = blockqueue:BlockQueueBase
+dproblem = dummyblocks:DummyProblemBlock
+queuewidget = blockqueue:QueueWidget
 

@@ -13,9 +13,9 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from .runtime import Usage, create_xblock, MEMORY_KVS
-from .scenarios import SCENARIOS, Scenario
-from .request import webob_to_django_response, django_to_webob_request
+from workbench.runtime import Usage, create_xblock, MEMORY_KVS
+from workbench.scenarios import SCENARIOS, Scenario
+from workbench.request import webob_to_django_response, django_to_webob_request
 
 
 LOG_STREAM = None
@@ -93,7 +93,7 @@ def queue(request):
     student_id = "student uno"
     template = "blockview.html"
     view_name = "student_view"
-    scenario_id = "blockqueue"
+    scenario_id = "queuewidget"
 
     log.info("Start show_scenario %r for student %s", scenario_id, student_id)
 
