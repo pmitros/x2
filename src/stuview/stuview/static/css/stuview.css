@@ -1,0 +1,73 @@
+
+.thumb {
+    border: 1px solid #aaa;
+    border-left: 3px solid #aaa;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+
+    background-color: #eee;
+}
+
+.thumb:hover{
+    border-left: 3px solid #00f;
+}
+.active_thumb {
+    border-left: 3px solid #00f;
+}
+
+.active_page {
+    padding: 10px;
+    padding-left: 50px;
+    margin: 5px;
+    width: 600px;
+}
+
+.queue_widget{
+    margin: 50px;
+}
+
+.thumb_caption{
+    font-size: 12px;
+    font-family: sans-serif;
+    padding-top: 10px;
+}
+
+.thumbs_container{
+    padding-top: 10px;
+}
+
+.tooltip {
+    position: absolute;
+    z-index: 5;
+    padding: 6px;
+
+    background-color: rgba(0,0,0,0.8);
+       /*background-color: #eee;*/
+        border: 1px solid #aaa;
+    /*border-left: 3px solid #00f;*/
+    /*border-bottom: 0px solid #aaa;*/
+
+        text-align: right;
+}
+
+.tooltip a {
+    margin: 2px;
+    margin-right: 10px;
+    padding: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    color: #00ffff;
+    font-weight: bold;
+}
+
+.tooltip a:hover{
+    text-decoration: underline;
+}
+
+.mask{
+    position: absolute;
+    z-index: 1;
+
+    background-color: rgba(0,0,0,0.5);
+}
