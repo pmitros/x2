@@ -1,8 +1,8 @@
 ## Instructor Interface
 This interface allows instructors running a flipped classroom course to 
-1) monitor student progress in realtime, 
-2) offer on-demand help, and 
-3) capture help interactions using audio recording and shared whiteboard.
+1. monitor student progress in realtime, 
+2. offer on-demand help, and 
+3. capture help interactions using audio recording and shared whiteboard.
 
 ## Installation
 Required: Django, HTML5-supporting web browser, and node.js
@@ -22,7 +22,8 @@ Run the loaddata command with `src/x2/instructor-datadump.json`
 For more information, visit https://docs.djangoproject.com/en/1.5/ref/django-admin/#loaddata-fixture-fixture
 
 ### Step 4. Running Django server
-* In `src/x2`, run python manage.py runserver 0.0.0.0:3333
+* In `src/x2`, run 
+    python manage.py runserver 0.0.0.0:3333
 
 ### Step 5. Shared Whiteboard
 The capture interface uses the open source Walma Whiteboard.
@@ -31,7 +32,7 @@ We assume that Walma is running at http://localhost:1337 (default Walma setting)
 A URL to a valid board is required for iframe inside capture_interaction.html
 
 ### Step 6. Open the interface.
-Visit http://localhost:3333/instructor/6.00x/sep-1-2013/view-layout
+    http://localhost:3333/instructor/6.00x/sep-1-2013/view-layout
 
 6.00x is the course slug, sep-1-2013 is the session slug: they depend on the Course and Session table data.
 
