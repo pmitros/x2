@@ -16,8 +16,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = patterns(
     'stuview.views',
     url(r'^$', 'index', name='index'),
-    url(r'^butler$', 'butler', name='butler'),
+    url(r'^qwidget', 'qwidget', name='qwidget'),
     url(r'^queue', 'queue', name='queue'),
+    url(r'^butler', 'butler', name='butler'),
     url(r'^scenario/(?P<scenario_id>[^/]+)/(?P<view_name>[^/]+)/$', 'show_scenario', name='scenario'),
     url(r'^scenario/(?P<scenario_id>[^/]+)/$', 'show_scenario'),
 

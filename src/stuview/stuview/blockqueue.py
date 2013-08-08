@@ -1,4 +1,4 @@
-from xblock.core import XBlock
+from xblock.core import XBlock, Scope, String
 from xblock.fragment import Fragment
 
 
@@ -6,6 +6,8 @@ class BlockQueueBase(XBlock):
     """ Abstract queue class
     """
     has_children = True
+
+    fubar = String(default="barfu", scope=Scope.content)
 
 
 class VerticalQueue(BlockQueueBase):
@@ -24,6 +26,10 @@ class VerticalQueue(BlockQueueBase):
 class QueueWidget(VerticalQueue):
 
     def student_view(self, context):
+
+        self.fubar = "barbar"
+        # print "dir", [(x, getattr(self, x)) for x in dir(self) if not str(x).startswith('__')]
+
         result = Fragment()
 
         queue = super(QueueWidget, self).student_view(context)
@@ -32,6 +38,7 @@ class QueueWidget(VerticalQueue):
                                             queue=queue)
         result.add_content(html)
         result.add_css_url('static/css/stuview.css')
+
 
 
         return result

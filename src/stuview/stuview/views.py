@@ -13,10 +13,11 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from workbench.runtime import Usage, create_xblock, MEMORY_KVS
-from workbench.scenarios import SCENARIOS, Scenario
-from workbench.request import webob_to_django_response, django_to_webob_request
+from .runtime import Usage, create_xblock, MEMORY_KVS
+from .scenarios import SCENARIOS, Scenario
+from .util import webob_to_django_response, django_to_webob_request
 
+from .mapping import MAPPING
 
 LOG_STREAM = None
 
@@ -46,8 +47,32 @@ def get_student_id(request):
     student_id = request.GET.get('student', 'student_1')
     return student_id
 
+# class Musage(Usage):
+#     def __init__(self,block_name=None, children=None, initial_state=None, def_id=None, usage_id=None):
+#
+#         if usage_id is None:
+#             Usage.__init__(self, block_name, children, initial_state, def_id)
+#             print "MAPPING", self.id, block_name
+#             MAPPING[str(self.id)] = str(block_name)
+#         else:
+#             #recreate usage
+#             self.id = usage_id
+#             self.parent = None
+#             self.block_name = MAPPING[usage_id]
+#             #TODO
+#             self.def_id = def_id or ("def_%d" % next(self._ids))
+#
+#             key = KeyValueStore(scope=Scope.parent, block_scope_id=usage_id)
+#             print "gotten", MEMORY_KVS.get(key)
+#             self.children = children or []
+#             self.initial_state = initial_state or {}
+#
+#             # Update our global index of all usages.
+#             self._usage_index[self.id] = self
+#
+#             for child in self.children:
+#                 child.parent = self
 
-#---- Views -----
 
 def index(_request):
     """Render `index.html`"""
@@ -57,24 +82,31 @@ def index(_request):
     })
 
 
-def butler(request):
+def qwidget(request):
 
-    student_id = "student uno"
-    template = "block.html"
+    student_id = "student_rex"
+    template = "static/html/mblock.html"
     view_name = "student_view"
-    scenario_id = "textbook"
+    scenario_id = "queuewidget"
 
     log.info("Start show_scenario %r for student %s", scenario_id, student_id)
 
-    usage = Usage(scenario_id, [])
-    scenario = Scenario("textbook sample", usage)
-    usage.store_initial_state()
+    try:
+        scenario = SCENARIOS[scenario_id]
+    except KeyError:
+
+
+        usage = Usage(scenario_id, [Usage(x) for x in ["dtext", "dvideo", "dproblem", "dtext", "dproblem", "dtext"]], def_id='kraken')
+
+        usage.store_initial_state()
+
+        scenario = Scenario("Block Queue Example", usage)
+        SCENARIOS[scenario_id] = scenario
+
+    usage = scenario.usage
     block = create_xblock(usage, student_id)
 
-
-
     frag = block.runtime.render(block, {}, view_name)
-    print "frag", frag.body_html()
     log.info("End show_scenario %s", scenario_id)
     return render_to_response(template, {
         'scenario': scenario,
@@ -86,33 +118,39 @@ def butler(request):
         'log': LOG_STREAM.getvalue(),
         'student_id': student_id,
         'usage': usage,
+        'mapping': MAPPING,
     })
+
+
+
+def butler(request):
+
+    Usage("dtext")
+    Usage("dtext")
+
+    return HttpResponse(u"done")
 
 def queue(request):
 
-    student_id = "student uno"
-    template = "blockview.html"
+    student_id = "student_1"
+    template = "block.html"
     view_name = "student_view"
-    scenario_id = "queuewidget"
+    class_id = "textblock"
 
-    log.info("Start show_scenario %r for student %s", scenario_id, student_id)
 
-    kida = Usage("dtext")
-    kidb = Usage("dvideo")
-    kidc = Usage("dproblem")
-    kidd = Usage("dtext")
-    kide = Usage("dproblem")
+    log.info("Start show_scenario %r for student %s", class_id, student_id)
 
-    usage = Usage(scenario_id, [kida, kidb, kidc, kidd, kide])
-    scenario = Scenario("Block Queue Example", usage)
+    # create an XBlock
+    block_cls = TextBlock
+    runtime = WorkbenchRuntime(block_cls, student_id)
+
+    usage = Usage(class_id)
+    scenario = Scenario("Text DB", usage)
     usage.store_initial_state()
     block = create_xblock(usage, student_id)
 
-
-
     frag = block.runtime.render(block, {}, view_name)
-    print "frag", frag.body_html()
-    log.info("End show_scenario %s", scenario_id)
+    log.info("End show_scenario %s", class_id)
     return render_to_response(template, {
         'scenario': scenario,
         'block': block,
@@ -163,6 +201,7 @@ def show_scenario(request, scenario_id, view_name='student_view', template='bloc
         'log': LOG_STREAM.getvalue(),
         'student_id': student_id,
         'usage': usage,
+
     })
 
 

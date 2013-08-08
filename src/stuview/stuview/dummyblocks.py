@@ -1,11 +1,12 @@
-from xblock.core import XBlock, Scope, Integer
+from xblock.core import XBlock, Scope, Integer, String
 from xblock.fragment import Fragment
 
 class DummyBlock(XBlock):
 
+    contype = String(help="the type of the content", default="dummy content", scope=Scope.content)
     views = Integer(help="the number of times this block has been viewed",
                     default=0,
-                    scope=Scope.content)
+                    scope=Scope.user_state)
 
     def student_view(self, context):
         return Fragment(u"Student %s View" % self.content_type)
@@ -21,8 +22,14 @@ class DummyBlock(XBlock):
 
     @XBlock.json_handler
     def activate(self, data):
+        if self.views is None:
+            self.views = 0
         self.views += 1
-        return self.page_view().body_html()
+        result = {}
+        result['page_view'] = self.page_view().body_html()
+        result['thumb_view'] = self.thumb_view(None).body_html()
+        self.contype = "newcon"
+        return result
 
 
 class DummyTextBlock(DummyBlock):
@@ -38,6 +45,7 @@ class DummyTextBlock(DummyBlock):
         frag = Fragment(html)
         frag.add_javascript_url('static/js/verticalqueue.js')
         frag.initialize_js('VerticalQueue')
+        print "contype", self.contype
         return frag
 
     def page_view(self):
@@ -75,6 +83,10 @@ class DummyVideoBlock(DummyBlock):
 
 class DummyProblemBlock(DummyBlock):
     content_type = 'Problem'
+
+    problem_content = """
+    Calculate the area under the curve
+    """
 
     def thumb_view(self,context):
 
