@@ -23,6 +23,7 @@ For more information, visit https://docs.djangoproject.com/en/1.5/ref/django-adm
 
 ### Step 4. Running Django server
 * In `src/x2`, run 
+
     python manage.py runserver 0.0.0.0:3333
 
 ### Step 5. Shared Whiteboard
