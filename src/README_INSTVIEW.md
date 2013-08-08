@@ -22,7 +22,7 @@ Run the loaddata command with `src/x2/instructor-datadump.json`
 For more information, visit https://docs.djangoproject.com/en/1.5/ref/django-admin/#loaddata-fixture-fixture
 
 ### Step 4. Running Django server
-* In `src/x2`, run 
+In `src/x2`, run 
 
     python manage.py runserver 0.0.0.0:3333
 
