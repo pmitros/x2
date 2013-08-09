@@ -1,0 +1,79 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instructor View</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
+    <link rel="stylesheet" href="{% static "css/style.css" %}" />    
+    <style>
+        audio, video{
+            width: 100%;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <a class="navbar-brand" href="#">{{ course.slug }} Instructor</a>
+      <ul class="nav navbar-nav">
+        <li><a href="./view-layout">View Class</a></li>
+        <li><a href="./manage-layout">Manage Layout</a></li>
+        <li class="active"><a href="#">Capture Interaction</a></li>
+        <!-- <li><a href="#">Manage Class</a></li> -->
+      </ul>
+    </div>
+
+    <div class="container">
+
+    <div class="row">
+        <div class="sidebar col-12 col-sm-2 col-lg-2">
+            <h3>Controls</h3>
+            <div>
+                <audio id="audio" autoplay loop controls></audio><br/>
+                <button id="capture-button" class="btn btn-danger">Record Audio</button>
+                <div id="audio-url-preview"></div>
+            </div>
+            <div>
+                <video id="video" autoplay loop controls muted width="320" height="240"></video>
+                <input type="checkbox" id="record-screen" style="display:none">
+                <label for="record-screen" style="display:none">Record Screen</label>
+                <button id="video-capture-button" class="btn btn-danger">Record Video</button>
+                <div id="video-url-preview"></div>
+            </div>            
+        </div>
+        <div class="main col-12 col-sm-10 col-lg-10">
+            <h3>Sketchpad</h3>
+            <!-- <iframe src="http://drawonthe.net/board_index.php?id=130807_11" width="600" height="600"></iframe> -->
+            <iframe src="http://localhost:1337/b" width="800" height="800"></iframe>
+        </div>
+    </div>
+
+    </div>
+
+    <script src="{% static "js/jquery-1.10.2.min.js" %}"></script>
+    <script src="{% static "js/jquery-ui.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/RecordRTC.js" %}"></script>    
+    <!-- Optionally enable responsive features in IE8 -->
+    <!-- // <script src="js/respond.js"></script> -->
+    <!-- // <script src="{% static "js/student.js" %}"></script> -->
+    <script src="{% static "js/layout.js" %}"></script>
+    <script src="{% static "js/touch-device.js" %}"></script>
+    <script src="{% static "js/student-layout.js" %}"></script>
+    <script src="{% static "js/block-layout.js" %}"></script>
+    <script src="{% static "js/help-queue.js" %}"></script>
+    <script src="{% static "js/capture.js" %}"></script>
+    <script src="{% static "js/utils.js" %}"></script>
+    <script>
+        $(document).ready(function(){
+            console.log("{{student.id}}")
+            TouchDevice.init();
+            Capture.init();
+        });
+    </script>    
+  </body>
+</html>
