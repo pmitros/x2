@@ -20,6 +20,8 @@ from xblock.core import XBlock, Scope, ModelType
 from xblock.runtime import DbModel, KeyValueStore, Runtime, NoSuchViewError
 from xblock.fragment import Fragment
 from .util import make_safe_for_html
+from .models import SCOPED_KVS, BASE_KVS
+
 
 log = logging.getLogger(__name__)
 
@@ -34,8 +36,8 @@ class Usage(object):
 
     """
 
-    # An infinite stream of ids, for giving each Usage an id.
-    _ids = itertools.count()
+    # # An infinite stream of ids, for giving each Usage an id.
+    # _ids = itertools.count()
 
     # Maps ids to Usages, a dict of all instances created, ever.
     _usage_index = {}
@@ -43,13 +45,22 @@ class Usage(object):
     # The set of Usage ids that have been initialized by store_initial_state.
     _inited = set()
 
-    def __init__(self, block_name, children=None, initial_state=None, def_id=None):
-        self.id = "usage_%d" % next(self._ids)  # pylint: disable=C0103
+    def __init__(self, class_id, children=None, initial_state=None, def_id=None):
+        self.id = "usage_%d" %  BASE_KVS.incr('ids',0)
+        self.def_id = def_id or ("def_%d" % BASE_KVS.incr('ids', 0))
+        self.children = children or []
+
+        usage_data = BASE_KVS.get('USAGE_DATA', {})
+        usage_data[self.id] = {
+            'class_id': class_id,
+            'def_id': self.def_id,
+            'children': [x.id for x in self.children]
+        }
+        BASE_KVS.set('USAGE_DATA', usage_data)
 
         self.parent = None
-        self.block_name = block_name
-        self.def_id = def_id or ("def_%d" % next(self._ids))
-        self.children = children or []
+        self.block_name = class_id
+
         self.initial_state = initial_state or {}
 
         # Update our global index of all usages.
@@ -59,6 +70,31 @@ class Usage(object):
         for child in self.children:
             child.parent = self
 
+
+    @classmethod
+    def recreate(cls, usage_id):
+
+        # if usage_id in cls._usage_index:
+        #     raise KeyError('Usage %s is already in the index' % usage_id)
+
+        self = cls.__new__(cls)
+        self.id = usage_id
+        self.parent = None
+
+        self.block_name = BASE_KVS.get('USAGE_DATA')[self.id]['class_id']
+        self.def_id = BASE_KVS.get('USAGE_DATA')[self.id]['def_id']
+
+        children_ids = BASE_KVS.get('USAGE_DATA')[self.id]['children']
+        self.children = [Usage.recreate(x) for x in children_ids]
+
+        self._usage_index[self.id] = self
+
+        #TODO store_initial_state or similar might be necessary
+
+        for child in self.children:
+            child.parent = self
+
+        return self
 
 
     def store_initial_state(self):
@@ -183,9 +219,11 @@ class MemoryKeyValueStore(KeyValueStore):
 
 from .models import LiteKVS
 
-# MEMORY_KVS = LiteKVS()
-# MEMORY_KVS.clear()
-MEMORY_KVS = MemoryKeyValueStore({})
+# GLOBAL_KVS = LiteKVS()
+# GLOBAL_KVS = MemoryKeyValueStore({})
+# GLOBAL_KVS.clear()
+
+
 
 def create_xblock(usage, student_id=None):
     """Create an XBlock instance.
@@ -195,7 +233,7 @@ def create_xblock(usage, student_id=None):
     """
     block_cls = XBlock.load_class(usage.block_name)
     runtime = WorkbenchRuntime(block_cls, student_id, usage)
-    model = DbModel(MEMORY_KVS, block_cls, student_id, usage)
+    model = DbModel(SCOPED_KVS, block_cls, student_id, usage)
     block = block_cls(runtime, model)
     return block
 
