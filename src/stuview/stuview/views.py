@@ -13,11 +13,10 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from .runtime import Usage, create_xblock, MEMORY_KVS
-from .scenarios import SCENARIOS, Scenario
+from .runtime import Usage, create_xblock
 from .util import webob_to_django_response, django_to_webob_request
 
-from .mapping import MAPPING
+from .models import SCOPED_KVS, NAMED_USAGES
 
 LOG_STREAM = None
 
@@ -63,7 +62,7 @@ def get_student_id(request):
 #             self.def_id = def_id or ("def_%d" % next(self._ids))
 #
 #             key = KeyValueStore(scope=Scope.parent, block_scope_id=usage_id)
-#             print "gotten", MEMORY_KVS.get(key)
+#             print "gotten", GLOBAL_KVS.get(key)
 #             self.children = children or []
 #             self.initial_state = initial_state or {}
 #
@@ -75,60 +74,81 @@ def get_student_id(request):
 
 
 def index(_request):
-    """Render `index.html`"""
-    the_scenarios = sorted(SCENARIOS.items())
-    return render_to_response('index.html', {
-        'scenarios': [(desc, scenario.description) for desc, scenario in the_scenarios]
-    })
+    # """Render `index.html`"""
+    # the_scenarios = sorted(SCENARIOS.items())
+    # return render_to_response('index.html', {
+    #     'scenarios': [(desc, scenario.description) for desc, scenario in the_scenarios]
+    # })
+
+    return HttpResponse(u"Index not implemented")
 
 
 def qwidget(request):
 
     student_id = "student_rex"
+    lesson = "lessonA"
+    course = "courseX"
     template = "static/html/mblock.html"
     view_name = "student_view"
-    scenario_id = "queuewidget"
+    class_id = "queuewidget"
 
-    log.info("Start show_scenario %r for student %s", scenario_id, student_id)
+    log.info("Start show_scenario %r for student %s", class_id, student_id)
 
-    try:
-        scenario = SCENARIOS[scenario_id]
-    except KeyError:
+    if NAMED_USAGES.has(course=course, lesson=lesson, student=student_id):
+        usage_id = NAMED_USAGES.get(course=course, lesson=lesson, student=student_id)
 
-
-        usage = Usage(scenario_id, [Usage(x) for x in ["dtext", "dvideo", "dproblem", "dtext", "dproblem", "dtext"]], def_id='kraken')
-
+        #have we loaded the usage?
+        try:
+            usage = Usage.find_usage(usage_id)
+        except KeyError:
+            #recreate it from the DB
+            print "recreating ", usage_id
+            usage = Usage.recreate(usage_id)
+    else:
+        usage = Usage(class_id, [Usage(x) for x in ["dtext", "dvideo", "dproblem", "dtext", "dproblem", "dtext"]], def_id='kraken')
         usage.store_initial_state()
+        NAMED_USAGES.set(course=course, lesson=lesson, student=student_id, usage=usage)
 
-        scenario = Scenario("Block Queue Example", usage)
-        SCENARIOS[scenario_id] = scenario
 
-    usage = scenario.usage
     block = create_xblock(usage, student_id)
 
     frag = block.runtime.render(block, {}, view_name)
-    log.info("End show_scenario %s", scenario_id)
+    log.info("End show_scenario %s", class_id)
     return render_to_response(template, {
-        'scenario': scenario,
+        'named_usage': '.'.join([course, lesson, student_id]),
         'block': block,
         'body': frag.body_html(),
-        'database': MEMORY_KVS,
+        'database': SCOPED_KVS,
         'head_html': frag.head_html(),
         'foot_html': frag.foot_html(),
         'log': LOG_STREAM.getvalue(),
         'student_id': student_id,
         'usage': usage,
-        'mapping': MAPPING,
     })
-
 
 
 def butler(request):
 
-    Usage("dtext")
-    Usage("dtext")
+    student_id = "student_rex"
+    template = "static/html/mblock.html"
+    view_name = "student_view"
 
-    return HttpResponse(u"done")
+    usage = Usage.recreate('usage_12')
+    block = create_xblock(usage, student_id)
+
+    frag = block.runtime.render(block, {}, view_name)
+
+    return render_to_response(template, {
+        'scenario': None,
+        'block': block,
+        'body': frag.body_html(),
+        'database': SCOPED_KVS,
+        'head_html': frag.head_html(),
+        'foot_html': frag.foot_html(),
+        'log': LOG_STREAM.getvalue(),
+        'student_id': student_id,
+        'usage': usage,
+    })
 
 def queue(request):
 
@@ -155,7 +175,7 @@ def queue(request):
         'scenario': scenario,
         'block': block,
         'body': frag.body_html(),
-        'database': MEMORY_KVS,
+        'database': SCOPED_KVS,
         'head_html': frag.head_html(),
         'foot_html': frag.foot_html(),
         'log': LOG_STREAM.getvalue(),
@@ -163,6 +183,12 @@ def queue(request):
         'usage': usage,
     })
 
+
+def showdb(request):
+
+    return render_to_response("static/html/showdb.html", {
+        'database': SCOPED_KVS,
+    })
 
 
 @ensure_csrf_cookie
@@ -195,7 +221,7 @@ def show_scenario(request, scenario_id, view_name='student_view', template='bloc
         'scenario': scenario,
         'block': block,
         'body': frag.body_html(),
-        'database': MEMORY_KVS,
+        'database': SCOPED_KVS,
         'head_html': frag.head_html(),
         'foot_html': frag.foot_html(),
         'log': LOG_STREAM.getvalue(),
