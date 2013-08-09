@@ -14,10 +14,28 @@ body {
     border: solid 1px #888888;
 }
 
+#students-list {
+    width: 90%;
+    margin: 1em;
+    cursor: pointer;
+}
+
 .section-title {
     font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 0.3em;
+}
+
+audio {
+    width: 200px;
+}
+
+#capture-button {
+    margin-top: -20px;
+}
+
+.nowrap {
+    white-space: nowrap;
 }
 
 .section-header {

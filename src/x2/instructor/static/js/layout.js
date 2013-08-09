@@ -21,14 +21,6 @@ var Layout = function() {
         load_queue();
     }
 
-    function load_classroom_view(){
-        load_students();
-    }
-
-    function load_list_view(){
-        load_students_list();
-    }
-
     function bindEvents(){
         $("#update-layout-button").click(function(){
             var group_size = parseInt($("#group-size").val(), 10);
@@ -59,6 +51,15 @@ var Layout = function() {
         });
     }
 
+
+    function load_classroom_view(){
+        load_students();
+    }
+
+    function load_list_view(){
+        load_students_list();
+    }
+    
     function get_student_by_id(student_id){
         var index;
         for (index in Layout.students){
@@ -237,8 +238,18 @@ var Layout = function() {
         var index;
         var student_id;
         var $new_student;
-        var $table = $("<table/>").addClass("table table-striped");
-        var $header = $("<tr/>").append("<th>status</th><th>name</th><th>group</th><th>progress</th>");
+        var $table = $("<table/>").attr("id","students-list").addClass("sortable table table-striped");
+        var $header = $("<tr/>");
+        $("<th/>").append("<span/>").text("status")
+                .appendTo($header);
+        $("<th/>").append("<span/>").text("name")
+                .appendTo($header);
+        $("<th/>").append("<span/>").text("group")
+                .appendTo($header);
+        $("<th/>").append("<span/>").text("progress")
+                .appendTo($header);
+        $("<span/>").addClass("sort-option").attr("data-default", "ascending")
+            .appendTo($header.find("th"));
         $table.append($header);
         for (index in Layout.students){
             student_id = Layout.students[index]["id"];
@@ -246,6 +257,8 @@ var Layout = function() {
             $table.append($new_student);
         }
         $("#classroom-layout").append($table);
+        bindSortableTableEvents();
+        $("#students-list th").first().click().click();
     }
 
     function save_students(){

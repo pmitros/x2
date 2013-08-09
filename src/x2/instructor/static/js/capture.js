@@ -1,6 +1,7 @@
 // Capture audio and sketch pad
 
 var Capture = function() {
+    var interaction_id;
     var localStream;
     var audio = document.querySelector('audio');
     var video = document.querySelector('video');
@@ -20,17 +21,9 @@ var Capture = function() {
     };
     var screen_constraints;
 
-    function isCaptureScreen() {
-        if (document.getElementById('record-screen').checked) {
-            screen_constraints = {
-                mandatory: { chromeMediaSource: 'screen' },
-                optional: []
-            };
-            videoConstraints.video = screen_constraints;
-        }
-    }
 
-    function init(){
+    function init(iid){
+        interaction_id = iid;
         if (hasGetUserMedia()) {
           // Good to go!
         } else {
@@ -43,6 +36,17 @@ var Capture = function() {
         bindEvents();
     }
 
+
+    function isCaptureScreen() {
+        if (document.getElementById('record-screen').checked) {
+            screen_constraints = {
+                mandatory: { chromeMediaSource: 'screen' },
+                optional: []
+            };
+            videoConstraints.video = screen_constraints;
+        }
+    }
+
     function capture_failure_handler(event){
         console.log("capture failure");
     }
@@ -52,6 +56,7 @@ var Capture = function() {
         // $(document).on("endCapture", end_capture_handler);
         $("#capture-button").click(capture_button_handler);
         $("#video-capture-button").click(video_capture_button_handler);
+        $("#save-interaction-button").click(save_interaction_button_handler);
     }
 
     function capture_button_handler(event){
@@ -76,6 +81,28 @@ var Capture = function() {
             $(this).text("Stop Recording");
             start_video_capture();
         }
+    }
+
+    function save_interaction_button_handler(event){
+        //TODO: update the status
+        console.log("saved", $("#myModal #summary").val());
+        var data = {
+            "interaction_id": ineraction_id,
+            "summary": $("#myModal #summary").val()
+        };
+        var csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.post("/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
+            console.log(data);
+        });        
     }
 
     function start_audio_capture(){
@@ -132,9 +159,53 @@ var Capture = function() {
     function stop_audio_capture(){
         audio.src = '';
         recorder.stopRecording(function(url) {
-            console.log(url);
-            document.getElementById('audio-url-preview').innerHTML = '<a href="' + url + '" target="_blank">play recording</a>';
+            // console.log(url);
+            // document.getElementById('audio-url-preview').innerHTML = '<a href="' + url + '" target="_blank">play recording</a>';
+            upload_file(recorder.getBlob());
         });
+        // TODO: update interaction information
+    }
+
+    function upload_file(blob){
+        console.log(blob);
+        var formData = new FormData();
+        formData.append('interaction_id', interaction_id);
+        formData.append('audio_file', blob);
+        // xhr.send(formData);
+        var csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $.ajax({
+           url: "/ajax/capture/interaction/stop",
+           type: "POST",
+           data: formData,
+           processData: false,
+           contentType: false,
+           success: function(response) {
+                console.log(response["message"]);
+                // document.getElementById('audio-url-preview').innerHTML = '<a href="' + response["url"] + '" target="_blank">play recording</a>';
+                $("#myModal .modal-title").text("Interaction successfully recorded.");
+                $("#myModal .modal-body #preview-audio").src = response["url"];
+                $('#myModal').modal({
+                  keyboard: false
+                });
+           },
+           error: function(jqXHR, textStatus, errorMessage) {
+               console.log(jqXHR, textStatus, errorMessage);
+               $("#myModal .modal-title").text("Interaction recording failed.");
+               $('#myModal').modal({
+                 keyboard: false
+               });
+           }
+        });
+
     }
 
     function stop_video_capture(){
