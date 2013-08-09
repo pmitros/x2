@@ -26,11 +26,33 @@
 
     <div class="row">
         <div class="sidebar col-12 col-sm-2 col-lg-2">
-            <h3>Help Queue</h3>
-            <div id="help-queue"></div>
+            <div class="section-header">
+                <div class="section-title">Help Queue</div>
+            </div>
+            <div id="help-queue">
+                <div class="sort-option">
+                    <label>sort by: </label>
+                    <div class="btn-group">
+                        
+                      <button type="button" class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown">
+                        time <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a href="#">time</a></li>
+                        <li><a href="#">group</a></li>
+                        <li><a href="#">progress</a></li>
+                      </ul>
+                    </div>            
+                </div>
+            </div>
         </div>
         <div class="main col-12 col-sm-10 col-lg-10">
-            <h3>Classroom Layout</h3>
+            <div class="section-header">
+                <ul id="view-options" class="nav nav-pills">
+                  <li class="active"><a href="#" id="classroom-view-button">Classroom View</a></li>
+                  <li><a href="#" id="list-view-button">List View</a></li>
+                </ul>
+            </div>
             <div id="classroom-layout"></div>
         </div>
     </div>

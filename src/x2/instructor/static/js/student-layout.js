@@ -77,6 +77,18 @@ var StudentLayout = function() {
         return $student;
     }
 
+    function create_student_list(student_id){
+        var student = Layout.get_student_by_id(student_id);
+        var session_student = Layout.get_session_student_by_id(student_id);       
+        var $row = $("<tr/>");
+        $("<td/>").text(session_student["badge"]).appendTo($row);
+        $("<td/>").text(student["name"]).appendTo($row);
+        $("<td/>").text(session_student["group"]).appendTo($row);
+        $("<td/>").text(session_student["progress"]).appendTo($row);
+        console.log($row, student, session_student);
+        return $row;
+    }
+
     function add_popover($student){
         var html = "<div data-id='" + $student.attr("data-id") + "'>"
             + "<div>&quot;I don't understand how to derive x from the equation.&quot;</div><br/>"
@@ -253,6 +265,7 @@ var StudentLayout = function() {
     return {
         init: init,
         create_student: create_student,
+        create_student_list: create_student_list,
         has_badge: has_badge,
         add_badge: add_badge,
         remove_badge: remove_badge,

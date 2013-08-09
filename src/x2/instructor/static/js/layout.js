@@ -16,8 +16,17 @@ var Layout = function() {
         bindEvents();
         console.log("Layout initialized", course, session, blocks, students, session_students);
         // load_blocks(readonly);
-        load_students();
+        // selecting the default option
+        $("#view-options li a").first().trigger("click");
         load_queue();
+    }
+
+    function load_classroom_view(){
+        load_students();
+    }
+
+    function load_list_view(){
+        load_students_list();
     }
 
     function bindEvents(){
@@ -35,6 +44,18 @@ var Layout = function() {
 
         $("#save-layout-button").click(function(){
             save_blocks();
+        });
+
+        $("#view-options li a").click(function(){
+            console.log($(this).attr("id"), "selected");
+            $("#classroom-layout").html("");
+            $("#view-options li").removeClass("active");
+            $(this).parent().addClass("active");
+            if ($(this).attr("id") == "classroom-view-button"){
+                load_classroom_view();
+            } else if ($(this).attr("id") == "list-view-button"){
+                load_list_view();
+            }
         });
     }
 
@@ -209,6 +230,22 @@ var Layout = function() {
             $new_student.css("top", StudentLayout.get_top(Layout.students[index]) + "px");
             check_overlap(student_id);
         }
+    }
+
+
+    function load_students_list(){
+        var index;
+        var student_id;
+        var $new_student;
+        var $table = $("<table/>").addClass("table table-striped");
+        var $header = $("<tr/>").append("<th>status</th><th>name</th><th>group</th><th>progress</th>");
+        $table.append($header);
+        for (index in Layout.students){
+            student_id = Layout.students[index]["id"];
+            $new_student = StudentLayout.create_student_list(student_id);
+            $table.append($new_student);
+        }
+        $("#classroom-layout").append($table);
     }
 
     function save_students(){

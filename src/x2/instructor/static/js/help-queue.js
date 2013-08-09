@@ -23,7 +23,7 @@ var HelpQueue = function() {
             $student = $("#help-queue .student[data-id='" + HelpQueue.queue[i] + "']");
             if ($student.length === 0)
                 continue;
-            $student.css("top", i * ($student.height() + 20) + 60)
+            $student.css("top", i * ($student.height() + 10) + 85)
                 .css("left", "25%");
         }
     }
