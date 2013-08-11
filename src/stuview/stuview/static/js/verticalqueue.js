@@ -2,24 +2,50 @@
 function VerticalQueue(runtime, element) {
 
     var handler_url = runtime.handler_url('activate');
+    var toolbar_handler = runtime.handler_url('toolbar');
 
-     function update_active(data) {
-        $(element).parents('.queue_widget').children('.active_page').html(data.page_view);
+    function on_help(){
+        var issue_summary = prompt('Describe your issue:')
+
+        if(issue_summary == null){
+            return
+        }
+
+         $.ajax({type: "POST",
+                url: toolbar_handler,
+                data: JSON.stringify({request: 'help', 'issue':issue_summary}),
+                success: function(evt){console.log(evt)}
+        });
+    }
+
+    function on_complete(){
+
+         $.ajax({type: "POST",
+                url: toolbar_handler,
+                data: JSON.stringify({request: 'complete'}),
+                success: function(evt){console.log(evt); on_thumb_click()}
+        });
+    }
+
+    function update_active(data) {
+        var active_page = $(element).parents('.queue_widget').children('.active_page').first()
+        $(active_page).html(data.page_view);
+        $(active_page).find('.button_help').click(on_help)
+        $(active_page).find('.button_complete').click(on_complete)
+
         $(element).html(data.thumb_view)
-
-
         $('.thumb').removeClass('active_thumb')
         $(element).children(".thumb").addClass('active_thumb')
     }
 
-
-    $('.thumb', element).live('click', function(eventObject) {
-
-        $.ajax({type: "POST",
+    function on_thumb_click(){
+          $.ajax({type: "POST",
                 url: handler_url,
                 data: JSON.stringify({}),
                 success: update_active});
-    });
+    }
+
+    $('.thumb', element).live('click', on_thumb_click);
 
     $('.thumb', element).live('mouseenter', function(eventObject){
 

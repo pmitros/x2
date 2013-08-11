@@ -82,10 +82,10 @@ def index(_request):
 
     return HttpResponse(u"Index not implemented")
 
-
+@ensure_csrf_cookie
 def qwidget(request):
 
-    student_id = "student_rex"
+    student_id = get_student_id(request)
     lesson = "lessonA"
     course = "courseX"
     template = "static/html/mblock.html"
@@ -190,6 +190,9 @@ def showdb(request):
         'database': SCOPED_KVS,
     })
 
+def cleardb(request):
+    SCOPED_KVS.clear()
+    return showdb(request)
 
 @ensure_csrf_cookie
 def show_scenario(request, scenario_id, view_name='student_view', template='block.html'):

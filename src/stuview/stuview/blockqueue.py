@@ -7,8 +7,6 @@ class BlockQueueBase(XBlock):
     """
     has_children = True
 
-    fubar = String(default="barfu", scope=Scope.content)
-
 
 class VerticalQueue(BlockQueueBase):
 
@@ -27,8 +25,6 @@ class QueueWidget(VerticalQueue):
 
     def student_view(self, context):
 
-        self.fubar = "barbar"
-        # print "dir", [(x, getattr(self, x)) for x in dir(self) if not str(x).startswith('__')]
 
         result = Fragment()
 
