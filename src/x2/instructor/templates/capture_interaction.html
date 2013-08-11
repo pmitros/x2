@@ -10,11 +10,6 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
     <link rel="stylesheet" href="{% static "css/style.css" %}" />    
-    <style>
-        audio, video{
-            width: 100%;
-        }
-    </style>
   </head>
   <body>
     <div class="navbar">
@@ -30,27 +25,63 @@
     <div class="container">
 
     <div class="row">
-        <div class="sidebar col-12 col-sm-2 col-lg-2">
-            <h3>Controls</h3>
+<!--         <div class="sidebar col-12 col-sm-2 col-lg-2">
+            <div class="section-header">
+                <div class="section-title">Controls</div>
+            </div>
             <div>
                 <audio id="audio" autoplay loop controls></audio><br/>
                 <button id="capture-button" class="btn btn-danger">Record Audio</button>
                 <div id="audio-url-preview"></div>
             </div>
-            <div>
+            <div style="display:none">
                 <video id="video" autoplay loop controls muted width="320" height="240"></video>
                 <input type="checkbox" id="record-screen" style="display:none">
                 <label for="record-screen" style="display:none">Record Screen</label>
                 <button id="video-capture-button" class="btn btn-danger">Record Video</button>
                 <div id="video-url-preview"></div>
-            </div>            
-        </div>
-        <div class="main col-12 col-sm-10 col-lg-10">
-            <h3>Sketchpad</h3>
+            </div>
+        </div> -->
+        <div class="main col-12 col-sm-12 col-lg-12">
+            <div class="section-header">
+                <span class="section-title col-12 col-sm-6 col-lg-6 nowrap">Sketchpad</span>
+                <span class="col-12 col-sm-6 col-lg-6">
+                    <audio id="audio" class="nowrap" autoplay loop controls></audio>
+                    <button id="capture-button" class="btn btn-danger nowrap">Record Audio</button>
+                    <!-- <div id="audio-url-preview"></div> -->
+                </span>                
+            </div>
             <!-- <iframe src="http://drawonthe.net/board_index.php?id=130807_11" width="600" height="600"></iframe> -->
-            <iframe src="http://localhost:1337/b" width="800" height="800"></iframe>
+            <iframe src="http://localhost:1337/b" width="100%" height="800"></iframe>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Interaction successfully captured!</h4>
+          </div>
+          <div class="modal-body">
+            <div>Preview the recorded audio:</div>
+            <audio id="preview-audio" autoplay loop controls></audio>
+            <div class="more-info">some other information</div>
+            <br/>
+            <div>Leave a summary of this interaction (optional)</div>
+            <textarea rows="3" cols="50" id="summary"></textarea>
+          </div>
+          <div class="modal-footer">
+            <div>Would you like to save this interaction and share with others?<br/></div>
+            <div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Discard</button>
+                <button type="button" class="btn btn-primary" id="save-interaction-button" data-dismiss="modal">Save this interaction</button>
+            </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     </div>
 
@@ -70,9 +101,11 @@
     <script src="{% static "js/utils.js" %}"></script>
     <script>
         $(document).ready(function(){
-            console.log("{{student.id}}")
+            console.log("{{student.id}}");
+            console.log("{{interaction.id}}");
+            // var interaction = JSON.stringify({{interaction|safe}});
             TouchDevice.init();
-            Capture.init();
+            Capture.init({{interaction.id}});
         });
     </script>    
   </body>

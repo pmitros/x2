@@ -1,9 +1,11 @@
+from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
 from datetime import datetime
+import os
 import json
 
 
@@ -89,7 +91,7 @@ def capture(request, course_slug, session_slug):
         interaction = Interaction(
             started_at=datetime.now(),
             ended_at=datetime.now(),
-            is_rejected=False)
+            is_rejected=True)
         interaction.t = instructor
         interaction.l = student
         interaction.save()
@@ -100,7 +102,8 @@ def capture(request, course_slug, session_slug):
         {"course": course,
         "session": session,
         "student": student,
-        "instructor": instructor})
+        "instructor": instructor,
+        "interaction": interaction})
 
 
 @csrf_protect
@@ -121,7 +124,7 @@ def ajax_layout_blocks_update(request):
                 block_model.location = str(block["left"]) + "," + str(block["top"])
             block_model.save()
     return HttpResponse(
-        json.dumps({'message': 'success'}, ensure_ascii=False), mimetype='application/javascript')
+        json.dumps({'message': 'success'}, ensure_ascii=False), mimetype='application/json')
 
 
 @csrf_protect
@@ -141,7 +144,7 @@ def ajax_layout_students_update(request):
                 student_model.location = str(student["left"]) + "," + str(student["top"])
                 student_model.save()
     return HttpResponse(
-        json.dumps({'message': 'success'}, ensure_ascii=False), mimetype='application/javascript')
+        json.dumps({'message': 'success'}, ensure_ascii=False), mimetype='application/json')
 
 
 @csrf_protect
@@ -160,7 +163,7 @@ def ajax_layout_student_update(request):
                 setattr(student_model, key, data[key])
             student_model.save()
     return HttpResponse(
-        json.dumps({'message': 'success'}, ensure_ascii=False), mimetype='application/javascript')
+        json.dumps({'message': 'success'}, ensure_ascii=False), mimetype='application/json')
 
 
 @csrf_protect
@@ -186,7 +189,58 @@ def ajax_layout_session_student_update(request):
                 #     session_id=data["session_id"], student_id=data["student_id"])
                 message = "database access error"
     return HttpResponse(
-        json.dumps({'message': message}, ensure_ascii=False), mimetype='application/javascript')
+        json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
 
 
-    
+@csrf_protect
+def ajax_capture_interaction_stop(request):
+    """
+    store captured audio data
+    """
+    message = "success"
+    url = "#"
+    # TODO: update whiteboard, ended_at information
+    if request.method == "POST":
+        # data = request.POST["data"]
+        try:
+            print request.POST, request.FILES
+            blob = request.FILES['audio_file']
+            interaction_id = request.POST['interaction_id']
+            interaction = Interaction.objects.get(id=interaction_id)
+            filename = interaction_id + ".ogg"
+            filepath = os.path.join(settings.MEDIA_ROOT, filename)
+            with open(filepath, "wb+") as fd:
+                for chunk in blob.chunks():
+                    fd.write(chunk)
+            interaction.audio_path = filename
+            interaction.ended_at = datetime.now()
+            interaction.save()
+            url = settings.MEDIA_URL + filename
+        except:
+            print "error", url
+            message = "database access error"
+    return HttpResponse(
+        json.dumps({'message': message, 'url': url}, ensure_ascii=False), mimetype='application/json')
+
+
+@csrf_protect
+def ajax_capture_interaction_accept(request):
+    """
+    accept this interaction, and store summary
+    """
+    message = "success"
+    if request.method == "POST":
+        print request.POST
+        try:
+            interaction_id = request.POST["interaction_id"]
+            interaction = Interaction.objects.get(id=interaction_id)
+            interaction.summary = request.POST["summary"]
+            interaction.is_rejected = False
+            interaction.save()
+        except:
+            pass
+    return HttpResponse(
+        json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
+   
+
+

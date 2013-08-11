@@ -11,6 +11,23 @@ var StudentLayout = function() {
         $(document).on("click", ".start-help-button", start_help_handler);
         $(document).on("click", ".end-help-button", end_help_handler);
         $(document).on("click", ".student-remove-button", student_remove_handler);
+        // dismiss any open popover when clicked elsewhere on the screen
+        $('body').on('click', function (e) {
+            $('.student, .student-list').each(function () {
+                //the 'is' for buttons that trigger popups
+                //the 'has' for icons within a button that triggers a popup
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+        // to locate the popover at the bottom of the current mouse position
+        $(document).on("click", ".student-list", function(event){
+            $popover = $(".popover");
+            console.log(event.pageX, event.pageY, $popover.width(), $popover.height());
+            $popover.css('left', (event.pageX - $popover.width()/2) + 'px');
+            $popover.css('top', (event.pageY + 10) + 'px');
+        });
     }
 
     function start_help_handler(event){
@@ -79,18 +96,24 @@ var StudentLayout = function() {
 
     function create_student_list(student_id){
         var student = Layout.get_student_by_id(student_id);
-        var session_student = Layout.get_session_student_by_id(student_id);       
-        var $row = $("<tr/>");
-        $("<td/>").text(session_student["badge"]).appendTo($row);
-        $("<td/>").text(student["name"]).appendTo($row);
-        $("<td/>").text(session_student["group"]).appendTo($row);
-        $("<td/>").text(session_student["progress"]).appendTo($row);
-        console.log($row, student, session_student);
-        return $row;
+        var session_student = Layout.get_session_student_by_id(student_id);
+        var $student = $("<tr/>")
+                            .addClass("student-list")
+                            .attr("data-id", student_id)
+                            .attr("data-name", student["name"])
+                            .attr("data-group", session_student["group"]);
+        $("<td/>").text(session_student["badge"]).appendTo($student);
+        $("<td/>").text(student["name"]).appendTo($student);
+        $("<td/>").text(session_student["group"]).appendTo($student);
+        $("<td/>").text(session_student["progress"]).appendTo($student);
+        add_popover($student);
+        return $student;
     }
 
     function add_popover($student){
-        var html = "<div data-id='" + $student.attr("data-id") + "'>"
+        var student_id = $student.attr("data-id");
+        var student = Layout.get_student_by_id(student_id);
+        var html = "<div data-id='" + student_id + "'>"
             + "<div>&quot;I don't understand how to derive x from the equation.&quot;</div><br/>"
             + "<button class='btn btn-primary start-help-button'>Help this student</button><br/>"
             + "<button type='button' class='btn btn-primary end-help-button'>Mark as resolved</button><br/>"
@@ -100,7 +123,8 @@ var StudentLayout = function() {
             "html": true,
             "content": html,
             "container": 'body',
-            "title": $student.attr("data-name")
+            "placement": 'bottom',
+            "title": student["name"]
         });
     }
 

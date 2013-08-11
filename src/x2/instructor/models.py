@@ -18,6 +18,8 @@ class Agent(models.Model):
     location = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)
     # parent = models.ForeignKey('self', null=True, default=None)
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)    
     def __unicode__(self):
         return self.name
 
@@ -87,7 +89,15 @@ class Interaction(models.Model):
     agent_learner = models.ManyToManyField(Agent, related_name="l")
     started_at = models.DateTimeField(blank=True)
     ended_at = models.DateTimeField(blank=True)
-    is_rejected = models.BooleanField()
+    is_rejected = models.BooleanField(default=True)
     audio_path = models.URLField(blank=True)
     video_path = models.URLField(blank=True)
     whiteboard_path = models.URLField(blank=True)
+    summary = models.CharField(max_length=1024, blank=True, null=True)
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+    def __unicode__(self):
+        return self.id
+
+
