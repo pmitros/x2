@@ -201,6 +201,8 @@ def ajax_layout_session_student_update(request):
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
 
 
+XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
+ 
 @csrf_protect
 def ajax_layout_help_request_new(request):
     """
@@ -208,8 +210,8 @@ def ajax_layout_help_request_new(request):
     """
     message = "success"
     hr_id = -1
-    if request.method == "POST":
-        data = json.loads(request.POST["data"])
+    if request.method == "GET":
+        data = json.loads(request.GET["data"])
         if data["session_id"] == "" or data["student_id"] == "":
             print "database access error"
         else:
@@ -224,17 +226,23 @@ def ajax_layout_help_request_new(request):
                 model.save()
             except:
                 message = "help request processing failed"
-    if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
-        print request.META
-        response = HttpResponse()
-        response['Access-Control-Allow-Origin']  = XS_SHARING_ALLOWED_ORIGINS 
+"""
+    print request.META
+    try:
+        #    if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
+        response = HttpResponse(
+            json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
+        response['Access-Control-Allow-Origin']  = "*" # XS_SHARING_ALLOWED_ORIGINS 
         response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS ) 
         response['Access-Control-Allow-Headers'] = ",".join( XS_SHARING_ALLOWED_HEADERS )
-        response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
-        return response
-    else:
-        return HttpResponse(
-            json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
+        #        response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
+    except as e:
+        print "hello"
+"""   
+    response = HttpResponse(
+        json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
+    print response
+    return response
 
 
 @csrf_protect
