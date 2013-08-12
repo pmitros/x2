@@ -19,10 +19,10 @@ function VerticalQueue(runtime, element) {
             description: issue_summary,
             resource: 2
         }
-        
+
        // var reqdata = {request: 'help', 'issue':issue_summary}
 
-         $.ajax({type: "POST",
+         $.ajax({type: "GET",
                 url: toolbar_handler,
                 data: reqdata,
                 success: function(evt){console.log(evt)}
