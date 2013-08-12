@@ -84,6 +84,22 @@ class TableBlock(models.Model):
         return self.name
 
 
+class HelpRequest(models.Model):
+    session = models.ForeignKey(Session)
+    student = models.ForeignKey(Student)
+    # status of this help request: requested, in-progress, complete, canceled
+    status = models.CharField(max_length=32)
+    # description added by the student
+    description = models.CharField(max_length=1024, blank=True, null=True)
+    # current learning resource, index in the queue
+    # TODO: access the database of resources and refer to the id there
+    resource = models.CharField(max_length=32, blank=True, null=True)
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+    def __unicode__(self):
+        return self.description
+
+
 class Interaction(models.Model):
     agent_teacher = models.ManyToManyField(Agent, related_name="t")
     agent_learner = models.ManyToManyField(Agent, related_name="l")
@@ -93,11 +109,12 @@ class Interaction(models.Model):
     audio_path = models.URLField(blank=True)
     video_path = models.URLField(blank=True)
     whiteboard_path = models.URLField(blank=True)
-    summary = models.CharField(max_length=1024, blank=True, null=True)
+    instructor_summary = models.CharField(max_length=1024, blank=True, null=True)
+    student_summary = models.CharField(max_length=1024, blank=True, null=True)
     
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
     def __unicode__(self):
-        return self.id
+        return str(self.id)
 
 
