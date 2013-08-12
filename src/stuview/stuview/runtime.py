@@ -19,8 +19,8 @@ from django.template import loader as django_template_loader, \
 from xblock.core import XBlock, Scope, ModelType
 from xblock.runtime import DbModel, KeyValueStore, Runtime, NoSuchViewError
 from xblock.fragment import Fragment
-from .util import make_safe_for_html
-from .models import SCOPED_KVS, BASE_KVS
+from util import make_safe_for_html
+from models import SCOPED_KVS, BASE_KVS
 
 
 log = logging.getLogger(__name__)
@@ -232,13 +232,13 @@ def create_xblock(usage, student_id=None):
 
     """
     block_cls = XBlock.load_class(usage.block_name)
-    runtime = WorkbenchRuntime(block_cls, student_id, usage)
+    runtime = StuviewRuntime(block_cls, student_id, usage)
     model = DbModel(SCOPED_KVS, block_cls, student_id, usage)
     block = block_cls(runtime, model)
     return block
 
 
-class WorkbenchRuntime(Runtime):
+class StuviewRuntime(Runtime):
     """
     Access to the workbench runtime environment for XBlocks.
 
@@ -247,7 +247,7 @@ class WorkbenchRuntime(Runtime):
 
     """
     def __init__(self, block_cls, student_id, usage):
-        super(WorkbenchRuntime, self).__init__()
+        super(StuviewRuntime, self).__init__()
 
         self.block_cls = block_cls
         self.student_id = student_id
@@ -255,7 +255,7 @@ class WorkbenchRuntime(Runtime):
 
     def render(self, block, context, view_name):
         try:
-            return super(WorkbenchRuntime, self).render(block, context, view_name)
+            return super(StuviewRuntime, self).render(block, context, view_name)
         except NoSuchViewError:
             return Fragment(u"<i>No such view: %s on %s</i>"
                             % (view_name, make_safe_for_html(repr(block))))

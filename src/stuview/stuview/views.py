@@ -12,6 +12,7 @@ from StringIO import StringIO
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils import simplejson
 
 from .runtime import Usage, create_xblock
 from .util import webob_to_django_response, django_to_webob_request
@@ -46,32 +47,6 @@ def get_student_id(request):
     student_id = request.GET.get('student', 'student_1')
     return student_id
 
-# class Musage(Usage):
-#     def __init__(self,block_name=None, children=None, initial_state=None, def_id=None, usage_id=None):
-#
-#         if usage_id is None:
-#             Usage.__init__(self, block_name, children, initial_state, def_id)
-#             print "MAPPING", self.id, block_name
-#             MAPPING[str(self.id)] = str(block_name)
-#         else:
-#             #recreate usage
-#             self.id = usage_id
-#             self.parent = None
-#             self.block_name = MAPPING[usage_id]
-#             #TODO
-#             self.def_id = def_id or ("def_%d" % next(self._ids))
-#
-#             key = KeyValueStore(scope=Scope.parent, block_scope_id=usage_id)
-#             print "gotten", GLOBAL_KVS.get(key)
-#             self.children = children or []
-#             self.initial_state = initial_state or {}
-#
-#             # Update our global index of all usages.
-#             self._usage_index[self.id] = self
-#
-#             for child in self.children:
-#                 child.parent = self
-
 
 def index(_request):
     # """Render `index.html`"""
@@ -81,6 +56,33 @@ def index(_request):
     # })
 
     return HttpResponse(u"Index not implemented")
+
+
+
+@ensure_csrf_cookie
+def qinfo(request):
+
+    student = request.GET.get('student')
+    course = request.GET.get('course', 'courseX')
+    lesson = request.GET.get('lesson', 'lessonA')
+
+    if NAMED_USAGES.has(course=course, lesson=lesson, student=student):
+        usage_id = NAMED_USAGES.get(course=course, lesson=lesson, student=student)
+        try:
+            usage = Usage.find_usage(usage_id)
+        except KeyError:
+            #recreate it from the DB
+            print "recreating ", usage_id
+            usage = Usage.recreate(usage_id)
+    else:
+        raise Http404
+
+    block = create_xblock(usage, student)
+    progress = block.progress()
+    active = block.active_index()
+
+    result = {'progress': progress, 'active': active}
+    return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
 @ensure_csrf_cookie
 def qwidget(request):
@@ -105,7 +107,9 @@ def qwidget(request):
             print "recreating ", usage_id
             usage = Usage.recreate(usage_id)
     else:
-        usage = Usage(class_id, [Usage(x) for x in ["dtext", "dvideo", "dproblem", "dtext", "dproblem", "dtext"]], def_id='kraken')
+
+        usage = Usage(class_id, [Usage(x) for x in ["dtext", "dvideo", "dtext", "dtext", "dtext", "dtext"]], def_id='kraken')
+        # problem_1 = Usage('dproblem', initial_state={'content':'static/html/problem_1.html'})
         usage.store_initial_state()
         NAMED_USAGES.set(course=course, lesson=lesson, student=student_id, usage=usage)
 
@@ -138,6 +142,7 @@ def butler(request):
 
     frag = block.runtime.render(block, {}, view_name)
 
+
     return render_to_response(template, {
         'scenario': None,
         'block': block,
@@ -152,36 +157,24 @@ def butler(request):
 
 def queue(request):
 
-    student_id = "student_1"
-    template = "block.html"
-    view_name = "student_view"
-    class_id = "textblock"
+    student = request.GET.get('student')
+    course = request.GET.get('course', 'courseX')
+    lesson = request.GET.get('lesson', 'lessonA')
+
+    if NAMED_USAGES.has(course=course, lesson=lesson, student=student):
+        usage_id = NAMED_USAGES.get(course=course, lesson=lesson, student=student)
+        try:
+            usage = Usage.find_usage(usage_id)
+        except KeyError:
+            usage = Usage.recreate(usage_id)
+    else:
+        raise Http404
 
 
-    log.info("Start show_scenario %r for student %s", class_id, student_id)
+    block = create_xblock(usage, student)
+    frag = block.runtime.render(block, {}, 'queue_view')
 
-    # create an XBlock
-    block_cls = TextBlock
-    runtime = WorkbenchRuntime(block_cls, student_id)
-
-    usage = Usage(class_id)
-    scenario = Scenario("Text DB", usage)
-    usage.store_initial_state()
-    block = create_xblock(usage, student_id)
-
-    frag = block.runtime.render(block, {}, view_name)
-    log.info("End show_scenario %s", class_id)
-    return render_to_response(template, {
-        'scenario': scenario,
-        'block': block,
-        'body': frag.body_html(),
-        'database': SCOPED_KVS,
-        'head_html': frag.head_html(),
-        'foot_html': frag.foot_html(),
-        'log': LOG_STREAM.getvalue(),
-        'student_id': student_id,
-        'usage': usage,
-    })
+    return HttpResponse(frag.body_html())
 
 
 def showdb(request):

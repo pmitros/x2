@@ -19,6 +19,7 @@ urlpatterns = patterns(
     url(r'^qwidget', 'qwidget', name='qwidget'),
     url(r'^queue', 'queue', name='queue'),
     url(r'^cleardb', 'cleardb', name='cleardb'),
+    url(r'^qinfo', 'qinfo', name='qinfo'),
     url(r'^butler', 'butler', name='butler'),
     url(r'^showdb', 'showdb', name='showdb'),
     url(r'^scenario/(?P<scenario_id>[^/]+)/(?P<view_name>[^/]+)/$', 'show_scenario', name='scenario'),

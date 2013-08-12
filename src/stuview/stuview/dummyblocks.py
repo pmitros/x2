@@ -53,6 +53,10 @@ class DummyBlock(XBlock):
         result['page_view'] = self.page_view().body_html()
         result['thumb_view'] = self.thumb_view(None).body_html()
 
+        parent = self.runtime.get_block(self.parent)
+        parent.set_active(self.runtime.usage.id)
+
+
         return result
 
 
@@ -113,17 +117,23 @@ class DummyVideoBlock(DummyBlock):
 class DummyProblemBlock(DummyBlock):
     content_type = 'Problem'
 
-    problem_content = """
-    Calculate the area under the curve
-    """
+    content = String(default='Missing Content',
+                             help='The HTML file containing the problem content',
+                             scope=Scope.user_state)
+
+    def set_content(self, html_file):
+        self.content = html_file
+        self.save()
 
     def thumb_view(self,context):
 
+        thumb_complete = 'thumb_complete' if self.complete else ''
         html = self.runtime.render_template('static/html/videothumb.html',
                                             thumb_img = "../static/img/problem_thumb.png",
                                             thumb_caption = "Problem Caption",
                                             views = self.views,
-                                            complete = self.complete)
+                                            complete = self.complete,
+                                            thumb_complete=thumb_complete)
 
         frag = Fragment(html)
         frag.add_javascript_url('static/js/verticalqueue.js')
@@ -131,11 +141,14 @@ class DummyProblemBlock(DummyBlock):
         return frag
 
     def page_view(self):
-        return Fragment(u"""
-        <h1> Equivalence Relation </h1>
-        <p> In mathematics, an equivalence relation is a relation that is reflexive, symmetric, and transitive.  </p>
-        <p> The relation "greater than" is
-        <p> symmetric: <select> <option>True</option> <option>False</option> </select> </p>
-        <p> reflexive: <select> <option>True</option> <option>False</option> </select> </p>
-        <p> transitive: <select> <option>True</option> <option>False</option> </select> </p>
-        """)
+        result = Fragment()
+        toolbar_frag = self.toolbar_view()
+        result.add_frag_resources(toolbar_frag)
+
+        content_frag = self.runtime.render_template(self.content)
+
+        html = self.runtime.render_template('static/html/problemblock.html',
+                                            toolbar=toolbar_frag,
+                                            content=content_frag)
+        result.add_content(html)
+        return result
