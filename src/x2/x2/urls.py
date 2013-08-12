@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/view-layout$', 'instructor.views.view_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/manage-layout$', 'instructor.views.manage_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture$', 'instructor.views.capture'),
-    # url(r'^ajax/layout/create$', 'instructor.views.create_layout'),
+    # url(r'^x2/ajax/layout/create$', 'instructor.views.create_layout'),
     url(r'^x2/ajax/layout/blocks/update$', 'instructor.views.ajax_layout_blocks_update'),
     url(r'^x2/ajax/layout/students/update$', 'instructor.views.ajax_layout_students_update'),
     url(r'^x2/ajax/layout/student/update$', 'instructor.views.ajax_layout_student_update'),
@@ -28,11 +28,11 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^x2/admin/', include(admin.site.urls)),
 )
 
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
     urlpatterns += patterns('',
-        (r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+        (r'^x2/media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.MEDIA_ROOT}))

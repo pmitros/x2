@@ -100,7 +100,7 @@ var Capture = function() {
             }
         });
 
-        $.post("/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
         });
     }
@@ -183,7 +183,7 @@ var Capture = function() {
         });
 
         $.ajax({
-           url: "/ajax/capture/interaction/stop",
+           url: "/x2/ajax/capture/interaction/stop",
            type: "POST",
            data: formData,
            processData: false,

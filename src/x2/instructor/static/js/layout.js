@@ -59,7 +59,7 @@ var Layout = function() {
     function load_list_view(){
         load_students_list();
     }
-    
+
     function get_student_by_id(student_id){
         var index;
         for (index in Layout.students){
@@ -175,7 +175,7 @@ var Layout = function() {
             }
         });
 
-        $.post("/ajax/layout/blocks/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/blocks/update", {"data": JSON.stringify(data)}, function(data){
             disable_save_button();
         });
     }
@@ -283,7 +283,7 @@ var Layout = function() {
             }
         });
 
-        $.post("/ajax/layout/students/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/students/update", {"data": JSON.stringify(data)}, function(data){
             disable_save_button();
         });
     }

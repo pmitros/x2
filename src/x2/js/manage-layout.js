@@ -111,7 +111,7 @@ var Layout = function() {
             }
         });
 
-        $.post("/ajax/layout/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/update", {"data": JSON.stringify(data)}, function(data){
             disable_save_button();
         });
     }

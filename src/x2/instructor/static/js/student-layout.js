@@ -233,7 +233,7 @@ var StudentLayout = function() {
             }
         });
 
-        $.post("/ajax/layout/student/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/student/update", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
         });
     }
@@ -281,7 +281,7 @@ var StudentLayout = function() {
             }
         });
 
-        $.post("/ajax/layout/session-student/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/session-student/update", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
         });
     }
