@@ -2,7 +2,9 @@
 function VerticalQueue(runtime, element) {
 
     var handler_url = runtime.handler_url('activate');
-    var toolbar_handler = runtime.handler_url('toolbar');
+    //var toolbar_handler = runtime.handler_url('toolbar');
+
+    var toolbar_handler = 'http://localhost:3333/x2/ajax/layout/help-request/new'
 
     function on_help(){
         var issue_summary = prompt('Describe your issue:')
@@ -11,9 +13,18 @@ function VerticalQueue(runtime, element) {
             return
         }
 
+        reqdata = {
+            session_id: 'sep-1-2013',
+            student_id: student_id,
+            description: issue_summary,
+            resource: 2
+        }
+        
+       // var reqdata = {request: 'help', 'issue':issue_summary}
+
          $.ajax({type: "POST",
                 url: toolbar_handler,
-                data: JSON.stringify({request: 'help', 'issue':issue_summary}),
+                data: reqdata,
                 success: function(evt){console.log(evt)}
         });
     }

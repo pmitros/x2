@@ -1,5 +1,6 @@
 from xblock.core import XBlock, Scope, Integer, String, Boolean
 from xblock.fragment import Fragment
+import urllib2, urllib
 
 class DummyBlock(XBlock):
 
@@ -39,7 +40,24 @@ class DummyBlock(XBlock):
             print "complete"
         elif data['request'] == 'help':
             print 'help called for: ', data['issue']
-            return {'status': 'acknowledged'}
+
+            post_data = [
+                ('session_id', 'sep-1-2013'),
+                ('student_id', str(self.runtime.student_id)),
+                ('description', str(data['issue'])),
+                ('resource', str(2))
+            ]
+
+
+            try:
+                result = urllib2.urlopen('http://localhost:3333/x2/ajax/layout/help-request/new', urllib.urlencode(post_data))
+                content = result.read()
+            except urllib2.URLError as e:
+                content = str(e)
+
+            print 'content: ', content
+            return content
+            # return {'status': 'acknowledged'}
         else:
             print 'unknown request'
 
