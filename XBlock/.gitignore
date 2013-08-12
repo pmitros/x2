@@ -1,0 +1,16 @@
+*.log
+*.pot
+*.pyc
+local_settings.py
+*.egg-info
+.treerc
+.coverage
+htmlcov
+
+# Documentation
+doc/_build
+.pip_cache
+nosetests.xml
+coverage.xml
+pep8.report
+pylint.report
