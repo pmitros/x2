@@ -214,7 +214,7 @@ class ScopedKVS(KeyValueStore):
         try:
             kvd = self._base_kvs.get(key=self.actual_key(key))
             return kvd[key.field_name]
-        except KeyValue.DoesNotExist:
+        except KeyError:
             raise KeyError(self.actual_key(key))
 
     def set(self, key, value):
