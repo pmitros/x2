@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
 from datetime import datetime
@@ -44,6 +45,7 @@ def populate_session_students(session_id, students):
             model.save()
 
 
+@ensure_csrf_cookie
 def view_layout(request, course_slug, session_slug):
     try:
         course = Course.objects.get(slug=course_slug)
