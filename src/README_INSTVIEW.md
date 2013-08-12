@@ -19,6 +19,7 @@ Required: Django, HTML5-supporting web browser, and node.js
 In `src/x2/x2/settings.py`, 
 
 * update TEMPLATE_DIR to include an absolute path to the template directory.
+* update MEDIA_ROOT to include an absolute path to the media directory.
 * update DATABASES to suit your database setup.
 
 ### Step 3. Initial Data
