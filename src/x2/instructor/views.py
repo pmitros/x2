@@ -8,6 +8,7 @@ from instructor.models import *
 from datetime import datetime
 import os
 import json
+import urllib2
 
 
 # def blocks_to_json(blocks):
@@ -56,6 +57,12 @@ def view_layout(request, course_slug, session_slug):
         session_students = SessionStudentData.objects.filter(session_id=session.id)
     except ObjectDoesNotExist:
         raise Http404
+    try:
+        for student in students:
+            # print student.id
+            print urllib2.urlopen("http://juhokim.com:2233/qinfo?student=" + str(student.id)).read()
+    except:
+        print "error returned"
     return render_to_response(
         "view_layout.html",
         {"course": course,
@@ -217,8 +224,17 @@ def ajax_layout_help_request_new(request):
                 model.save()
             except:
                 message = "help request processing failed"
-    return HttpResponse(
-        json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
+    if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
+        print request.META
+        response = HttpResponse()
+        response['Access-Control-Allow-Origin']  = XS_SHARING_ALLOWED_ORIGINS 
+        response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS ) 
+        response['Access-Control-Allow-Headers'] = ",".join( XS_SHARING_ALLOWED_HEADERS )
+        response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
+        return response
+    else:
+        return HttpResponse(
+            json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
 
 
 @csrf_protect
@@ -236,6 +252,7 @@ def ajax_capture_interaction_stop(request):
             blob = request.FILES['audio_file']
             interaction_id = request.POST['interaction_id']
             interaction = Interaction.objects.get(id=interaction_id)
+            # look at the recorded type and choose the extension accordingly
             filename = interaction_id + ".ogg"
             filepath = os.path.join(settings.MEDIA_ROOT, filename)
             with open(filepath, "wb+") as fd:
