@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Interaction.summary'
         db.add_column(u'instructor_interaction', 'summary',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=1024, blank=True),
+                      self.gf('django.db.models.fields.CharField')(max_length=1024, null=True, blank=True),
                       keep_default=False)
 
 
@@ -58,7 +58,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_rejected': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'started_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
-            'summary': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
+            'summary': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
             'video_path': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'whiteboard_path': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         },

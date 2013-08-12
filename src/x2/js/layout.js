@@ -143,7 +143,7 @@ var Layout = function() {
             }
         });
 
-        $.post("/ajax/layout/blocks/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/blocks/update", {"data": JSON.stringify(data)}, function(data){
             disable_save_button();
         });
     }
@@ -202,7 +202,7 @@ var Layout = function() {
             }
         });
 
-        $.post("/ajax/layout/students/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/students/update", {"data": JSON.stringify(data)}, function(data){
             disable_save_button();
         });
     }

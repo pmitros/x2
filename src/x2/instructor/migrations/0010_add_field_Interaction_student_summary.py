@@ -8,14 +8,16 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding field 'Interaction.student_summary'
+        db.add_column(u'instructor_interaction', 'student_summary',
+                      self.gf('django.db.models.fields.CharField')(max_length=1024, null=True, blank=True),
+                      keep_default=False)
 
-        # Changing field 'Interaction.summary'
-        db.alter_column(u'instructor_interaction', 'summary', self.gf('django.db.models.fields.CharField')(max_length=1024, null=True))
 
     def backwards(self, orm):
+        # Deleting field 'Interaction.student_summary'
+        db.delete_column(u'instructor_interaction', 'student_summary')
 
-        # Changing field 'Interaction.summary'
-        db.alter_column(u'instructor_interaction', 'summary', self.gf('django.db.models.fields.CharField')(default='', max_length=1024))
 
     models = {
         u'instructor.agent': {
@@ -43,6 +45,15 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Group', '_ormbases': [u'instructor.Agent']},
             u'agent_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['instructor.Agent']", 'unique': 'True', 'primary_key': 'True'})
         },
+        u'instructor.helprequest': {
+            'Meta': {'object_name': 'HelpRequest'},
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'resource': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True', 'blank': 'True'}),
+            'session': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['instructor.Session']"}),
+            'status': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
+            'student': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['instructor.Student']"})
+        },
         u'instructor.instructor': {
             'Meta': {'object_name': 'Instructor', '_ormbases': [u'instructor.Agent']},
             u'agent_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['instructor.Agent']", 'unique': 'True', 'primary_key': 'True'})
@@ -54,9 +65,10 @@ class Migration(SchemaMigration):
             'audio_path': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'ended_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'instructor_summary': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
             'is_rejected': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'started_at': ('django.db.models.fields.DateTimeField', [], {'blank': 'True'}),
-            'summary': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
+            'student_summary': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'null': 'True', 'blank': 'True'}),
             'video_path': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'whiteboard_path': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         },

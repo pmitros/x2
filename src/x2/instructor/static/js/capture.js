@@ -87,8 +87,8 @@ var Capture = function() {
         //TODO: update the status
         console.log("saved", $("#myModal #summary").val());
         var data = {
-            "interaction_id": ineraction_id,
-            "summary": $("#myModal #summary").val()
+            "interaction_id": interaction_id,
+            "instructor_summary": $("#myModal #summary").val()
         };
         var csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
@@ -100,9 +100,9 @@ var Capture = function() {
             }
         });
 
-        $.post("/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
-        });        
+        });
     }
 
     function start_audio_capture(){
@@ -183,7 +183,7 @@ var Capture = function() {
         });
 
         $.ajax({
-           url: "/ajax/capture/interaction/stop",
+           url: "/x2/ajax/capture/interaction/stop",
            type: "POST",
            data: formData,
            processData: false,
@@ -192,7 +192,7 @@ var Capture = function() {
                 console.log(response["message"]);
                 // document.getElementById('audio-url-preview').innerHTML = '<a href="' + response["url"] + '" target="_blank">play recording</a>';
                 $("#myModal .modal-title").text("Interaction successfully recorded.");
-                $("#myModal .modal-body #preview-audio").src = response["url"];
+                $("#myModal .modal-body #preview-audio").attr("src", response["url"]);
                 $('#myModal').modal({
                   keyboard: false
                 });

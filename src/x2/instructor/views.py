@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
 from datetime import datetime
@@ -44,6 +45,7 @@ def populate_session_students(session_id, students):
             model.save()
 
 
+@ensure_csrf_cookie
 def view_layout(request, course_slug, session_slug):
     try:
         course = Course.objects.get(slug=course_slug)
@@ -193,6 +195,33 @@ def ajax_layout_session_student_update(request):
 
 
 @csrf_protect
+def ajax_layout_help_request_new(request):
+    """
+    Create a new help request from a student
+    """
+    message = "success"
+    hr_id = -1
+    if request.method == "POST":
+        data = json.loads(request.POST["data"])
+        if data["session_id"] == "" or data["student_id"] == "":
+            print "database access error"
+        else:
+            try:
+                model = HelpRequest(
+                    session_id=data["session_id"], 
+                    student_id=data["student_id"],
+                    description=data["description"],
+                    resource=data["resource"],
+                    status="requested")
+                hr_id = model.id
+                model.save()
+            except:
+                message = "help request processing failed"
+    return HttpResponse(
+        json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
+
+
+@csrf_protect
 def ajax_capture_interaction_stop(request):
     """
     store captured audio data
@@ -231,16 +260,17 @@ def ajax_capture_interaction_accept(request):
     message = "success"
     if request.method == "POST":
         print request.POST
+        data = json.loads(request.POST["data"])
         try:
-            interaction_id = request.POST["interaction_id"]
+            interaction_id = data["interaction_id"]
             interaction = Interaction.objects.get(id=interaction_id)
-            interaction.summary = request.POST["summary"]
+            interaction.instructor_summary = data["summary"]
             interaction.is_rejected = False
             interaction.save()
         except:
-            pass
+            print "exception"
     return HttpResponse(
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
    
 
-
+    

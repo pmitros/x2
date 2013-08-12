@@ -113,12 +113,12 @@ var StudentLayout = function() {
     function add_popover($student){
         var student_id = $student.attr("data-id");
         var student = Layout.get_student_by_id(student_id);
-        var html = "<div data-id='" + student_id + "'>"
-            + "<div>&quot;I don't understand how to derive x from the equation.&quot;</div><br/>"
-            + "<button class='btn btn-primary start-help-button'>Help this student</button><br/>"
-            + "<button type='button' class='btn btn-primary end-help-button'>Mark as resolved</button><br/>"
-            + "<button type='button' class='btn btn-danger remove-student-button'>Remove this student</button>"
-            + "</div>";
+        var html = "<div data-id='" + student_id + "'>" +
+            "<div>&quot;I don't understand how to derive x from the equation.&quot;</div><br/>" +
+            "<button class='btn btn-primary start-help-button'>Help this student</button><br/>" +
+            "<button type='button' class='btn btn-primary end-help-button'>Mark as resolved</button><br/>" +
+            // + "<button type='button' class='btn btn-danger remove-student-button'>Remove this student</button>"
+            "</div>";
         $student.popover({
             "html": true,
             "content": html,
@@ -233,7 +233,7 @@ var StudentLayout = function() {
             }
         });
 
-        $.post("/ajax/layout/student/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/student/update", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
         });
     }
@@ -281,7 +281,7 @@ var StudentLayout = function() {
             }
         });
 
-        $.post("/ajax/layout/session-student/update", {"data": JSON.stringify(data)}, function(data){
+        $.post("/x2/ajax/layout/session-student/update", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
         });
     }
