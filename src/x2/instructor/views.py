@@ -201,47 +201,56 @@ def ajax_layout_session_student_update(request):
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
 
 
-XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
  
-@csrf_protect
+#@csrf_protect
+@ensure_csrf_cookie
 def ajax_layout_help_request_new(request):
     """
     Create a new help request from a student
     """
     message = "success"
     hr_id = -1
-    if request.method == "GET":
-        data = json.loads(request.GET["data"])
-        if data["session_id"] == "" or data["student_id"] == "":
-            print "database access error"
-        else:
-            try:
-                model = HelpRequest(
-                    session_id=data["session_id"], 
-                    student_id=data["student_id"],
-                    description=data["description"],
-                    resource=data["resource"],
-                    status="requested")
-                hr_id = model.id
-                model.save()
-            except:
-                message = "help request processing failed"
-"""
+    print request.method
+    data = request.GET
+    print data["session_id"]
+    if True:
+	#data = json.loads(request.GET["data"])
+	if data["session_id"] == "" or data["student_id"] == "":
+	    print "database access error"
+	else:
+	    try:
+		session = Session.objects.get(slug=data["session_id"])
+		model = HelpRequest(
+		    session_id=session.id, 
+		    student_id=data["student_id"],
+		    description=data["description"],
+		    resource=data["resource"],
+		    status="requested")
+		model.save()
+		hr_id = model.id
+	    except:
+		message = "help request processing failed"
+    """"
     print request.META
+    XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
+    response = HttpResponse()
     try:
         #    if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
-        response = HttpResponse(
-            json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
+        #    json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
         response['Access-Control-Allow-Origin']  = "*" # XS_SHARING_ALLOWED_ORIGINS 
         response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS ) 
         response['Access-Control-Allow-Headers'] = ",".join( XS_SHARING_ALLOWED_HEADERS )
         #        response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
     except as e:
         print "hello"
-"""   
+    #print response
+    """   
+    print hr_id, message
+    XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
     response = HttpResponse(
         json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
-    print response
+    response['Access-Control-Allow-Origin']  = "*" # XS_SHARING_ALLOWED_ORIGINS 
+    response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS ) 
     return response
 
 
