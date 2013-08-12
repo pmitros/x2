@@ -35,6 +35,7 @@ class DummyBlock(XBlock):
 
         if data['request'] == 'complete':
             self.complete = True
+            self.save()
             print "complete"
         elif data['request'] == 'help':
             print 'help called for: ', data['issue']
