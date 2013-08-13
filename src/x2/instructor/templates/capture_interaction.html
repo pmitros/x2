@@ -51,7 +51,7 @@
                     <!-- <div id="audio-url-preview"></div> -->
                 </span>                
             </div>
-            <iframe src="http://drawonthe.net/board_index.php?id=130807_11" width="100%" height="600"></iframe>
+            <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe>
             <!-- <iframe src="http://juhokim.com:1337/b" width="100%" height="800"></iframe> -->
         </div>
     </div>
@@ -106,6 +106,15 @@
             // var interaction = JSON.stringify({{interaction|safe}});
             TouchDevice.init();
             Capture.init({{interaction.id}});
+
+            // $.ajax({
+            //     url: "http://drawonthe.net/newboard.php",
+            //     dataType: 'text/html',
+            // }).success(function(data){
+            //     // $("iframe").html(data);
+            //     console.log("done", data);
+            //     console.log(String(data));
+            // });
         });
     </script>    
   </body>
