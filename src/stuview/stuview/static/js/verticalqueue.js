@@ -4,7 +4,7 @@ function VerticalQueue(runtime, element) {
     var handler_url = runtime.handler_url('activate');
     //var toolbar_handler = runtime.handler_url('toolbar');
 
-    var toolbar_handler = 'http://localhost:3333/x2/ajax/layout/help-request/new'
+    var toolbar_handler = 'http://juhokim.com:3333/x2/ajax/layout/help-request/new'
 
     function on_help(){
         var issue_summary = prompt('Describe your issue:')
