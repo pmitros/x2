@@ -83,13 +83,8 @@
             StudentLayout.init();
             HelpQueue.init();
             Layout.init("{{course.id}}", "{{session.id}}", JSON.parse(blocks), JSON.parse(students), JSON.parse(session_students), true);
-
-            // (function poll(){
-            //     $.ajax({ url: "server", success: function(data){
-            //         console.log("student status returned");
-            //     }, dataType: "json", complete: poll, timeout: 10000 });
-            // })();            
-
+          
+/*
             var socket = new io.Socket();
             socket.connect("http://localhost:3333");
             socket.on('connect', function() {
@@ -108,7 +103,7 @@
                 // }
                 
             });            
-            
+*/            
         });
     </script>    
   </body>

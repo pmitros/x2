@@ -27,6 +27,8 @@ You can either start entering data using Django's admin interface,
 but for faster testing there is a data dump file with initial dummy data.
 Run the loaddata command with `src/x2/instructor-datadump.json`
 
+    python manage.py loaddata instructor-datadump.json
+    
 For more information, visit https://docs.djangoproject.com/en/1.5/ref/django-admin/#loaddata-fixture-fixture
 
 ### Step 4. Running Django server
@@ -40,12 +42,14 @@ Make sure to install and run Walma by visiting https://github.com/opinsys/walma
 We assume that Walma is running at http://localhost:1337 (default Walma setting).
 A URL to a valid board is required for iframe inside capture_interaction.html
 
+#### Audio/Video capture
+We currently use HTML5's webrtc implementation to capture audio (and optionally video).
+You need to have browser support for this to work - Chrome or Firefox (hopefully Chrome Canary for Firefox Nightly).
+Refer to https://github.com/muaz-khan/WebRTC-Experiment/tree/master/RecordRTC for browser compatibility.
+
 ### Step 6. Open the interface.
     http://localhost:3333/instructor/6.00x/sep-1-2013/view-layout
 
 6.00x is the course slug, sep-1-2013 is the session slug: they depend on the Course and Session table data.
 
-#### Audio/Video capture
-We currently use HTML5's webrtc implementation to capture audio (and optionally video).
-You need to have browser support for this to work - Chrome or Firefox (hopefully Chrome Canary for Firefox Nightly)
 

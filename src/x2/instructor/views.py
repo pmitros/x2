@@ -6,6 +6,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
 from datetime import datetime
+import sys
 import os
 import json
 import urllib2
@@ -89,12 +90,6 @@ def view_layout(request, course_slug, session_slug):
         session_students = SessionStudentData.objects.filter(session_id=session.id)
     except ObjectDoesNotExist:
         raise Http404
-    try:
-        for student in students:
-            # print student.id
-            print urllib2.urlopen("http://juhokim.com:2233/qinfo?student=" + str(student.id)).read()
-    except:
-        print "error returned"
     return render_to_response(
         "view_layout.html",
         {"course": course,
@@ -233,7 +228,6 @@ def ajax_layout_session_student_update(request):
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
 
 
- 
 #@csrf_protect
 @ensure_csrf_cookie
 def ajax_layout_help_request_new(request):
@@ -245,23 +239,22 @@ def ajax_layout_help_request_new(request):
     print request.method
     data = request.GET
     print data["session_id"]
-    if True:
 	#data = json.loads(request.GET["data"])
-	if data["session_id"] == "" or data["student_id"] == "":
-	    print "database access error"
-	else:
-	    try:
-		session = Session.objects.get(slug=data["session_id"])
-		model = HelpRequest(
-		    session_id=session.id, 
-		    student_id=data["student_id"],
-		    description=data["description"],
-		    resource=data["resource"],
-		    status="requested")
-		model.save()
-		hr_id = model.id
-	    except:
-		message = "help request processing failed"
+    if data["session_id"] == "" or data["student_id"] == "":
+        print "database access error"
+    else:
+        try:
+            session = Session.objects.get(slug=data["session_id"])
+            model = HelpRequest(
+    		    session_id=session.id, 
+    		    student_id=data["student_id"],
+    		    description=data["description"],
+    		    resource=data["resource"],
+    		    status="requested")
+            model.save()
+            hr_id = model.id
+        except:
+            message = "help request processing failed"
     """"
     print request.META
     XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
@@ -276,7 +269,7 @@ def ajax_layout_help_request_new(request):
     except as e:
         print "hello"
     #print response
-    """   
+    """
     print hr_id, message
     XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
     response = HttpResponse(
@@ -337,6 +330,32 @@ def ajax_capture_interaction_accept(request):
             print "exception"
     return HttpResponse(
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
-   
 
-    
+
+@csrf_protect
+def ajax_layout_students_progress(request):
+    """
+    get updated student progress
+    """
+    message = "success"
+    if request.method == "POST":
+        print request.POST
+        data = json.loads(request.POST["data"])
+        course = Course.objects.get(id=data["course_id"])
+        session = Session.objects.get(id=data["session_id"])
+        students = Student.objects.filter(course=course.id)
+
+        results = []
+        try:
+            for student in students:
+                print student.id
+                result = urllib2.urlopen("http://ls.edx.org:2233/qinfo?student=" + str(student.id)).read()
+                results.append(result)
+        except urllib2.HTTPError as e:
+            print e, "error returned"
+
+    return HttpResponse(
+        json.dumps({'results': json.dumps(results)}, ensure_ascii=False), mimetype='application/json')
+
+
+
