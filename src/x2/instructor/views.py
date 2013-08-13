@@ -330,7 +330,7 @@ def ajax_capture_interaction_accept(request):
         try:
             interaction_id = data["interaction_id"]
             interaction = Interaction.objects.get(id=interaction_id)
-            interaction.instructor_summary = data["summary"]
+            interaction.instructor_summary = data["instructor_summary"]
             interaction.is_rejected = False
             interaction.save()
         except:
