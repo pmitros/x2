@@ -48,7 +48,6 @@ class DummyBlock(XBlock):
                 ('resource', str(2))
             ]
 
-
             try:
                 result = urllib2.urlopen('http://localhost:3333/x2/ajax/layout/help-request/new', urllib.urlencode(post_data))
                 content = result.read()
