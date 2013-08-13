@@ -48,9 +48,9 @@ class DummyBlock(XBlock):
 
 
             req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
-            print r.url
-            print r.text
-            content = r.text
+            print req.url
+            print req.text
+            content = req.text
 
 
             print 'content: ', content
