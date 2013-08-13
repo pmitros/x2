@@ -46,13 +46,12 @@ class DummyBlock(XBlock):
                    'description': str(data['issue']),
                    'resource': str(2)}
 
-            try:
-                req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
-                print r.url
-                print r.text
-                content = r.text
-            except as e:
-                content = str(e)
+
+            req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
+            print r.url
+            print r.text
+            content = r.text
+
 
             print 'content: ', content
             return content
