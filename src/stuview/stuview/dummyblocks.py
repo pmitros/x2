@@ -49,7 +49,7 @@ class DummyBlock(XBlock):
                    'resource': str(2)}
 
 
-            req = requests.post('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
+            req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
             print req.url
             print req.text
             content = req.text
