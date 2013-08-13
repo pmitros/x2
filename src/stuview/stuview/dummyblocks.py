@@ -41,13 +41,15 @@ class DummyBlock(XBlock):
         elif data['request'] == 'help':
             print 'help called for: ', data['issue']
 
+            #str(self.runtime.student_id)
+
             params = {'session_id': 'sep-1-2013',
-                   'student_id': str(self.runtime.student_id),
+                   'student_id': str(2),
                    'description': str(data['issue']),
                    'resource': str(2)}
 
 
-            req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
+            req = requests.post('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
             print req.url
             print req.text
             content = req.text
