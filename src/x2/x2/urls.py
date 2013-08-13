@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^x2/ajax/layout/help-request/new$', 'instructor.views.ajax_layout_help_request_new'),
     url(r'^x2/ajax/capture/interaction/stop$', 'instructor.views.ajax_capture_interaction_stop'),
     url(r'^x2/ajax/capture/interaction/accept$', 'instructor.views.ajax_capture_interaction_accept'),
-    
+    url(r'^x2/ajax/layout/students/progress$', 'instructor.views.ajax_layout_students_progress'),
     # url(r'^ajax/layout/remove$', 'instructor.views.remove_layout'),
 
     # Examples:

@@ -19,6 +19,49 @@ var Layout = function() {
         // selecting the default option
         $("#view-options li a").first().trigger("click");
         load_queue();
+        poll_for_progress_updates();
+    }
+
+    function poll_for_progress_updates(){
+        var data = {
+            "session_id": Layout.session_id,
+            "course_id": Layout.course_id
+        };
+        var csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        setTimeout(function(){
+            $.ajax({
+                url: "/x2/ajax/layout/students/progress",
+                type: "POST",
+                data: {"data": JSON.stringify(data)},
+                success: function(response) {
+                    console.log(response["results"]);
+                    var i;
+                    var entry;
+                    for (i=0; i<response["results"].length; i++){
+                        console.log(response["results"][i]);
+                    }
+                    // console.log(JSON.parse(response["results"]));
+                    var results = JSON.parse(response["results"]);
+                    for (entry in results){
+                        console.log(entry);
+                        console.log(entry["active"], entry["progress"]);
+                    }
+                },
+                // dataType: "json",
+                complete: poll_for_progress_updates,
+                error: function(jqXHR, textStatus, errorMessage) {
+                   console.log(jqXHR, textStatus, errorMessage);
+                }
+            });
+        }, 5000);
     }
 
     function bindEvents(){
