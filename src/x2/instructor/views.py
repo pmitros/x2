@@ -9,7 +9,39 @@ from datetime import datetime
 import os
 import json
 import urllib2
+from django_socketio.events import on_connect, on_message, on_subscribe, on_unsubscribe, on_error, on_disconnect, on_finish
 
+
+@on_connect
+def socketio_connect_handler(request, socket, context):
+    print socket, context
+    socket.send("connection established")
+
+
+@on_subscribe
+def socketio_subscribe_handler(request, socket, context, channel):
+    print "subscribing to", channel
+    socket.send("subscribed to", channel)
+
+student_data = []
+
+@on_message
+def socketio_message_handler(request, socket, context, message):
+    print "message received", context, message
+    course = Course.objects.get(slug="6.00x")
+    students = Student.objects.filter(course_id=course.id)
+    student_data = [None] * len(students)
+    try:
+        for index, student in enumerate(students):
+            # print student.id
+            # datum = urllib2.urlopen("http://juhokim.com:2233/qinfo?student=" + str(student.id)).read()
+            datum = {"student": 1, "currentIndex": 3}
+            # if student_data[index] != datum:
+            student_data[index] = datum
+    except:
+        print "student information not available"
+    print json.dumps(student_data)
+    socket.send(json.dumps(student_data))
 
 # def blocks_to_json(blocks):
 #     result = []

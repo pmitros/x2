@@ -29,6 +29,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^x2/admin/', include(admin.site.urls)),
+
+    url("", include('django_socketio.urls')),
 )
 
 if settings.DEBUG:

@@ -72,6 +72,7 @@
     <script src="{% static "js/help-queue.js" %}"></script>
     <script src="{% static "js/capture.js" %}"></script>
     <script src="{% static "js/utils.js" %}"></script>
+    <script src="{% static "js/socket.io.js" %}"></script>
     <script>
         $(document).ready(function(){
             var blocks = JSON.stringify({{blocks|safe}});
@@ -82,6 +83,32 @@
             StudentLayout.init();
             HelpQueue.init();
             Layout.init("{{course.id}}", "{{session.id}}", JSON.parse(blocks), JSON.parse(students), JSON.parse(session_students), true);
+
+            // (function poll(){
+            //     $.ajax({ url: "server", success: function(data){
+            //         console.log("student status returned");
+            //     }, dataType: "json", complete: poll, timeout: 10000 });
+            // })();            
+
+            var socket = new io.Socket();
+            socket.connect("http://localhost:3333");
+            socket.on('connect', function() {
+                console.log("connected");
+                console.log(socket);
+                socket.send("get-student-status", {course_id: "{{ course.id }}", session_id: "{{ session.id }}" });
+                // socket.subscribe('test-channel');
+            });
+            socket.on("message", function(data) {
+                // var parsed = JSON.stringify(data);
+                console.log("message received:", data);
+                // for (var i=0; i<JSON.parse(parsed).length; i++){
+                //     console.log(data[i]);
+                //     var entry = JSON.parse(data[i]);
+                //     console.log(entry, entry["student"], entry["currentIndex"]);
+                // }
+                
+            });            
+            
         });
     </script>    
   </body>
