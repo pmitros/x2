@@ -47,7 +47,7 @@ var StudentLayout = function() {
         var $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
         $("#myModal .modal-student-profile").html($profile_img);
         $("#myModal .modal-student-group").text(display_group(session_student["group"]));
-        $("#myModal .modal-student-progress").text(display_group(session_student["progress"]));
+        $("#myModal .modal-student-progress").text(display_progress(session_student["progress"]));
         $("#myModal .help-status").html(display_help_status(help_request));
         $("#myModal .help-requested-at").text(display_help_time(help_request));
         $("#myModal .help-resource").text(display_help_resource(help_request));
@@ -58,8 +58,12 @@ var StudentLayout = function() {
 
     function start_help_handler(event){
         var student_id = $(event.target).closest("#myModal").attr("data-id");
+        var help_request = Layout.get_help_request_by_student_id(student_id);
         console.log($(event.target), student_id);
-        window.location = "./capture?sid=" + student_id;
+        // TODO: add correct instructor ID
+        window.location = "./capture?sid=" + student_id +
+                        "&iid=" + "11" +
+                        "&hr=" + help_request["id"];
     }
 
     function end_help_handler(event){
@@ -291,11 +295,19 @@ var StudentLayout = function() {
 
     function save_student_handler(event, student_id, prop_list){
         var key;
+        var student = Layout.get_student_by_id(student_id);
         var data = {
             "id": student_id
         };
+        // any update should update 
+        // 1) Javascript objects (session_student, help_request)
+        // 2) server (via ajax)
+        // 3) frontend view (visual elements on the screen) -- already done by dragging        
         for (key in prop_list){
             data[key] = prop_list[key];
+            // not sure if there are any other fields to maintain at the moment
+            if (key == "location")
+                student["location"] = prop_list[key];
         }
         console.log(data);
         var csrftoken = getCookie('csrftoken');
@@ -309,39 +321,65 @@ var StudentLayout = function() {
         });
 
         $.post("/x2/ajax/layout/student/update", {"data": JSON.stringify(data)}, function(data){
-            console.log(data);
+            // console.log("/x2/ajax/layout/student/update", data);
         });
     }
 
     function status_update_handler(event, student_id, status){
+        var student = Layout.get_student_by_id(student_id);
+        var session_student = Layout.get_session_student_by_student_id(student_id);
+        var help_request = Layout.get_help_request_by_student_id(student_id);
         var data = {
             "session_id": Layout.session_id,
             "student_id": student_id
         };
-        // expection: status => {"type": type, "value": value}
+        // console.log("status_update", student_id, status["type"]);
+        // any update should update 
+        // 1) Javascript objects (session_student, help_request)
+        // 2) server (via ajax)
+        // 3) frontend view (visual elements on the screen)
+        // required format: status => {"type": type, "value": value}
         if (typeof status["type"] === "undefined")
             return;
         if (status["type"] === "help_requested"){
             $(document).trigger("addToHelpQueue", [student_id]);
+            if (session_student !== null)
+                session_student["badge"] = "question";
             add_badge(student_id, "question");
             data["badge"] = "question";
         } else if (status["type"] === "help_resolved"){
             $(document).trigger("removeFromHelpQueue", [student_id]);
+            if (session_student !== null)
+                session_student["badge"] = "";
             remove_badge(student_id, "question");
+            remove_badge(student_id, "comment");
             data["badge"] = "";
         } else if (status["type"] === "start_interaction"){
+            $(document).trigger("addToHelpQueue", [student_id]);
+            if (session_student !== null)
+                session_student["badge"] = "comment";
             add_badge(student_id, "comment");
             data["badge"] = "comment";
         } else if (status["type"] === "end_interaction"){
+            $(document).trigger("removeFromHelpQueue", [student_id]);
+            if (session_student !== null)
+                session_student["badge"] = "";
+            remove_badge(student_id, "question");
             remove_badge(student_id, "comment");
             data["badge"] = "";
         } else if (status["type"] === "update_progress"){
+            if (session_student !== null)
+                session_student["progress"] = status["value"];
             update_progress(student_id, status["value"]);
             data["progress"] = status["value"];
         } else if (status["type"] == "add_group"){
+            if (session_student !== null)
+                session_student["group"] = status["value"];
             add_group(student_id, status["value"]);
             data["group"] = status["value"];
         } else if (status["type"] == "remove_group"){
+            if (session_student !== null)
+                session_student["group"] = "";
             remove_group(student_id, status["value"]);
             data["group"] = "";
         }
@@ -357,7 +395,7 @@ var StudentLayout = function() {
         });
 
         $.post("/x2/ajax/layout/session-student/update", {"data": JSON.stringify(data)}, function(data){
-            console.log(data);
+            // console.log("/x2/ajax/layout/session-student/update", data);
         });
     }
 

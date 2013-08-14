@@ -1,7 +1,10 @@
 // Capture audio and sketch pad
 
 var Capture = function() {
+    var student_id;
     var interaction_id;
+    var help_request;
+
     var localStream;
     var audio = document.querySelector('audio');
     var video = document.querySelector('video');
@@ -22,8 +25,11 @@ var Capture = function() {
     var screen_constraints;
 
 
-    function init(iid){
+    function init(sid, iid, hr){
+        student_id = sid;
         interaction_id = iid;
+        help_request = hr[0];
+        console.log(hr, help_request["id"]);
         if (hasGetUserMedia()) {
           // Good to go!
         } else {
@@ -34,6 +40,7 @@ var Capture = function() {
         navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia ||
                                   navigator.mozGetUserMedia || navigator.msGetUserMedia;
         bindEvents();
+        $("#capture-button").click();
     }
 
 
@@ -57,6 +64,7 @@ var Capture = function() {
         $("#capture-button").click(capture_button_handler);
         $("#video-capture-button").click(video_capture_button_handler);
         $("#save-interaction-button").click(save_interaction_button_handler);
+        $("#discard-interaction-button").click(discard_interaction_button_handler);
     }
 
     function capture_button_handler(event){
@@ -66,7 +74,7 @@ var Capture = function() {
             stop_audio_capture();
         } else {
             $(this).addClass("recording");
-            $(this).text("Stop Recording");
+            $(this).text("Stop Recording...");
             start_audio_capture();
         }
     }
@@ -81,6 +89,10 @@ var Capture = function() {
             $(this).text("Stop Recording");
             start_video_capture();
         }
+    }
+
+    function discard_interaction_button_handler(event){
+        window.location = "./view-layout";
     }
 
     function save_interaction_button_handler(event){
@@ -102,6 +114,7 @@ var Capture = function() {
 
         $.post("/x2/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
+            window.location = "./view-layout";
         });
     }
 
@@ -167,9 +180,10 @@ var Capture = function() {
     }
 
     function upload_file(blob){
-        console.log(blob);
+        console.log(blob, help_request["id"]);
         var formData = new FormData();
         formData.append('interaction_id', interaction_id);
+        formData.append('hr_id', help_request["id"]);
         formData.append('audio_file', blob);
         // xhr.send(formData);
         var csrftoken = getCookie('csrftoken');
@@ -205,7 +219,6 @@ var Capture = function() {
                });
            }
         });
-
     }
 
     function stop_video_capture(){
