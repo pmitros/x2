@@ -2,13 +2,20 @@ from xblock.core import XBlock, Scope, Integer, String, Boolean
 from xblock.fragment import Fragment
 import requests
 
-class DummyBlock(XBlock):
+class ItemBlock(XBlock):
 
     views = Integer(help="the number of times this block has been viewed",
                     default=0,
                     scope=Scope.user_state)
     complete = Boolean("Has the student completed this item?", default=False, scope=Scope.user_state)
 
+    thumb_img = String(help="rendering of the page_view displayed in the thumb",
+                       default='../static/img/thumb_default.gif',
+                       scope=Scope.content)
+
+    thumb_caption = String(help="usually the title of the block, e.g. Problem 2",
+                           default='Missing caption',
+                           scope=Scope.content)
 
     def student_view(self, context):
         return Fragment(u"Student %s View" % self.content_type)
@@ -16,9 +23,17 @@ class DummyBlock(XBlock):
     def page_view(self):
         return Fragment(u'<div class="page"> Page %s View </div>' % self.content_type)
 
-    def thumb_view(self, context):
-        frag = Fragment(u'<div class="thumb"> Thumb %s View </div>' % self.content_type)
-
+    def thumb_view(self,context):
+        thumb_complete = 'thumb_complete' if self.complete else ''  # Todo remove
+        html = self.runtime.render_template('static/html/videothumb.html',
+                                            thumb_img=self.thumb_img,
+                                            thumb_caption=self.thumb_caption,
+                                            views=self.views,
+                                            complete=self.complete,
+                                            thumb_complete=thumb_complete)
+        frag = Fragment(html)
+        frag.add_javascript_url('static/js/verticalqueue.js')
+        frag.initialize_js('VerticalQueue')
         return frag
 
     def toolbar_view(self):
@@ -79,25 +94,8 @@ class DummyBlock(XBlock):
         return result
 
 
-class DummyTextBlock(DummyBlock):
-    content_type = 'Text'
+class TextBlock(ItemBlock):
 
-    def thumb_view(self,context):
-
-        thumb_complete = 'thumb_complete' if self.complete else ''
-
-        html = self.runtime.render_template('static/html/videothumb.html',
-                                            thumb_img = "../static/img/text.png",
-                                            thumb_caption = "Text Caption",
-                                            views = self.views,
-                                            complete= self.complete,
-                                            thumb_complete=thumb_complete)
-
-        frag = Fragment(html)
-        frag.add_javascript_url('static/js/verticalqueue.js')
-        frag.initialize_js('VerticalQueue')
-
-        return frag
 
     def page_view(self):
 
@@ -111,21 +109,7 @@ class DummyTextBlock(DummyBlock):
 
 
 
-class DummyVideoBlock(DummyBlock):
-    content_type = 'Video'
-
-    def thumb_view(self,context):
-
-        html = self.runtime.render_template('static/html/videothumb.html',
-                                            thumb_img = "../static/img/scicook_thumb.jpg",
-                                            thumb_caption = "Video Caption",
-                                            views = self.views,
-                                            complete= self.complete)
-
-        frag = Fragment(html)
-        frag.add_javascript_url('static/js/verticalqueue.js')
-        frag.initialize_js('VerticalQueue')
-        return frag
+class VideoBlock(ItemBlock):
 
     def page_view(self):
         return Fragment(u"""
@@ -133,38 +117,22 @@ class DummyVideoBlock(DummyBlock):
         """)
 
 
-class DummyProblemBlock(DummyBlock):
-    content_type = 'Problem'
-
+class ProblemBlock(ItemBlock):
     content = String(default='Missing Content',
-                             help='The HTML file containing the problem content',
-                             scope=Scope.user_state)
+                     help='The HTML file containing the problem content',
+                     scope=Scope.content)
 
     def set_content(self, html_file):
         self.content = html_file
         self.save()
-
-    def thumb_view(self,context):
-
-        thumb_complete = 'thumb_complete' if self.complete else ''
-        html = self.runtime.render_template('static/html/videothumb.html',
-                                            thumb_img = "../static/img/problem_thumb.png",
-                                            thumb_caption = "Problem Caption",
-                                            views = self.views,
-                                            complete = self.complete,
-                                            thumb_complete=thumb_complete)
-
-        frag = Fragment(html)
-        frag.add_javascript_url('static/js/verticalqueue.js')
-        frag.initialize_js('VerticalQueue')
-        return frag
 
     def page_view(self):
         result = Fragment()
         toolbar_frag = self.toolbar_view()
         result.add_frag_resources(toolbar_frag)
 
-        content_frag = self.runtime.render_template(self.content)
+        content_html = self.runtime.render_template(self.content)
+        content_frag = Fragment(content_html)
 
         html = self.runtime.render_template('static/html/problemblock.html',
                                             toolbar=toolbar_frag,
