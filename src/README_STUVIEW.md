@@ -1,10 +1,11 @@
-
 Installation
 ============
-Clone XBlock from github and install it by running:
+cd x2/src/XBlock
+pip install -r requirements.txt
 python setup.py install
 
 Go to /x2/src/stuview and run:
+pip install -r requirements
 python setup.py develop
 
 Running
