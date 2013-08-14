@@ -58,7 +58,40 @@
         </div>
     </div>
 
-    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title row">
+                <div class="modal-left col-4 col-sm-4 col-lg-4">
+                    <h4><span class="modal-student-name"></span></h4>
+                    <span class="modal-student-profile"></span>
+                </div>
+                <div class="modal-mid col-4 col-sm-4 col-lg-4">
+                    Group: <span class="modal-student-group"></span><br/>
+                    Progress: <span class="modal-student-progress"></span>
+                </div>
+                <div class="modal-right col-4 col-sm-4 col-lg-4">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4><span class="help-status"></span></h4>
+                </div>
+            </div>
+          </div>
+          <div class="modal-body modal-help">
+            <span class="modal-student-name"></span> needs help on <span class="help-resource"></span><br/>
+            description: &quot;<span class="help-description"></span>&quot;
+          </div>
+          <div class="modal-footer">
+            <button class='btn btn-primary start-help-button'>Help this student</button>
+            <button type='button' class='btn btn-primary end-help-button'>Mark as resolved</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    </div><!-- /.content -->
 
     <script src="{% static "js/jquery-1.10.2.min.js" %}"></script>
     <script src="{% static "js/jquery-ui.min.js" %}"></script>
@@ -83,6 +116,7 @@
             StudentLayout.init();
             HelpQueue.init();
             Layout.init("{{course.id}}", "{{session.id}}", JSON.parse(blocks), JSON.parse(students), JSON.parse(session_students), true);
+            Layout.poll_for_progress_updates();
           
 /*
             var socket = new io.Socket();

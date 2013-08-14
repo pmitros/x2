@@ -28,6 +28,34 @@ var StudentLayout = function() {
             $popover.css('left', (event.pageX - $popover.width()/2) + 'px');
             $popover.css('top', (event.pageY + 10) + 'px');
         });
+
+        $(document).on("click", ".student", student_click_handler);
+
+        $(document).on('show.bs.popover', ".student", function () {
+            console.log("popover shown", $(this).attr("data-id"));
+            // console.log(get_popover_content($(this).attr("data-id")));
+            // $(this).popover({content: get_popover_content($(this).attr("data-id"))});
+            // $(this).popover("destroy");
+            // add_popover($(this));
+        });
+    }
+
+    function student_click_handler(event){
+        var student_id =  $(this).attr("data-id");
+        var student = Layout.get_student_by_id(student_id);
+        var session_student = Layout.get_session_student_by_student_id(student_id);
+        var help_request = Layout.get_help_request_by_student_id(student_id);
+        if (help_request !== null)
+            $("#myModal .modal-help").show();
+        $("#myModal .modal-student-name").text(display_name(student["name"]));
+        var $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
+        $("#myModal .modal-student-profile").html($profile_img);
+        $("#myModal .modal-student-group").text(display_group(session_student["group"]));
+        $("#myModal .modal-student-progress").text(display_group(session_student["progress"]));
+        $("#myModal .help-status").html(display_help_status(help_request));
+        $("#myModal .help-resource").text(display_help_resource(help_request));
+        $("#myModal .help-description").text(display_help_description(help_request));
+        $("#myModal").modal();
     }
 
     function start_help_handler(event){
@@ -56,7 +84,7 @@ var StudentLayout = function() {
         var $name;
 
         var student = Layout.get_student_by_id(student_id);
-        var session_student = Layout.get_session_student_by_id(student_id);
+        var session_student = Layout.get_session_student_by_student_id(student_id);
         if (student === null){
         // if new student, load with default information
             $student = $("<div/>")
@@ -67,7 +95,7 @@ var StudentLayout = function() {
             $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
             $badge = $("<div/>").addClass("student-badge");
-            $progress = $("<div/>").addClass("student-progress").text("3/5");
+            $progress = $("<div/>").addClass("student-progress").text("n/a");
             $group = $("<div/>").addClass("student-group").text("None");
             $name = $("<div/>").addClass("student-name").text("anonymous");
 
@@ -90,13 +118,13 @@ var StudentLayout = function() {
             $name = $("<div/>").addClass("student-name").text(display_name(student["name"]));
         }
         $student.append($profile).append($badge).append($progress).append($group).append($name);
-        add_popover($student);
+        // add_popover($student);
         return $student;
     }
 
     function create_student_list(student_id){
         var student = Layout.get_student_by_id(student_id);
-        var session_student = Layout.get_session_student_by_id(student_id);
+        var session_student = Layout.get_session_student_by_student_id(student_id);
         var $student = $("<tr/>")
                             .addClass("student-list")
                             .attr("data-id", student_id)
@@ -106,27 +134,69 @@ var StudentLayout = function() {
         $("<td/>").text(student["name"]).appendTo($student);
         $("<td/>").text(session_student["group"]).appendTo($student);
         $("<td/>").text(session_student["progress"]).appendTo($student);
-        add_popover($student);
+        // add_popover($student);
         return $student;
     }
 
-    function add_popover($student){
-        var student_id = $student.attr("data-id");
-        var student = Layout.get_student_by_id(student_id);
-        var html = "<div data-id='" + student_id + "'>" +
-            "<div>&quot;I don't understand how to derive x from the equation.&quot;</div><br/>" +
-            "<button class='btn btn-primary start-help-button'>Help this student</button><br/>" +
-            "<button type='button' class='btn btn-primary end-help-button'>Mark as resolved</button><br/>" +
-            // + "<button type='button' class='btn btn-danger remove-student-button'>Remove this student</button>"
-            "</div>";
-        $student.popover({
-            "html": true,
-            "content": html,
-            "container": 'body',
-            "placement": 'bottom',
-            "title": student["name"]
-        });
+    function display_help_status(help_request){
+        if (help_request === null)
+            return "";
+        var html = "";
+        if (help_request["status"] == "requested")
+            html = "<div class='label label-danger'>help requested</div><br/>";
+        else if (help_request["status"] == "resolved")
+            html = "<div class='label label-success'>finished helping</div><br/>";
+        else if (help_request["status"] == "in_progress")
+            html = "<div class='label label-warning'>in discussion</div><br/>";
+        else
+            html = "";
+        return html;
     }
+
+    function display_help_description(help_request){
+        if (help_request === null)
+            return "";
+        return help_request["description"];
+    }
+
+    function display_help_resource(help_request){
+        if (help_request === null)
+            return "";
+        // TODO: show the actual content
+        return help_request["resource"];
+    }
+
+    function get_modal_header(student_id){
+        return display_name(student["name"]) + " | " + display_group(session_student["group"]);
+    }
+
+    // function get_popover_content(student_id){
+    //     var html = "";
+    //     var help_request = Layout.get_help_request_by_student_id(student_id);
+    //     html += "<div data-id='" + student_id + "'>" +
+    //                 get_html_status(help_request) +
+    //                 get_html_description(help_request) +
+    //                 get_html_resource(help_request) +
+    //                 // "<button class='btn btn-primary start-help-button'>Help this student</button><br/>" +
+    //                 // "<button type='button' class='btn btn-primary end-help-button'>Mark as resolved</button><br/>" +
+    //                 // + "<button type='button' class='btn btn-danger remove-student-button'>Remove this student</button>"
+    //                 "</div>";
+    //     return html;
+    // }
+
+    // function add_popover($student){
+    //     var student_id = $student.attr("data-id");
+    //     var student = Layout.get_student_by_id(student_id);
+    //     var session_student = Layout.get_session_student_by_student_id(student_id);
+    //     // var html = get_popover_content(student_id);
+    //     // $student.popover({
+    //     //     "html": true,
+    //     //     "content": html,
+    //     //     "container": 'body',
+    //     //     "placement": 'bottom',
+    //     //     "title": display_name(student["name"]) + " | " + display_group(session_student["group"])
+    //     // });
+    // }
 
 
     function display_group(group){
@@ -134,7 +204,7 @@ var StudentLayout = function() {
     }
 
     function display_progress(progress){
-        return progress === "" ? "3/5" : progress;
+        return progress === "" ? "n/a" : progress;
 
     }
 
@@ -246,7 +316,7 @@ var StudentLayout = function() {
         // expection: status => {"type": type, "value": value}
         if (typeof status["type"] === "undefined")
             return;
-        if (status["type"] === "need_help"){
+        if (status["type"] === "help_requested"){
             $(document).trigger("addToHelpQueue", [student_id]);
             add_badge(student_id, "question");
             data["badge"] = "question";

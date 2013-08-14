@@ -344,18 +344,24 @@ def ajax_layout_students_progress(request):
         course = Course.objects.get(id=data["course_id"])
         session = Session.objects.get(id=data["session_id"])
         students = Student.objects.filter(course=course.id)
-
-        results = []
-        try:
-            for student in students:
-                print student.id
+        results = {}
+        for student in students:
+            try:
                 result = urllib2.urlopen("http://ls.edx.org:2233/qinfo?student=" + str(student.id)).read()
-                results.append(result)
-        except urllib2.HTTPError as e:
-            print e, "error returned"
+                results[str(student.id)] = json.loads(result)
+            except (urllib2.HTTPError, urllib2.URLError) as e:
+                print e, "error returned"
+
+        requests = {}
+        try:
+            pending_requests = HelpRequest.objects.filter(
+                session_id=session.id,
+                status__in=["requested", "in_progress"])
+            requests = model_to_json(pending_requests)
+        except ObjectDoesNotExist:
+            print "no pending help requests"
 
     return HttpResponse(
-        json.dumps({'results': json.dumps(results)}, ensure_ascii=False), mimetype='application/json')
-
+        json.dumps({'results': json.dumps(results), 'requests': requests}, ensure_ascii=False), mimetype='application/json')
 
 

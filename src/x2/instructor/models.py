@@ -87,7 +87,7 @@ class TableBlock(models.Model):
 class HelpRequest(models.Model):
     session = models.ForeignKey(Session)
     student = models.ForeignKey(Student)
-    # status of this help request: requested, in-progress, complete, canceled
+    # status of this help request: requested, in_progress, resolved, canceled
     status = models.CharField(max_length=32)
     # description added by the student
     description = models.CharField(max_length=1024, blank=True, null=True)

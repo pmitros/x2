@@ -6,6 +6,7 @@ var Layout = function() {
     var blocks = [];
     var students = [];
     var session_students = [];
+    var help_requests = []; // gets updated inside the polling function, not init.
 
     function init(course, session, blocks, students, session_students, readonly){
         Layout.course_id = course;
@@ -19,7 +20,6 @@ var Layout = function() {
         // selecting the default option
         $("#view-options li a").first().trigger("click");
         load_queue();
-        poll_for_progress_updates();
     }
 
     function poll_for_progress_updates(){
@@ -42,26 +42,46 @@ var Layout = function() {
                 type: "POST",
                 data: {"data": JSON.stringify(data)},
                 success: function(response) {
-                    console.log(response["results"]);
                     var i;
+                    var student_id;
                     var entry;
-                    for (i=0; i<response["results"].length; i++){
-                        console.log(response["results"][i]);
-                    }
-                    // console.log(JSON.parse(response["results"]));
+                    var type;
+                    var value;
+                    // handle progress updates
                     var results = JSON.parse(response["results"]);
-                    for (entry in results){
+                    console.log(results);
+                    for (student_id in results){
+                        entry = results[student_id]["progress"];
+                        value = entry["complete"] + "/" + entry["total"];
+                        $(document).trigger(
+                            "student_status_update",
+                            [student_id, {"type": "update_progress", "value": value }]
+                        );
+                    }
+                    // handle status updates: help requested, etc.
+                    Layout.help_requests = JSON.parse(response["requests"]);
+                    for (i in Layout.help_requests){
+                        // id, resource, description, session_id, status, student_id
+                        entry = Layout.help_requests[i];
                         console.log(entry);
-                        console.log(entry["active"], entry["progress"]);
+                        if (entry["status"] == "requested")
+                            type = "help_requested";
+                        else if (entry["status"] == "resolved")
+                            type = "help_resolved";
+                        else if (entry["status"] == "in_progress")
+                            type = "start_interaction";
+                        $(document).trigger(
+                            "student_status_update",
+                            [entry["student_id"], {"type": type }]
+                        );
                     }
                 },
-                // dataType: "json",
                 complete: poll_for_progress_updates,
                 error: function(jqXHR, textStatus, errorMessage) {
                    console.log(jqXHR, textStatus, errorMessage);
                 }
             });
-        }, 5000);
+        }, 10000); // polling every 10 seconds
     }
 
     function bindEvents(){
@@ -112,11 +132,20 @@ var Layout = function() {
         return null;
     }
 
-    function get_session_student_by_id(student_id){
+    function get_session_student_by_student_id(student_id){
         var index;
         for (index in Layout.session_students){
             if (Layout.session_students[index]["student_id"] == student_id)
                 return Layout.session_students[index];
+        }
+        return null;
+    }
+
+    function get_help_request_by_student_id(student_id){
+        var index;
+        for (index in Layout.help_requests){
+            if (Layout.help_requests[index]["student_id"] == student_id)
+                return Layout.help_requests[index];
         }
         return null;
     }
@@ -450,7 +479,9 @@ var Layout = function() {
         course_id: course_id,
         session_id: session_id,
         get_student_by_id: get_student_by_id,
-        get_session_student_by_id: get_session_student_by_id
+        get_session_student_by_student_id: get_session_student_by_student_id,
+        get_help_request_by_student_id: get_help_request_by_student_id,
+        poll_for_progress_updates: poll_for_progress_updates
     };
 }();
 

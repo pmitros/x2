@@ -105,3 +105,12 @@ audio {
 .popover-content button {
     margin-bottom: 5px;
 }
+
+/* modal box for the view_layout */
+.modal-mid {
+    margin-top: 0.5em;
+}
+
+.modal-help {
+    display: none;
+}
