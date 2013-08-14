@@ -44,7 +44,7 @@ log = logging.getLogger(__name__)
 # id on the URL.
 def get_student_id(request):
     """Get the student_id from the given request."""
-    student_id = request.GET.get('student', 'student_1')
+    student_id = request.GET.get('student', None)
     return student_id
 
 
@@ -57,6 +57,35 @@ def index(_request):
 
     return HttpResponse(u"Index not implemented")
 
+
+@ensure_csrf_cookie
+def populate(request):
+    cleardb(request)
+    Usage._usage_index = {}  # todo hack, all state should go in the db, so we don't have to do this
+    Usage._inited = set()  # todo hack, same as above
+
+
+    course = request.GET.get('course', 'courseX')
+    lesson = request.GET.get('lesson', 'lessonA')
+    student_ids = ['student' + str(i) for i in range(1,6)]
+
+    for student_id in student_ids:
+        usage_problem_1 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 1', 'thumb_img':'static/img/problem_thumb.png'})
+        usage_problem_2 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 2', 'thumb_img':'static/img/problem_thumb.png'})
+        usage_problem_3 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 3', 'thumb_img':'static/img/problem_thumb.png'})
+        usage_problem_4 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 4', 'thumb_img':'static/img/problem_thumb.png'})
+
+        usage = Usage("queuewidget", [usage_problem_1,
+                                      usage_problem_2,
+                                      usage_problem_3,
+                                      usage_problem_4])
+
+        usage.store_initial_state()
+        NAMED_USAGES.set(course=course, lesson=lesson, student=student_id, usage=usage)
+        block = create_xblock(usage, student_id)
+        block.save()
+
+    return HttpResponse("Populated for: " + str(student_ids))
 
 
 @ensure_csrf_cookie
@@ -84,6 +113,31 @@ def qinfo(request):
     result = {'progress': progress, 'active': active}
     return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
+def allqinfo(request):
+    course = request.GET.get('course', 'courseX')
+    lesson = request.GET.get('lesson', 'lessonA')
+    usages = NAMED_USAGES.get_many(course=course, lesson=lesson)
+
+
+    result = {}
+
+    for u in usages:
+
+        try:
+            usage = Usage.find_usage(u['usage'])
+        except KeyError:
+            usage = Usage.recreate(u['usage'])
+
+        block = create_xblock(usage, u['student'])
+        progress = block.progress()
+        active = block.active_index()
+
+        info = {'progress': progress, 'active': active}
+
+        result[u['student']]=info
+
+    return HttpResponse(simplejson.dumps(result), mimetype='application/json')
+
 @ensure_csrf_cookie
 def qwidget(request):
 
@@ -108,10 +162,11 @@ def qwidget(request):
             usage = Usage.recreate(usage_id)
     else:
 
-        usage = Usage(class_id, [Usage(x) for x in ["dtext", "dvideo", "dtext", "dtext", "dtext", "dtext"]], def_id='kraken')
-        # problem_1 = Usage('dproblem', initial_state={'content':'static/html/problem_1.html'})
-        usage.store_initial_state()
-        NAMED_USAGES.set(course=course, lesson=lesson, student=student_id, usage=usage)
+        return HttpResponse("Cannot find queue for student: %s" % student_id)
+        # usage = Usage(class_id, [Usage(x) for x in ["dtext", "dvideo", "dtext", "dtext", "dtext", "dtext"]], def_id='kraken')
+        # # problem_1 = Usage('dproblem', initial_state={'content':'static/html/problem_1.html'})
+        # usage.store_initial_state()
+        # NAMED_USAGES.set(course=course, lesson=lesson, student=student_id, usage=usage)
 
 
     block = create_xblock(usage, student_id)
@@ -154,6 +209,7 @@ def butler(request):
         'student_id': student_id,
         'usage': usage,
     })
+
 
 def queue(request):
 

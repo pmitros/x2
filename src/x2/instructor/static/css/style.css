@@ -105,3 +105,21 @@ audio {
 .popover-content button {
     margin-bottom: 5px;
 }
+
+/* modal box for the view_layout */
+.modal-mid {
+    margin-top: 0.5em;
+}
+
+.modal-help {
+    display: none;
+}
+
+/* time display in the help queue */
+.time-elapsed {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 80px;
+    font-size: 0.8em;
+}

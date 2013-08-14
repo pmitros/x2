@@ -6,23 +6,43 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
 from datetime import datetime
+from django.utils.timezone import utc
 import os
 import json
 import urllib2
+from django_socketio.events import on_connect, on_message, on_subscribe, on_unsubscribe, on_error, on_disconnect, on_finish
 
 
-# def blocks_to_json(blocks):
-#     result = []
-#     for block in blocks:
-#         json_block = {}
-#         json_block["id"] = block.id
-#         json_block["name"] = block.name
-#         # json_block["location"] = block.location
-#         json_block["left"] = block.location.split(",")[0]
-#         json_block["top"] = block.location.split(",")[1]
-#         result.append(json_block)
-#     print json.dumps(result)
-#     return json.dumps(result)
+@on_connect
+def socketio_connect_handler(request, socket, context):
+    print socket, context
+    socket.send("connection established")
+
+
+@on_subscribe
+def socketio_subscribe_handler(request, socket, context, channel):
+    print "subscribing to", channel
+    socket.send("subscribed to", channel)
+
+student_data = []
+
+@on_message
+def socketio_message_handler(request, socket, context, message):
+    print "message received", context, message
+    course = Course.objects.get(slug="6.00x")
+    students = Student.objects.filter(course_id=course.id)
+    student_data = [None] * len(students)
+    try:
+        for index, student in enumerate(students):
+            # print student.id
+            # datum = urllib2.urlopen("http://juhokim.com:2233/qinfo?student=" + str(student.id)).read()
+            datum = {"student": 1, "currentIndex": 3}
+            # if student_data[index] != datum:
+            student_data[index] = datum
+    except:
+        print "student information not available"
+    print json.dumps(student_data)
+    socket.send(json.dumps(student_data))
 
 
 def model_to_json(instances):
@@ -32,10 +52,6 @@ def model_to_json(instances):
         result.append(json.loads(instance.toJSON()))
     return json.dumps(result)
 
-
-# class DataEncoder(json.JSONEncoder):
-#     def default(self, o):
-#         return o.__dict__
 
 def populate_session_students(session_id, students):
     for student in students:
@@ -57,12 +73,6 @@ def view_layout(request, course_slug, session_slug):
         session_students = SessionStudentData.objects.filter(session_id=session.id)
     except ObjectDoesNotExist:
         raise Http404
-    try:
-        for student in students:
-            # print student.id
-            print urllib2.urlopen("http://juhokim.com:2233/qinfo?student=" + str(student.id)).read()
-    except:
-        print "error returned"
     return render_to_response(
         "view_layout.html",
         {"course": course,
@@ -98,8 +108,8 @@ def capture(request, course_slug, session_slug):
         # TODO: hardcoded for hack
         instructor = Instructor.objects.get(id=11)
         interaction = Interaction(
-            started_at=datetime.now(),
-            ended_at=datetime.now(),
+            started_at=datetime.utcnow().replace(tzinfo=utc),
+            ended_at=datetime.utcnow().replace(tzinfo=utc),
             is_rejected=True)
         interaction.t = instructor
         interaction.l = student
@@ -201,7 +211,6 @@ def ajax_layout_session_student_update(request):
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
 
 
- 
 #@csrf_protect
 @ensure_csrf_cookie
 def ajax_layout_help_request_new(request):
@@ -210,26 +219,24 @@ def ajax_layout_help_request_new(request):
     """
     message = "success"
     hr_id = -1
-    print request.method
     data = request.GET
-    print data["session_id"]
-    if True:
-	#data = json.loads(request.GET["data"])
-	if data["session_id"] == "" or data["student_id"] == "":
-	    print "database access error"
-	else:
-	    try:
-		session = Session.objects.get(slug=data["session_id"])
-		model = HelpRequest(
-		    session_id=session.id, 
-		    student_id=data["student_id"],
-		    description=data["description"],
-		    resource=data["resource"],
-		    status="requested")
-		model.save()
-		hr_id = model.id
-	    except:
-		message = "help request processing failed"
+    print request.method, data["session_id"]
+    if data["session_id"] == "" or data["student_id"] == "":
+        print "database access error"
+    else:
+        try:
+            session = Session.objects.get(slug=data["session_id"])
+            model = HelpRequest(
+                session_id=session.id,
+                student_id=data["student_id"],
+                requested_at=datetime.utcnow().replace(tzinfo=utc),
+                description=data["description"],
+                resource=data["resource"],
+                status="requested")
+            model.save()
+            hr_id = model.id
+        except:
+            message = "help request processing failed"
     """"
     print request.META
     XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
@@ -244,7 +251,7 @@ def ajax_layout_help_request_new(request):
     except as e:
         print "hello"
     #print response
-    """   
+    """
     print hr_id, message
     XS_SHARING_ALLOWED_METHODS = ["POST", "GET", "OPTIONS", "PUT", "DELETE"]
     response = HttpResponse(
@@ -276,7 +283,7 @@ def ajax_capture_interaction_stop(request):
                 for chunk in blob.chunks():
                     fd.write(chunk)
             interaction.audio_path = filename
-            interaction.ended_at = datetime.now()
+            interaction.ended_at = datetime.utcnow().replace(tzinfo=utc)
             interaction.save()
             url = settings.MEDIA_URL + filename
         except:
@@ -298,13 +305,45 @@ def ajax_capture_interaction_accept(request):
         try:
             interaction_id = data["interaction_id"]
             interaction = Interaction.objects.get(id=interaction_id)
-            interaction.instructor_summary = data["summary"]
+            interaction.instructor_summary = data["instructor_summary"]
             interaction.is_rejected = False
             interaction.save()
         except:
             print "exception"
     return HttpResponse(
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
-   
 
-    
+
+@csrf_protect
+def ajax_layout_students_progress(request):
+    """
+    get updated student progress
+    """
+    message = "success"
+    if request.method == "POST":
+        print request.POST
+        data = json.loads(request.POST["data"])
+        course = Course.objects.get(id=data["course_id"])
+        session = Session.objects.get(id=data["session_id"])
+        students = Student.objects.filter(course=course.id)
+        results = {}
+        for student in students:
+            try:
+                result = urllib2.urlopen("http://ls.edx.org:2233/qinfo?student=" + str(student.id)).read()
+                results[str(student.id)] = json.loads(result)
+            except (urllib2.HTTPError, urllib2.URLError) as e:
+                print e, "error returned"
+
+        requests = {}
+        try:
+            pending_requests = HelpRequest.objects.filter(
+                session_id=session.id,
+                status__in=["requested", "in_progress"])
+            requests = model_to_json(pending_requests)
+        except ObjectDoesNotExist:
+            print "no pending help requests"
+
+    return HttpResponse(
+        json.dumps({'results': json.dumps(results), 'requests': requests}, ensure_ascii=False), mimetype='application/json')
+
+

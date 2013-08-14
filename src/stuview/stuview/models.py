@@ -280,6 +280,18 @@ class UsageManager(object):
         scenarios = self._base_kvs.get(self.glob_key)
         return scenarios[key]
 
+    def get_many(self, course, lesson):
+        named_usages = self._base_kvs.get(self.glob_key)
+        partial_key = '.'.join([str(x) for x in [course, lesson]])
+
+        usages = []
+        for key, usage in named_usages.iteritems():
+            if key.startswith(partial_key):
+                student = key.split('.')[-1]
+                usages.append({'student':student, 'usage':usage})
+        return usages
+
+
     def has(self, course, lesson, student):
         try:
             scenarios = self._base_kvs.get(self.glob_key)
@@ -295,3 +307,4 @@ class UsageManager(object):
 BASE_KVS = BaseKVS()
 SCOPED_KVS = ScopedKVS(BASE_KVS)
 NAMED_USAGES = UsageManager(BASE_KVS)
+

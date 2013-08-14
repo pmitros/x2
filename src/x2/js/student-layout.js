@@ -29,7 +29,7 @@ var StudentLayout = function() {
             $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
             $badge = $("<div/>").addClass("student-badge");
-            $progress = $("<div/>").addClass("student-progress").text("3/5");
+            $progress = $("<div/>").addClass("student-progress").text("N/A");
             $group = $("<div/>").addClass("student-group").text("None");
             $name = $("<div/>").addClass("student-name").text(student_name);
 
@@ -43,7 +43,7 @@ var StudentLayout = function() {
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
             $badge = $("<div/>").addClass("student-badge");
             // TODO: sync
-            $progress = $("<div/>").addClass("student-progress").text("3/5");
+            $progress = $("<div/>").addClass("student-progress").text("N/A");
             $group = $("<div/>").addClass("student-group").text("None");
             $name = $("<div/>").addClass("student-name").text(student["name"]);
         }

@@ -49,8 +49,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = "/Users/juhokim/edx-vagrant/x2/media/"
-# MEDIA_ROOT = "/srv/www/juhokim.com/public_html/x2/media"
+MEDIA_ROOT = "/srv/www/juhokim.com/public_html/x2/media"
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -111,8 +110,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/Users/juhokim/edx-vagrant/x2/src/x2/instructor/templates",
-    # "/srv/www/juhokim.com/public_html/x2/src/x2/instructor/templates",
+    "/srv/www/juhokim.com/public_html/x2/src/x2/instructor/templates",
 )
 
 INSTALLED_APPS = (
@@ -127,6 +125,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_socketio',
     'instructor',
 )
 
@@ -158,3 +157,10 @@ LOGGING = {
         },
     }
 }
+
+# Overwrite with local settings if exists.
+# local_settings should not be in version control.
+try:
+    from local_settings import *
+except ImportError:
+    pass
