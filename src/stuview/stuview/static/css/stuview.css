@@ -1,7 +1,7 @@
 
 .thumb {
     border: 1px solid #aaa;
-    border-left: 3px solid #aaa;
+    /*border-left: 3px solid #aaa;*/
     padding: 10px;
     margin: 5px;
     cursor: pointer;
@@ -16,11 +16,12 @@
     background-size: cover;
 }
 
-.thumb:hover{
-    border-left: 3px solid #00f;
-}
+/*.thumb:hover{*/
+    /*border-left: 3px solid #00f;*/
+/*}*/
 .active_thumb {
-    border-left: 3px solid #00f;
+    /*border-left: 3px solid #00f;*/
+    background-color: #ddf;
 }
 
 .active_page {
