@@ -19,7 +19,7 @@ var Layout = function() {
         // load_blocks(readonly);
         // selecting the default option
         $("#view-options li a").first().trigger("click");
-        load_queue();
+        // load_queue();
     }
 
     function poll_for_progress_updates(){
@@ -466,13 +466,13 @@ var Layout = function() {
         });
     }
 
-    function load_queue(){
-        $("#classroom-layout .student").each(function(){
-            if ($(this).find(".student-badge[class*='badge-']").length){
-                $(document).trigger("addToHelpQueue", [$(this).attr("data-id")]);
-            }
-        });
-    }
+    // function load_queue(){
+    //     $("#classroom-layout .student").each(function(){
+    //         if ($(this).find(".student-badge[class*='badge-']").length){
+    //             $(document).trigger("addToHelpQueue", [$(this).attr("data-id")]);
+    //         }
+    //     });
+    // }
 
     return {
         init: init,

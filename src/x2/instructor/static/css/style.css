@@ -114,3 +114,12 @@ audio {
 .modal-help {
     display: none;
 }
+
+/* time display in the help queue */
+.time-elapsed {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 80px;
+    font-size: 0.8em;
+}

@@ -75,6 +75,7 @@
                 <div class="modal-right col-4 col-sm-4 col-lg-4">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4><span class="help-status"></span></h4>
+                    <span class="help-requested-at"></span>
                 </div>
             </div>
           </div>
@@ -93,9 +94,10 @@
 
     </div><!-- /.content -->
 
-    <script src="{% static "js/jquery-1.10.2.min.js" %}"></script>
-    <script src="{% static "js/jquery-ui.min.js" %}"></script>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/vendor/jquery-1.10.2.min.js" %}"></script>
+    <script src="{% static "js/vendor/jquery-ui.min.js" %}"></script>
+    <script src="{% static "js/vendor/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/vendor/socket.io.js" %}"></script>
     <!-- Optionally enable responsive features in IE8 -->
     <!-- <script src="js/respond.js"></script> -->
     <script src="{% static "js/layout.js" %}"></script>
@@ -105,7 +107,7 @@
     <script src="{% static "js/help-queue.js" %}"></script>
     <script src="{% static "js/capture.js" %}"></script>
     <script src="{% static "js/utils.js" %}"></script>
-    <script src="{% static "js/socket.io.js" %}"></script>
+
     <script>
         $(document).ready(function(){
             var blocks = JSON.stringify({{blocks|safe}});

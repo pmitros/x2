@@ -12,6 +12,7 @@ var StudentLayout = function() {
         $(document).on("click", ".end-help-button", end_help_handler);
         $(document).on("click", ".student-remove-button", student_remove_handler);
         // dismiss any open popover when clicked elsewhere on the screen
+        /*
         $('body').on('click', function (e) {
             $('.student, .student-list').each(function () {
                 //the 'is' for buttons that trigger popups
@@ -21,23 +22,18 @@ var StudentLayout = function() {
                 }
             });
         });
+        */
         // to locate the popover at the bottom of the current mouse position
+        /*
         $(document).on("click", ".student-list", function(event){
             $popover = $(".popover");
             console.log(event.pageX, event.pageY, $popover.width(), $popover.height());
             $popover.css('left', (event.pageX - $popover.width()/2) + 'px');
             $popover.css('top', (event.pageY + 10) + 'px');
         });
-
+        */
+        $(document).on("click", ".student-list", student_click_handler);
         $(document).on("click", ".student", student_click_handler);
-
-        $(document).on('show.bs.popover', ".student", function () {
-            console.log("popover shown", $(this).attr("data-id"));
-            // console.log(get_popover_content($(this).attr("data-id")));
-            // $(this).popover({content: get_popover_content($(this).attr("data-id"))});
-            // $(this).popover("destroy");
-            // add_popover($(this));
-        });
     }
 
     function student_click_handler(event){
@@ -53,13 +49,15 @@ var StudentLayout = function() {
         $("#myModal .modal-student-group").text(display_group(session_student["group"]));
         $("#myModal .modal-student-progress").text(display_group(session_student["progress"]));
         $("#myModal .help-status").html(display_help_status(help_request));
+        $("#myModal .help-requested-at").text(display_help_time(help_request));
         $("#myModal .help-resource").text(display_help_resource(help_request));
         $("#myModal .help-description").text(display_help_description(help_request));
         $("#myModal").modal();
+        $("#myModal").attr("data-id", student_id);
     }
 
     function start_help_handler(event){
-        var student_id = $(event.target).parent().attr("data-id");
+        var student_id = $(event.target).closest("#myModal").attr("data-id");
         console.log($(event.target), student_id);
         window.location = "./capture?sid=" + student_id;
     }
@@ -108,12 +106,13 @@ var StudentLayout = function() {
                             .attr("data-group", session_student["group"]);
             $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
-            $badge = $("<div/>").addClass("student-badge");
             // TODO: remove duplicate code: use add_badge, add_group, etc.
-            if (session_student["badge"] !== "")
-                $badge.addClass("badge-" + session_student["badge"])
-                    .html("<i class='icon-large icon-" + session_student["badge"] + "'></i>");
-            $progress = $("<div/>").addClass("student-progress").text(display_progress(session_student["progress"]));
+            // if (session_student["badge"] !== "")
+            //     $badge.addClass("badge-" + session_student["badge"])
+            //         .html("<i class='icon-large icon-" + session_student["badge"] + "'></i>");
+            // $progress = $("<div/>").addClass("student-progress").text(display_progress(session_student["progress"]));
+            $badge = $("<div/>").addClass("student-badge");
+            $progress = $("<div/>").addClass("student-progress").text("n/a");
             $group = $("<div/>").addClass("student-group").text(display_group(session_student["group"]));
             $name = $("<div/>").addClass("student-name").text(display_name(student["name"]));
         }
@@ -151,6 +150,12 @@ var StudentLayout = function() {
         else
             html = "";
         return html;
+    }
+
+    function display_help_time(help_request){
+        if (help_request === null)
+            return "";
+        return formatDate(help_request["requested_at"]);
     }
 
     function display_help_description(help_request){

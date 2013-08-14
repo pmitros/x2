@@ -1,5 +1,6 @@
 from django.db import models
 import json
+import datetime
 
 
 class Course(models.Model):
@@ -7,6 +8,7 @@ class Course(models.Model):
     slug = models.CharField(max_length=32)
     term = models.CharField(max_length=255)
     classroom_layout_path = models.URLField(blank=True)
+
     def __unicode__(self):
         return self.name
 
@@ -18,8 +20,10 @@ class Agent(models.Model):
     location = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)
     # parent = models.ForeignKey('self', null=True, default=None)
+    
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)    
+        return json.dumps(self, default=dthandler, sort_keys=True)    
+    
     def __unicode__(self):
         return self.name
 
@@ -30,7 +34,7 @@ class Student(Agent):
     interaction_in_progress = models.BooleanField()
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+        return json.dumps(self, default=dthandler, sort_keys=True)
 
 
 class Instructor(Agent):
@@ -51,6 +55,7 @@ class Session(models.Model):
     course = models.ForeignKey(Course)
     started_at = models.DateTimeField(blank=True)
     ended_at = models.DateTimeField(blank=True)
+
     def __unicode__(self):
         return self.name
 
@@ -68,7 +73,8 @@ class SessionStudentData(models.Model):
     num_help_received = models.IntegerField(default=0)
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+        return json.dumps(self, default=dthandler, sort_keys=True)
+
     def __unicode__(self):
         return unicode(self.session) + " " + unicode(self.student)
 
@@ -79,7 +85,8 @@ class TableBlock(models.Model):
     location = models.CharField(max_length=255, blank=True)
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+        return json.dumps(self, default=dthandler, sort_keys=True)
+
     def __unicode__(self):
         return self.name
 
@@ -87,6 +94,7 @@ class TableBlock(models.Model):
 class HelpRequest(models.Model):
     session = models.ForeignKey(Session)
     student = models.ForeignKey(Student)
+    requested_at = models.DateTimeField(blank=True)
     # status of this help request: requested, in_progress, resolved, canceled
     status = models.CharField(max_length=32)
     # description added by the student
@@ -94,8 +102,10 @@ class HelpRequest(models.Model):
     # current learning resource, index in the queue
     # TODO: access the database of resources and refer to the id there
     resource = models.CharField(max_length=32, blank=True, null=True)
+
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+        return json.dumps(self, default=dthandler, sort_keys=True)
+
     def __unicode__(self):
         return self.description
 
@@ -113,8 +123,16 @@ class Interaction(models.Model):
     student_summary = models.CharField(max_length=1024, blank=True, null=True)
     
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+        return json.dumps(self, default=dthandler, sort_keys=True)
+
     def __unicode__(self):
         return str(self.id)
 
 
+def dthandler(obj):
+    # lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else obj.__dict__
+    if hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    else:
+        return obj.__dict__
+        # raise TypeError, 'Object of type %s with value of %s is not JSON serializable' % (type(obj), repr(obj))

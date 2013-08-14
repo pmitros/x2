@@ -6,7 +6,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
 from datetime import datetime
-import sys
+from django.utils.timezone import utc
 import os
 import json
 import urllib2
@@ -44,19 +44,6 @@ def socketio_message_handler(request, socket, context, message):
     print json.dumps(student_data)
     socket.send(json.dumps(student_data))
 
-# def blocks_to_json(blocks):
-#     result = []
-#     for block in blocks:
-#         json_block = {}
-#         json_block["id"] = block.id
-#         json_block["name"] = block.name
-#         # json_block["location"] = block.location
-#         json_block["left"] = block.location.split(",")[0]
-#         json_block["top"] = block.location.split(",")[1]
-#         result.append(json_block)
-#     print json.dumps(result)
-#     return json.dumps(result)
-
 
 def model_to_json(instances):
     result = []
@@ -65,10 +52,6 @@ def model_to_json(instances):
         result.append(json.loads(instance.toJSON()))
     return json.dumps(result)
 
-
-# class DataEncoder(json.JSONEncoder):
-#     def default(self, o):
-#         return o.__dict__
 
 def populate_session_students(session_id, students):
     for student in students:
@@ -125,8 +108,8 @@ def capture(request, course_slug, session_slug):
         # TODO: hardcoded for hack
         instructor = Instructor.objects.get(id=11)
         interaction = Interaction(
-            started_at=datetime.now(),
-            ended_at=datetime.now(),
+            started_at=datetime.utcnow().replace(tzinfo=utc),
+            ended_at=datetime.utcnow().replace(tzinfo=utc),
             is_rejected=True)
         interaction.t = instructor
         interaction.l = student
@@ -236,21 +219,20 @@ def ajax_layout_help_request_new(request):
     """
     message = "success"
     hr_id = -1
-    print request.method
     data = request.GET
-    print data["session_id"]
-	#data = json.loads(request.GET["data"])
+    print request.method, data["session_id"]
     if data["session_id"] == "" or data["student_id"] == "":
         print "database access error"
     else:
         try:
             session = Session.objects.get(slug=data["session_id"])
             model = HelpRequest(
-    		    session_id=session.id, 
-    		    student_id=data["student_id"],
-    		    description=data["description"],
-    		    resource=data["resource"],
-    		    status="requested")
+                session_id=session.id,
+                student_id=data["student_id"],
+                requested_at=datetime.utcnow().replace(tzinfo=utc),
+                description=data["description"],
+                resource=data["resource"],
+                status="requested")
             model.save()
             hr_id = model.id
         except:
@@ -301,7 +283,7 @@ def ajax_capture_interaction_stop(request):
                 for chunk in blob.chunks():
                     fd.write(chunk)
             interaction.audio_path = filename
-            interaction.ended_at = datetime.now()
+            interaction.ended_at = datetime.utcnow().replace(tzinfo=utc)
             interaction.save()
             url = settings.MEDIA_URL + filename
         except:
