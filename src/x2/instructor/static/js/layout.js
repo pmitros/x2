@@ -43,19 +43,19 @@ var Layout = function() {
                 data: {"data": JSON.stringify(data)},
                 success: function(response) {
                     var i;
-                    var student_id;
+                    var name;
                     var entry;
                     var type;
                     var value;
                     // handle progress updates
                     var results = JSON.parse(response["results"]);
-                    console.log(results);
-                    for (student_id in results){
-                        entry = results[student_id]["progress"];
+                    for (name in results){
+                        console.log(name, results[name]);
+                        entry = results[name]["progress"];
                         value = entry["complete"] + "/" + entry["total"];
                         $(document).trigger(
                             "student_status_update",
-                            [student_id, {"type": "update_progress", "value": value }]
+                            [get_student_id_by_name(name), {"type": "update_progress", "value": value }]
                         );
                     }
                     // handle status updates: help requested, etc.
@@ -63,7 +63,7 @@ var Layout = function() {
                     for (i in Layout.help_requests){
                         // id, resource, description, session_id, status, student_id
                         entry = Layout.help_requests[i];
-                        console.log(entry);
+                        // console.log(entry);
                         if (entry["status"] == "requested")
                             type = "help_requested";
                         else if (entry["status"] == "resolved")
@@ -81,7 +81,7 @@ var Layout = function() {
                    console.log(jqXHR, textStatus, errorMessage);
                 }
             });
-        }, 10000); // polling every 10 seconds
+        }, 5000); // polling every 5 seconds
     }
 
     function bindEvents(){
@@ -128,6 +128,15 @@ var Layout = function() {
         for (index in Layout.students){
             if (Layout.students[index]["id"] == student_id)
                 return Layout.students[index];
+        }
+        return null;
+    }
+
+    function get_student_id_by_name(student_name){
+        var index;
+        for (index in Layout.students){
+            if (Layout.students[index]["name"] == student_name)
+                return Layout.students[index]["id"];
         }
         return null;
     }

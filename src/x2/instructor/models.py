@@ -20,17 +20,19 @@ class Agent(models.Model):
     location = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)
     # parent = models.ForeignKey('self', null=True, default=None)
-    
+
     def toJSON(self):
         return json.dumps(self, default=dthandler, sort_keys=True)    
-    
+
     def __unicode__(self):
         return self.name
 
 
 class Student(Agent):
     profile_img_path = models.CharField(max_length=500, blank=True)
+    # not used
     needs_help = models.BooleanField()
+    # not used
     interaction_in_progress = models.BooleanField()
 
     def toJSON(self):

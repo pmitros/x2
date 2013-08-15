@@ -51,8 +51,8 @@
                     <!-- <div id="audio-url-preview"></div> -->
                 </span>                
             </div>
-            <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe>
-            <!-- <iframe src="http://juhokim.com:1337/b" width="100%" height="800"></iframe> -->
+            <!-- <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe> -->
+            <iframe src="http://ls.edx.org:1337/b" width="100%" height="800"></iframe>
         </div>
     </div>
 
@@ -75,7 +75,7 @@
           <div class="modal-footer">
             <div>Would you like to save this interaction and share with others?<br/></div>
             <div>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Discard</button>
+                <button type="button" class="btn btn-default" id="discard-interaction-button" data-dismiss="modal">Discard</button>
                 <button type="button" class="btn btn-primary" id="save-interaction-button" data-dismiss="modal">Save this interaction</button>
             </div>
           </div>
@@ -92,7 +92,6 @@
     <script src="{% static "js/vendor/RecordRTC.js" %}"></script>    
     <!-- Optionally enable responsive features in IE8 -->
     <!-- // <script src="js/respond.js"></script> -->
-    <!-- // <script src="{% static "js/student.js" %}"></script> -->
     <script src="{% static "js/layout.js" %}"></script>
     <script src="{% static "js/touch-device.js" %}"></script>
     <script src="{% static "js/student-layout.js" %}"></script>
@@ -105,17 +104,11 @@
             console.log("{{student.id}}");
             console.log("{{interaction.id}}");
             // var interaction = JSON.stringify({{interaction|safe}});
+            var help_request = JSON.stringify({{help_request|safe}});
             TouchDevice.init();
-            Capture.init({{interaction.id}});
+            // StudentLayout.init();
+            Capture.init("{{student.id}}", "{{interaction.id}}", JSON.parse(help_request));
 
-            // $.ajax({
-            //     url: "http://drawonthe.net/newboard.php",
-            //     dataType: 'text/html',
-            // }).success(function(data){
-            //     // $("iframe").html(data);
-            //     console.log("done", data);
-            //     console.log(String(data));
-            // });
         });
     </script>    
   </body>
