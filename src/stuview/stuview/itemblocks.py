@@ -74,9 +74,12 @@ class ItemBlock(XBlock):
 
             if req.status_code == 200:
                 reqdic = simplejson.loads(req.text)
-                return reqdic['message']
+                if reqdic['message'] == 'success':
+                    return "Your request was received. Help is on the way!"
+                else:
+                    return "There was a problem with your help request: %s" % reqdic['message']
             else:
-                return req
+                return "Couldn't connect. Status code received: %s" % str(req.status_code)
 
         else:
             print 'unknown request'
