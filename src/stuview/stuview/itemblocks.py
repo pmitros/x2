@@ -65,9 +65,9 @@ class ItemBlock(XBlock):
             #str(self.runtime.student_id)
 
             params = {'session_id': 'sep-1-2013',
-                   'student_id': str(2),
+                   'student_id': self.runtime.student_id,
                    'description': str(data['issue']),
-                   'resource': str(2)}
+                   'resource': str(2)}  # todo fix
 
 
             req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
