@@ -137,8 +137,9 @@ function bindSortableTableEvents(){
 function formatDate(str) {
     // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
     // var date = new Date(str.substr(0,4), str.substr(4,2)-1, str.substr(-2)); // months are 0-based
-    var date = new Date(str);
-    return _prettyDate(date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate());
+    // var date = new Date(str);
+    // return _prettyDate(date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate());
+    return _prettyDate(str);
 }
 
 function _prettyDate(date_str){

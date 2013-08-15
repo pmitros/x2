@@ -36,11 +36,12 @@ var HelpQueue = function() {
         // var student_name = $(".student[data-id='" + student_id + "']");
         var $new_student = StudentLayout.create_student(student_id);
         var help_request = Layout.get_help_request_by_student_id(student_id);
-        if (help_request !== null)
+        if (help_request !== null){
             $("<span/>")
                 .addClass("time-elapsed label label-default")
                 .text(formatDate(help_request["requested_at"]))
                 .appendTo($new_student);
+        }
         HelpQueue.queue.push(student_id);
         $("#help-queue").append($new_student);
         refresh_queue();

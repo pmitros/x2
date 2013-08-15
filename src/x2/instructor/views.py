@@ -102,11 +102,18 @@ def capture(request, course_slug, session_slug):
     except (KeyError, TypeError):
         student_id = 1
     try:
+        instructor_id = int(request.GET.get('iid'))
+    except (KeyError, TypeError):
+        instructor_id = 11  # juho
+    try:
+        hr_id = int(request.GET.get('hr'))
+    except (KeyError, TypeError):
+        hr_id = -1
+    try:
         course = Course.objects.get(slug=course_slug)
         session = Session.objects.get(slug=session_slug)
         student = Student.objects.get(id=student_id)
-        # TODO: hardcoded for hack
-        instructor = Instructor.objects.get(id=11)
+        instructor = Instructor.objects.get(id=instructor_id)
         interaction = Interaction(
             started_at=datetime.utcnow().replace(tzinfo=utc),
             ended_at=datetime.utcnow().replace(tzinfo=utc),
@@ -114,6 +121,11 @@ def capture(request, course_slug, session_slug):
         interaction.t = instructor
         interaction.l = student
         interaction.save()
+
+        help_request = HelpRequest.objects.get(id=hr_id)
+        help_request.status = "in_progress"
+        help_request.save()
+
     except ObjectDoesNotExist:
         raise Http404
     return render_to_response(
@@ -122,7 +134,8 @@ def capture(request, course_slug, session_slug):
         "session": session,
         "student": student,
         "instructor": instructor,
-        "interaction": interaction})
+        "interaction": interaction,
+        "help_request": model_to_json([help_request])})
 
 
 @csrf_protect
@@ -178,7 +191,6 @@ def ajax_layout_student_update(request):
         else:
             student_model = Student.objects.get(id=data["id"])
             for key in data:
-                print key, data[key]
                 setattr(student_model, key, data[key])
             student_model.save()
     return HttpResponse(
@@ -200,7 +212,6 @@ def ajax_layout_session_student_update(request):
                 model = SessionStudentData.objects.get(
                     session_id=data["session_id"], student_id=data["student_id"])
                 for key in data:
-                    print key, data[key]
                     setattr(model, key, data[key])
                 model.save()
             except ObjectDoesNotExist:
@@ -226,9 +237,10 @@ def ajax_layout_help_request_new(request):
     else:
         try:
             session = Session.objects.get(slug=data["session_id"])
+            student = Student.objects.get(name=data["student_id"])
             model = HelpRequest(
                 session_id=session.id,
-                student_id=data["student_id"],
+                student_id=student.id,
                 requested_at=datetime.utcnow().replace(tzinfo=utc),
                 description=data["description"],
                 resource=data["resource"],
@@ -289,6 +301,14 @@ def ajax_capture_interaction_stop(request):
         except:
             print "error", url
             message = "database access error"
+
+        try:
+            help_request = HelpRequest.objects.get(id=request.POST['hr_id'])
+            help_request.status = "resolved"
+            help_request.save()
+        except:
+            print "help request processing error"
+            message = "help request processing error"
     return HttpResponse(
         json.dumps({'message': message, 'url': url}, ensure_ascii=False), mimetype='application/json')
 
@@ -327,23 +347,28 @@ def ajax_layout_students_progress(request):
         session = Session.objects.get(id=data["session_id"])
         students = Student.objects.filter(course=course.id)
         results = {}
-        for student in students:
-            try:
-                result = urllib2.urlopen("http://ls.edx.org:2233/qinfo?student=" + str(student.id)).read()
-                results[str(student.id)] = json.loads(result)
-            except (urllib2.HTTPError, urllib2.URLError) as e:
-                print e, "error returned"
+        # for student in students:
+        #     try:
+        #         result = urllib2.urlopen("http://ls.edx.org:2233/qinfo?student=" + str(student.id)).read()
+        #         results[str(student.id)] = json.loads(result)
+        #     except (urllib2.HTTPError, urllib2.URLError) as e:
+        #         print e, "error returned"
+
+        try:
+            results = urllib2.urlopen("http://ls.edx.org:2233/allqinfo").read()
+        except (urllib2.HTTPError, urllib2.URLError) as e:
+            print e, "error returned"
 
         requests = {}
         try:
             pending_requests = HelpRequest.objects.filter(
                 session_id=session.id,
-                status__in=["requested", "in_progress"])
+                status__in=["requested", "in_progress", "resolved"])
             requests = model_to_json(pending_requests)
         except ObjectDoesNotExist:
             print "no pending help requests"
 
     return HttpResponse(
-        json.dumps({'results': json.dumps(results), 'requests': requests}, ensure_ascii=False), mimetype='application/json')
+        json.dumps({'results': results, 'requests': requests}, ensure_ascii=False), mimetype='application/json')
 
 

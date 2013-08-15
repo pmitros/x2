@@ -114,7 +114,7 @@
             var students = JSON.stringify({{students|safe}});
             var session_students = JSON.stringify({{session_students|safe}});
             TouchDevice.init();
-            Capture.init();
+            // Capture.init();
             StudentLayout.init();
             HelpQueue.init();
             Layout.init("{{course.id}}", "{{session.id}}", JSON.parse(blocks), JSON.parse(students), JSON.parse(session_students), true);
