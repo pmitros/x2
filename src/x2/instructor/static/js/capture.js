@@ -4,6 +4,7 @@ var Capture = function() {
     var student_id;
     var interaction_id;
     var help_request;
+    var whiteboard_count;
 
     var localStream;
     var audio = document.querySelector('audio');
@@ -26,6 +27,7 @@ var Capture = function() {
 
 
     function init(sid, iid, hr){
+        whiteboard_count = 0;
         student_id = sid;
         interaction_id = iid;
         help_request = hr[0];
@@ -41,6 +43,9 @@ var Capture = function() {
                                   navigator.mozGetUserMedia || navigator.msGetUserMedia;
         bindEvents();
         $("#capture-button").click();
+        $("#new-whiteboard-button").click();
+        $("#introModal").modal({
+        });
     }
 
 
@@ -65,6 +70,14 @@ var Capture = function() {
         $("#video-capture-button").click(video_capture_button_handler);
         $("#save-interaction-button").click(save_interaction_button_handler);
         $("#discard-interaction-button").click(discard_interaction_button_handler);
+        $("#new-whiteboard-button").click(new_whiteboard_button_handler);
+    }
+
+    function new_whiteboard_button_handler(event){
+        whiteboard_count += 1;
+        var board_url = "http://ls.edx.org:1337/" + interaction_id + "_" + whiteboard_count;
+        console.log("opening new whiteboard at", board_url);
+        $("#whiteboard").attr("src", board_url);
     }
 
     function capture_button_handler(event){
@@ -74,7 +87,7 @@ var Capture = function() {
             stop_audio_capture();
         } else {
             $(this).addClass("recording");
-            $(this).text("Stop Recording...");
+            $(this).text("Stop Recording");
             start_audio_capture();
         }
     }

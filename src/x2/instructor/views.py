@@ -231,7 +231,7 @@ def ajax_layout_help_request_new(request):
     message = "success"
     hr_id = -1
     data = request.GET
-    print request.method, data["session_id"]
+    print request.method, data
     if data["session_id"] == "" or data["student_id"] == "":
         print "database access error"
     else:
@@ -256,8 +256,8 @@ def ajax_layout_help_request_new(request):
     try:
         #    if 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' in request.META:
         #    json.dumps({'help_request_id': hr_id, 'message': message}, ensure_ascii=False), mimetype='application/json')
-        response['Access-Control-Allow-Origin']  = "*" # XS_SHARING_ALLOWED_ORIGINS 
-        response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS ) 
+        response['Access-Control-Allow-Origin']  = "*" # XS_SHARING_ALLOWED_ORIGINS
+        response['Access-Control-Allow-Methods'] = ",".join( XS_SHARING_ALLOWED_METHODS )
         response['Access-Control-Allow-Headers'] = ",".join( XS_SHARING_ALLOWED_HEADERS )
         #        response['Access-Control-Allow-Credentials'] = XS_SHARING_ALLOWED_CREDENTIALS
     except as e:

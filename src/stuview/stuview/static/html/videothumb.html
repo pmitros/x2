@@ -2,18 +2,21 @@
 <div class="thumb {{ thumb_complete|safe }} ">
 
     <div class="thumb_content">
-    <img src = "{{ thumb_img }}" height="80px" width="80px" />
+
+    <img src = "{{ thumb_img }}" width="100%" />
+
+
     </div>
 
-    <div class="thumb_caption">
+    <div class="thumb_caption thumb_text">
         <span> {{ thumb_caption }} </span>
     </div>
 
-    <div class="thumb_caption">
+    <div class="thumb_text">
         <span> views: {{ views }} </span>
     </div>
 
-    <div class="thumb_caption ">
+    <div class="thumb_text ">
         <span> complete: {{ complete }} </span>
     </div>
 </div>
