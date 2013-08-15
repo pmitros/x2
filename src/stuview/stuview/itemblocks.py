@@ -64,13 +64,17 @@ class ItemBlock(XBlock):
 
             #str(self.runtime.student_id)
 
+            parent = self.runtime.get_block(self.parent)
+            active_inx = parent.get_active_inx()
             params = {'session_id': 'sep-1-2013',
                    'student_id': self.runtime.student_id,
                    'description': str(data['issue']),
-                   'resource': str(2)}  # todo fix
+                   'resource': str(active_inx)}  # todo fix
 
-
-            req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
+            try:
+                req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
+            except Exception as e:
+                return "Couldn't connect: " + str(e)
 
             if req.status_code == 200:
                 reqdic = simplejson.loads(req.text)
@@ -83,8 +87,15 @@ class ItemBlock(XBlock):
 
         else:
             print 'unknown request'
+            return "unknown request"
 
 
+    #todo this should go elsewhere
+    def _almost_equal(self, student_value, correct_value, tolerance=0.05):
+        if abs(float(student_value)-float(correct_value)) < (float(correct_value) * tolerance):
+            return True
+        else:
+            return False
 
     @XBlock.json_handler
     def activate(self, data):
@@ -103,12 +114,23 @@ class ItemBlock(XBlock):
     def forminput(self, data):
         input_dic = simplejson.loads(self.input)
         key = data['key']
-        val = data['value']
-        input_dic[key] = val
+        student_value = data['value']
+        input_dic[key]['val'] = student_value
         self.input = simplejson.dumps(input_dic)
         self.save()
 
-        return 'saved %s %s ' % (key,val)
+        correct_value = input_dic[key]['corr']
+
+        print student_value, correct_value
+        try:
+            if self._almost_equal(student_value, correct_value):
+                return 'correct'
+            else:
+                return 'incorrect'
+        except ValueError:
+            #student entered garbage
+            return 'incorrect'
+
 
 class TextBlock(ItemBlock):
 

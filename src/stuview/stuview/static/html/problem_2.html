@@ -1,94 +1,96 @@
-
 <div class='content'>
-    <h1> Statistical Significance Tests </h1>
+    <h1>Part 1: The sampling distribution of the sample mean</h1>
 
     <p>
-    Statistical significance tests help us solve problems like the following:
+        <i>
+            You are not expected to know how to solve this problem. You are
+            expected
+            to have questions. Use the "Ask for help" button to summon help.
+        </i>
+
     </p>
 
     <p>
-        The average SAT score in Mathematics is <b> μ=514 </b> with standard deviation of <b> σ=117 </b>.
-        A math teacher in Springfield High has a class of 30 students who have received scores as follows:
+        The nation average SAT score in Mathematics is <b> μ=514 </b> with
+        standard deviation of <b> σ=117 </b>.
+        A math teacher in Springfield High has a class of <b> 30 students </b>who
+        have received scores as follows:
     </p>
 
     <p>
-        <table border=1px>
-            <tr>
-                <td>Student 1</td><td>544</td>
-            </tr>
-            <tr>
-                <td>Student 2</td><td>590</td>
-            </tr>
-            <tr>
-                <td>...</td><td>...</td>
-            </tr>
-            <tr>
-                <td>Student 30</td><td>522</td>
-            </tr>
-            <tr>
-                <td>average</td><td>S=543</td>
-            </tr>
-        </table>
+    <table border=1px>
+        <tr>
+            <td>Student 1</td>
+            <td>544</td>
+        </tr>
+        <tr>
+            <td>Student 2</td>
+            <td>590</td>
+        </tr>
+        <tr>
+            <td>...</td>
+            <td>...</td>
+        </tr>
+        <tr>
+            <td>Student 30</td>
+            <td>522</td>
+        </tr>
+        <tr>
+            <td>class average</td>
+            <td>S=543</td>
+        </tr>
+    </table>
     </p>
 
     <p>
-        The teacher wants to find out whether his students were better than average,
-        which would mean that he did a good job teaching. He calculates the average
-        score of his class, let's call it the "class average": <b>S=543</b>, which is obviously higher than the nation average <b>μ=514</b>.
+        The teacher wants to find out whether his students were better than
+        average,
+        which would mean that he did a good job teaching. He calculates the
+        average
+        score of his class, let's call it the "class average": <b>S=543</b>,
+        which is obviously higher than the nation average <b>μ=514.</b>
     </p>
 
     <p>
-        However, the teacher is still not convinced. He is worried that the higher scores
-        might be a fluke due to randomness, and that his students are actually average. What
-        the teacher wants to calculate is the probability that if the students are average
-        they will get scores at least as good as the ones they got. In statistics this probability
-        is called a p-value. If the p-value is sufficiently small (less than 0.05), we will reject the
-        hypothesis that the students are average, which in our case would mean that the students are better.
+        However, the teacher is still not convinced. He is worried that the
+        higher scores
+        might be a fluke due to randomness, and that his students are actually
+        average. What
+        the teacher wants to calculate is the probability that if the students
+        are indeed average
+        they will get scores at least as good as the ones they got. In
+        statistics this probability
+        is called a p-value. If the p-value is sufficiently small (less than
+        0.05), we will reject the
+        hypothesis that the students are average, which in our case would mean
+        that they are better.
     </p>
 
 
     <p>
         We calculate the p-value using the following steps:
-        <ol>
-            <li>Assume that students were indeed average in the sense that each student's score
-            came from a normal distribution: <b>N(μ=514, σ²=117²)</b>  </li>
-            <li>
-                Derive the sampling distribution of the class average: <b>S</b>
-                 (Hint: think of the central limit theorem).
-                <br />
-                <b> Answer </b>: the distribution is Normal with:
-                <br />{% if x and x.strip %}OK{% else %}Empty{% endif %}
+    <ol>
+        <li>Assume that students were indeed average in the sense that each
+            student's score
+            came from a normal distribution: <b>N(μ=514, σ²=117²)</b></li>
+        <li>
+            Derive the sampling distribution of the class average: <b>S</b>
+            (Hint: think of the central limit theorem).
+            <br/>
+            <b> Answer </b>: the distribution is Normal with:
+            <br/>
 
-                mean = <input type="text" id="input_1" value="{% if input and input.input_1 %}{{ input.input_1 }}{% else %}""{% endif %}" /> <button id="button_1">check</button>
-                <br />
-                variance = <input type=text id="input_2" value="{{ input.input_2}}" /> <button id="button_2">check</button>
-            </li>
+            mean = <input type="text" id="input_mean"
+                          value="{{ input.input_mean.val }}"/>
+            <button input_src="input_mean" class='check_button'>check</button>
+            <br/>
+            variance = <input type=text id="input_var"
+                              value="{{ input.input_var.val }}"/>
+            <button input_src="input_var" class='check_button'>check</button>
+        </li>
 
-            <li>
-                Now that we know the distribution of the class average, we can find the probability
-                of obtaining a class average at least as good as we did. However, before we proceed
-                it will be useful to find a transformation of <b>S</b> that follows a standard normal
-                distribution, instead of merely normal, because working with the former is much easier.
-                In other words find:
-                <br />
-                <b>f(S) ~ N(0,1)</b>
-
-                <br />
-                Then plug in the observed value of <b>S</b>, to obtain what's known as the <b>Z-score</b>
-
-                <br />
-                <b>Answer: </b> Z-score = <input type="text" /> check
-
-            </li>
-            <li>
-                Now sketch a standard normal distribution, mark the observed Z-score from the previous step,
-                and calculate the area under the curve right of this value. This is our p-value.
-                (Hint: you can use the Z-score table from the introduction).
-                 <b>Answer: </b> P-value = <input type="text" /> check
-            </li>
-        </ul>
+    </ol>
     </p>
-
 
 
 </div>

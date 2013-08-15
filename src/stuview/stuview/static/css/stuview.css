@@ -8,19 +8,40 @@
 
     background-color: #eee;
 
+    width: 180px;
 }
 
 .content {
     font-size: 14px;
 }
 
+.thumb img{
+    opacity: 0.8;
+}
+
 .content li {
-    padding: 20px;
+    padding: 10px;
 }
 .thumb_complete{
     background-image: url('../img/Checkmark.svg');
     background-repeat: no-repeat;
     background-size: cover;
+}
+.check_button{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.button_correct{
+    background-image: url('../img/Checkmark.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.button_incorrect{
+    background-image: url('../img/Cross.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 /*.thumb:hover{*/
@@ -42,13 +63,17 @@
     margin: 50px;
 }
 
-.thumb_caption{
+.thumb_text{
     font-size: 12px;
     font-family: sans-serif;
     padding-top: 5px;
     text-shadow: rgb(255, 255, 255) 1px 1px 2px;
 }
 
+.thumb_caption{
+    font-size: 14px;
+    font-weight: bold;
+}
 .thumbs_container{
     padding-top: 10px;
 }
@@ -69,7 +94,7 @@
 
 .tooltip a {
     margin: 2px;
-    margin-right: 10px;
+    margin-left: 10px;
     padding: 4px;
     text-decoration: none;
     font-size: 12px;

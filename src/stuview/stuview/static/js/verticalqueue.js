@@ -48,17 +48,27 @@ function VerticalQueue(runtime, element) {
 
     function check_button(){
 
-        buttonid = $(this).attr('id')
-        tokens = buttonid.split('_')
-        inputid = 'input_' + tokens[tokens.length-1]
+        inputid = $(this).attr('input_src')
         inputval = $('#'+inputid).val()
 
-        console.log(buttonid, inputid, inputval)
+        button = this
+
+        console.log(inputid, inputval)
 
           $.ajax({type: "POST",
                 url: input_handler,
                 data: JSON.stringify({key:inputid, value:inputval}),
-                success: function(evt){console.log(evt); }
+                success: function(data){
+                    console.log(data)
+                    if (data=='correct'){
+                        $(button).removeClass('button_incorrect')
+                        $(button).addClass('button_correct')
+                    }
+                    else{
+                         $(button).removeClass('button_correct')
+                         $(button).addClass('button_incorrect')
+                    }
+                }
         });
 
     }
@@ -69,7 +79,7 @@ function VerticalQueue(runtime, element) {
         $(active_page).find('.button_help').click(on_help)
         $(active_page).find('.button_complete').click(on_complete)
 
-        $(active_page).find("button[id^='button']").click(check_button)
+        $(active_page).find(".check_button").click(check_button)
 
         $(element).html(data.thumb_view)
         $('.thumb').removeClass('active_thumb')
@@ -88,12 +98,6 @@ function VerticalQueue(runtime, element) {
     $('.thumb', element).live('mouseenter', function(eventObject){
 
         var tooltip = $('<div class="tooltip">')
-        var helplink = $('<a>', {
-            text: 'help',
-            title: 'HELP',
-            href: '#',
-            click: function(){alert("Help is on the way!")}
-        }).appendTo(tooltip)
 
         var togglelink = $('<a>', {
             text: '▼',
