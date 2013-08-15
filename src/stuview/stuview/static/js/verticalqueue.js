@@ -5,6 +5,7 @@ function VerticalQueue(runtime, element) {
     //var toolbar_handler = runtime.handler_url('toolbar');
 
     var toolbar_handler = runtime.handler_url('toolbar')
+    var input_handler = runtime.handler_url('forminput')
 
     function on_help(){
         var issue_summary = prompt('Describe your issue:')
@@ -31,7 +32,7 @@ function VerticalQueue(runtime, element) {
          $.ajax({type: "POST",
                 url: toolbar_handler,
                 data: JSON.stringify(reqdata),
-                success: function(evt){console.log(evt)}
+                success: function(evt){alert(evt)}
         });
     }
 
@@ -44,11 +45,31 @@ function VerticalQueue(runtime, element) {
         });
     }
 
+
+    function check_button(){
+
+        buttonid = $(this).attr('id')
+        tokens = buttonid.split('_')
+        inputid = 'input_' + tokens[tokens.length-1]
+        inputval = $('#'+inputid).val()
+
+        console.log(buttonid, inputid, inputval)
+
+          $.ajax({type: "POST",
+                url: input_handler,
+                data: JSON.stringify({key:inputid, value:inputval}),
+                success: function(evt){console.log(evt); }
+        });
+
+    }
+
     function update_active(data) {
         var active_page = $(element).parents('.queue_widget').children('.active_page').first()
         $(active_page).html(data.page_view);
         $(active_page).find('.button_help').click(on_help)
         $(active_page).find('.button_complete').click(on_complete)
+
+        $(active_page).find("button[id^='button']").click(check_button)
 
         $(element).html(data.thumb_view)
         $('.thumb').removeClass('active_thumb')

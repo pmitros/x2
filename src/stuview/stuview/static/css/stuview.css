@@ -10,6 +10,13 @@
 
 }
 
+.content {
+    font-size: 14px;
+}
+
+.content li {
+    padding: 20px;
+}
 .thumb_complete{
     background-image: url('../img/Checkmark.svg');
     background-repeat: no-repeat;

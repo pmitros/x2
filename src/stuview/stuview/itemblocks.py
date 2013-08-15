@@ -1,12 +1,18 @@
 from xblock.core import XBlock, Scope, Integer, String, Boolean
 from xblock.fragment import Fragment
 import requests
+from django.utils import simplejson
 
 class ItemBlock(XBlock):
 
     views = Integer(help="the number of times this block has been viewed",
                     default=0,
                     scope=Scope.user_state)
+
+    input = String(help="Json of input entered by the student, such as answers to questions",
+                   default=simplejson.dumps({}),
+                   scope=Scope.user_state)
+
     complete = Boolean("Has the student completed this item?", default=False, scope=Scope.user_state)
 
     thumb_img = String(help="rendering of the page_view displayed in the thumb",
@@ -89,10 +95,18 @@ class ItemBlock(XBlock):
 
         parent = self.runtime.get_block(self.parent)
         parent.set_active(self.runtime.usage.id)
-
-
         return result
 
+    @XBlock.json_handler
+    def forminput(self, data):
+        input_dic = simplejson.loads(self.input)
+        key = data['key']
+        val = data['value']
+        input_dic[key] = val
+        self.input = simplejson.dumps(input_dic)
+        self.save()
+
+        return 'saved %s %s ' % (key,val)
 
 class TextBlock(ItemBlock):
 
@@ -122,16 +136,14 @@ class ProblemBlock(ItemBlock):
                      help='The HTML file containing the problem content',
                      scope=Scope.content)
 
-    def set_content(self, html_file):
-        self.content = html_file
-        self.save()
+
 
     def page_view(self):
         result = Fragment()
         toolbar_frag = self.toolbar_view()
         result.add_frag_resources(toolbar_frag)
 
-        content_html = self.runtime.render_template(self.content)
+        content_html = self.runtime.render_template(self.content, input=simplejson.loads(self.input))
         content_frag = Fragment(content_html)
 
         html = self.runtime.render_template('static/html/problemblock.html',

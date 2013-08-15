@@ -71,7 +71,7 @@ def populate(request):
 
     for student_id in student_ids:
         usage_problem_1 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 1', 'thumb_img':'static/img/problem_thumb.png'})
-        usage_problem_2 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 2', 'thumb_img':'static/img/problem_thumb.png'})
+        usage_problem_2 = Usage("problemitem", initial_state={'content': 'static/html/problem_2.html', 'thumb_caption':'Problem 2', 'thumb_img':'static/img/problem_thumb.png'})
         usage_problem_3 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 3', 'thumb_img':'static/img/problem_thumb.png'})
         usage_problem_4 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 4', 'thumb_img':'static/img/problem_thumb.png'})
 
