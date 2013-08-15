@@ -41,7 +41,6 @@ var HelpQueue = function() {
                 .addClass("time-elapsed label label-default")
                 .text(formatDate(help_request["requested_at"]))
                 .appendTo($new_student);
-            console.log(student_id, help_request["requested_at"], formatDate(help_request["requested_at"]));
         }
         HelpQueue.queue.push(student_id);
         $("#help-queue").append($new_student);

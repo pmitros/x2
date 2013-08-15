@@ -1,10 +1,17 @@
 var TouchDevice = function() {
 
     function init(){
+        // is_touch_device();
         document.addEventListener("touchstart", touchHandler, true);
         document.addEventListener("touchmove", touchHandler, true);
         document.addEventListener("touchend", touchHandler, true);
         document.addEventListener("touchcancel", touchHandler, true);
+    }
+
+    function is_touch_device() {
+        // alert("ontouchstart:" + !!('ontouchstart' in window) + " onmsgesturechange:" + !!('onmsgesturechange' in window));
+        return !!('ontouchstart' in window) // works on most browsers 
+          || !!('onmsgesturechange' in window); // works on ie10
     }
 
     // http://stackoverflow.com/questions/5186441/javascript-drag-and-drop-for-touch-devices
