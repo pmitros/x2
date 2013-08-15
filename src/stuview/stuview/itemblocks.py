@@ -71,14 +71,12 @@ class ItemBlock(XBlock):
 
 
             req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
-            print req.url
-            print req.text
-            content = req.text
 
+            if req.status_code == 200:
+                return req.text
+            else:
+                return req
 
-            print 'content: ', content
-            return content
-            # return {'status': 'acknowledged'}
         else:
             print 'unknown request'
 
