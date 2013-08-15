@@ -11,8 +11,36 @@
     <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
     <link rel="stylesheet" href="{% static "css/style.css" %}" /> 
     <style>
+        html{
+            min-height: 100%;
+            position: relative;
+        }
         body{
-            margin-top: 15px;
+            height: 100%;
+            margin-top: 20px;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: moz-none;
+            -ms-user-select: none;
+            user-select: none;            
+        }
+        #whiteboard {
+            width: 100%;
+            height: 100vh;
+        }
+        .fullpage-container {
+            /*height: 100vh;*/
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow:hidden;
+            z-index: -1;
+        }
+        .section-header {
+            padding-top: 10px;
         }
     </style>   
   </head>
@@ -26,7 +54,7 @@
       </ul>
     </div>
  -->
-    <div class=""> <!-- container -->
+    <div class="fullpage-container"> <!-- container -->
 
     <div class="row">
 <!--         <div class="sidebar col-12 col-sm-2 col-lg-2">
@@ -51,16 +79,18 @@
                 <span class="section-title col-12 col-sm-6 col-lg-6">Sketchpad</span>
                 <span class="col-12 col-sm-6 col-lg-6">
                     <audio id="audio" class="menu-item" autoplay loop controls></audio>
-                    <button id="capture-button" class="menu-item btn btn-large btn-danger">Record Audio</button>
-                    <button id="new-whiteboard-button" class="menu-item btn btn-large btn-primary">New Whiteboard</button>
+                    <button id="capture-button" class="menu-item btn btn-medium btn-danger">Record Audio</button>
+                    <button id="new-whiteboard-button" class="menu-item btn btn-medium btn-primary">New Whiteboard</button>
                     
                     <!-- <div id="audio-url-preview"></div> -->
                 </span>                
             </div>
             <!-- <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe> -->
             <!-- <iframe id="whiteboard" src="http://ls.edx.org:1337/{{ interaction.id }}" width="100%" height="800"></iframe> -->
-            <iframe id="whiteboard" width="100%" height="800"></iframe>
+            <iframe id="whiteboard"></iframe>
         </div>
+    </div>
+
     </div>
 
     <!-- Modal -->
@@ -90,7 +120,25 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
-    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="introModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- <div class="modal-header"> -->
+            
+          <!-- </div> -->
+          <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title"><strong>Warning!</strong> Make sure you choose "Allow" to record audio.</h4>
+          </div>
+          <div class="modal-footer">
+            <div>
+                <button type="button" class="btn btn-primary btn-large" data-dismiss="modal">Start</button>
+            </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     <script src="{% static "js/vendor/jquery-1.10.2.min.js" %}"></script>
     <script src="{% static "js/vendor/jquery-ui.min.js" %}"></script>

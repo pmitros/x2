@@ -27,11 +27,12 @@ body {
 }
 
 audio {
+    /*margin-top: 10px !important;*/
     width: 200px;
 }
 
 button.menu-item {
-    margin-top: -25px;
+    margin-top: -20px;
 }
 
 /* menu item in the capture screen */

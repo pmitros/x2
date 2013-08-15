@@ -44,6 +44,8 @@ var Capture = function() {
         bindEvents();
         $("#capture-button").click();
         $("#new-whiteboard-button").click();
+        $("#introModal").modal({
+        });
     }
 
 
