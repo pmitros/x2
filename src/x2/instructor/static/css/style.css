@@ -30,8 +30,13 @@ audio {
     width: 200px;
 }
 
-#capture-button {
-    margin-top: -5px;
+button.menu-item {
+    margin-top: -25px;
+}
+
+/* menu item in the capture screen */
+.menu-item {
+    margin: 0 1em;
 }
 
 .nowrap {
@@ -123,3 +128,5 @@ audio {
     left: 80px;
     font-size: 0.8em;
 }
+
+
