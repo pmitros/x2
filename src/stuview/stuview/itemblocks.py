@@ -73,7 +73,7 @@ class ItemBlock(XBlock):
             req = requests.get('http://localhost:3333/x2/ajax/layout/help-request/new', params=params)
 
             if req.status_code == 200:
-                return req.text
+                return req.text.message
             else:
                 return req
 
