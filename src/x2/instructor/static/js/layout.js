@@ -3,14 +3,16 @@
 var Layout = function() {
     var course_id = "";
     var session_id = "";
+    var instructor_id = "";
     var blocks = [];
     var students = [];
     var session_students = [];
     var help_requests = []; // gets updated inside the polling function, not init.
 
-    function init(course, session, blocks, students, session_students, readonly){
+    function init(course, session, instructor, blocks, students, session_students, readonly){
         Layout.course_id = course;
         Layout.session_id = session;
+        Layout.instructor_id = instructor;
         Layout.blocks = blocks;
         Layout.students = students;
         Layout.session_students = session_students;
@@ -487,6 +489,7 @@ var Layout = function() {
         init: init,
         course_id: course_id,
         session_id: session_id,
+        instructor_id: instructor_id,
         get_student_by_id: get_student_by_id,
         get_session_student_by_student_id: get_session_student_by_student_id,
         get_help_request_by_student_id: get_help_request_by_student_id,

@@ -65,8 +65,13 @@ def populate_session_students(session_id, students):
 @ensure_csrf_cookie
 def view_layout(request, course_slug, session_slug):
     try:
+        instructor_id = int(request.GET.get('iid'))
+    except (KeyError, TypeError):
+        instructor_id = 11
+    try:
         course = Course.objects.get(slug=course_slug)
         session = Session.objects.get(slug=session_slug)
+        instructor = Instructor.objects.get(id=instructor_id)
         students = Student.objects.filter(course=course.id)
         blocks = TableBlock.objects.filter(session=session.id)
         populate_session_students(session.id, students)
@@ -77,6 +82,7 @@ def view_layout(request, course_slug, session_slug):
         "view_layout.html",
         {"course": course,
         "session": session,
+        "instructor": instructor,
         "blocks": model_to_json(blocks),
         "students": model_to_json(students),
         "session_students": model_to_json(session_students)})
