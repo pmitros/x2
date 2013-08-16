@@ -59,6 +59,8 @@ var StudentLayout = function() {
         var help_request = Layout.get_help_request_by_student_id(student_id);
         if (help_request !== null)
             $("#myModal .modal-help").show();
+        else
+            $("#myModal .modal-help").hide();
         $("#myModal .modal-student-name").text(display_name(student["name"]));
         var $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
         $("#myModal .modal-student-profile").html($profile_img);
@@ -84,7 +86,7 @@ var StudentLayout = function() {
     }
 
     function end_help_handler(event){
-        console.log(event);
+        // console.log(event);
         // var student_id = event
     }
 
