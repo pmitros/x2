@@ -102,7 +102,8 @@ var Capture = function() {
     }
 
     function discard_interaction_button_handler(event){
-        window.location = "./view-layout";
+        // window.location = "./view-layout";
+        window.location = "./view-layout?iid=" + instructor_id;
     }
 
     function save_interaction_button_handler(event){
@@ -124,7 +125,7 @@ var Capture = function() {
 
         $.post("/x2/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
-            window.location = "./view-layout";
+            window.location = "./view-layout?iid=" + instructor_id;
         });
     }
 
