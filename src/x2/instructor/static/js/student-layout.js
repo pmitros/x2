@@ -62,7 +62,7 @@ var StudentLayout = function() {
         else
             $("#myModal .modal-help").hide();
         $("#myModal .modal-student-name").text(display_name(student["name"]));
-        var $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
+        var $profile_img = $("<img/>").attr("src", "http://ls.edx.org:3333/static/img/profile.png");
         $("#myModal .modal-student-profile").html($profile_img);
         $("#myModal .modal-student-group").text(display_group(session_student["group"]));
         $("#myModal .modal-student-progress").text(display_progress(session_student["progress"]));
@@ -80,9 +80,14 @@ var StudentLayout = function() {
         var help_request = Layout.get_help_request_by_student_id(student_id);
         console.log($(event.target), student_id);
         // TODO: add correct instructor ID
-        window.location = "./capture?sid=" + student_id +
-                        "&iid=" + instructor_id +
-                        "&hr=" + help_request["id"];
+        if (help_request === null) {
+            window.location = "./capture?sid=" + student_id +
+                            "&iid=" + instructor_id;
+        } else {
+            window.location = "./capture?sid=" + student_id +
+                            "&iid=" + instructor_id +
+                            "&hr=" + help_request["id"];
+        }
     }
 
     function end_help_handler(event){
@@ -113,7 +118,7 @@ var StudentLayout = function() {
                             .attr("data-id", student_id)
                             .attr("data-name", "anonymous")
                             .attr("data-group", "");
-            $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
+            $profile_img = $("<img/>").attr("src", "http://ls.edx.org:3333/static/img/profile.png");
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
             $badge = $("<div/>").addClass("student-badge");
             $progress = $("<div/>").addClass("student-progress").text("n/a");
@@ -127,7 +132,7 @@ var StudentLayout = function() {
                             .attr("data-id", student_id)
                             .attr("data-name", student["name"])
                             .attr("data-group", session_student["group"]);
-            $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
+            $profile_img = $("<img/>").attr("src", "http://ls.edx.org:3333/static/img/profile.png");
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
             // TODO: remove duplicate code: use add_badge, add_group, etc.
             // if (session_student["badge"] !== "")
