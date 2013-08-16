@@ -179,3 +179,12 @@ function _prettyDate(date_str){
     }
     return time;
 };
+
+function showAlert(message){
+    // var height = $("#alert").height();
+    // $("#alert").removeClass("animation").css("height", height).addClass("animation");
+    $("#alert").text(message).show();
+    setTimeout(function(){
+       $("#alert").hide();// or fade, css display however you'd like.
+    }, 5000);
+}

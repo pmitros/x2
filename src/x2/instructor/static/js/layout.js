@@ -3,14 +3,16 @@
 var Layout = function() {
     var course_id = "";
     var session_id = "";
+    var instructor_id = "";
     var blocks = [];
     var students = [];
     var session_students = [];
     var help_requests = []; // gets updated inside the polling function, not init.
 
-    function init(course, session, blocks, students, session_students, readonly){
+    function init(course, session, instructor, blocks, students, session_students, readonly){
         Layout.course_id = course;
         Layout.session_id = session;
+        Layout.instructor_id = instructor;
         Layout.blocks = blocks;
         Layout.students = students;
         Layout.session_students = session_students;
@@ -36,17 +38,17 @@ var Layout = function() {
                 }
             }
         });
-        setTimeout(function(){
-            $.ajax({
-                url: "/x2/ajax/layout/students/progress",
-                type: "POST",
-                data: {"data": JSON.stringify(data)},
-                success: function(response) {
-                    var i;
-                    var name;
-                    var entry;
-                    var type;
-                    var value;
+        $.ajax({
+            url: "/x2/ajax/layout/students/progress",
+            type: "POST",
+            data: {"data": JSON.stringify(data)},
+            success: function(response) {
+                var i;
+                var name;
+                var entry;
+                var type;
+                var value;
+                try{
                     // handle progress updates
                     var results = JSON.parse(response["results"]);
                     for (name in results){
@@ -58,31 +60,97 @@ var Layout = function() {
                             [get_student_id_by_name(name), {"type": "update_progress", "value": value }]
                         );
                     }
-                    // handle status updates: help requested, etc.
-                    Layout.help_requests = JSON.parse(response["requests"]);
-                    for (i in Layout.help_requests){
-                        // id, resource, description, session_id, status, student_id
-                        entry = Layout.help_requests[i];
-                        // console.log(entry);
-                        if (entry["status"] == "requested")
-                            type = "help_requested";
-                        else if (entry["status"] == "resolved")
-                            type = "help_resolved";
-                        else if (entry["status"] == "in_progress")
-                            type = "start_interaction";
-                        $(document).trigger(
-                            "student_status_update",
-                            [entry["student_id"], {"type": type }]
-                        );
-                    }
-                },
-                complete: poll_for_progress_updates,
-                error: function(jqXHR, textStatus, errorMessage) {
-                   console.log(jqXHR, textStatus, errorMessage);
+                } catch (e) {
+                    console.log("student queue info not available.");
                 }
-            });
-        }, 5000); // polling every 5 seconds
+                // handle status updates: help requested, etc.
+                Layout.help_requests = JSON.parse(response["requests"]);
+                for (i in Layout.help_requests){
+                    // id, resource, description, session_id, status, student_id
+                    entry = Layout.help_requests[i];
+                    // console.log(entry);
+                    if (entry["status"] == "requested")
+                        type = "help_requested";
+                    else if (entry["status"] == "resolved")
+                        type = "help_resolved";
+                    else if (entry["status"] == "in_progress")
+                        type = "start_interaction";
+                    $(document).trigger(
+                        "student_status_update",
+                        [entry["student_id"], {"type": type }]
+                    );
+                }
+            },
+            // complete: poll_for_progress_updates,
+            error: function(jqXHR, textStatus, errorMessage) {
+               console.log(jqXHR, textStatus, errorMessage);
+            }
+        });
+
+        setTimeout(poll_for_progress_updates, 5000); // polling every 5 seconds
     }
+
+    // function poll_for_progress_updates(){
+    //     var data = {
+    //         "session_id": Layout.session_id,
+    //         "course_id": Layout.course_id
+    //     };
+    //     var csrftoken = getCookie('csrftoken');
+    //     $.ajaxSetup({
+    //         crossDomain: false, // obviates need for sameOrigin test
+    //         beforeSend: function(xhr, settings) {
+    //             if (!csrfSafeMethod(settings.type)) {
+    //                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    //             }
+    //         }
+    //     });
+    //     setTimeout(function(){
+    //         $.ajax({
+    //             url: "/x2/ajax/layout/students/progress",
+    //             type: "POST",
+    //             data: {"data": JSON.stringify(data)},
+    //             success: function(response) {
+    //                 var i;
+    //                 var name;
+    //                 var entry;
+    //                 var type;
+    //                 var value;
+    //                 // handle progress updates
+    //                 var results = JSON.parse(response["results"]);
+    //                 for (name in results){
+    //                     console.log(name, results[name]);
+    //                     entry = results[name]["progress"];
+    //                     value = entry["complete"] + "/" + entry["total"];
+    //                     $(document).trigger(
+    //                         "student_status_update",
+    //                         [get_student_id_by_name(name), {"type": "update_progress", "value": value }]
+    //                     );
+    //                 }
+    //                 // handle status updates: help requested, etc.
+    //                 Layout.help_requests = JSON.parse(response["requests"]);
+    //                 for (i in Layout.help_requests){
+    //                     // id, resource, description, session_id, status, student_id
+    //                     entry = Layout.help_requests[i];
+    //                     // console.log(entry);
+    //                     if (entry["status"] == "requested")
+    //                         type = "help_requested";
+    //                     else if (entry["status"] == "resolved")
+    //                         type = "help_resolved";
+    //                     else if (entry["status"] == "in_progress")
+    //                         type = "start_interaction";
+    //                     $(document).trigger(
+    //                         "student_status_update",
+    //                         [entry["student_id"], {"type": type }]
+    //                     );
+    //                 }
+    //             },
+    //             complete: poll_for_progress_updates,
+    //             error: function(jqXHR, textStatus, errorMessage) {
+    //                console.log(jqXHR, textStatus, errorMessage);
+    //             }
+    //         });
+    //     }, 5000); // polling every 5 seconds
+    // }
 
     function bindEvents(){
         $("#update-layout-button").click(function(){
@@ -487,6 +555,7 @@ var Layout = function() {
         init: init,
         course_id: course_id,
         session_id: session_id,
+        instructor_id: instructor_id,
         get_student_by_id: get_student_by_id,
         get_session_student_by_student_id: get_session_student_by_student_id,
         get_help_request_by_student_id: get_help_request_by_student_id,

@@ -54,6 +54,9 @@
       </ul>
     </div>
  -->
+
+    <div id="alert"></div>
+
     <div class="fullpage-container"> <!-- container -->
 
     <div class="row">
@@ -124,17 +127,23 @@
     <div class="modal fade" id="introModal">
       <div class="modal-dialog">
         <div class="modal-content">
-          <!-- <div class="modal-header"> -->
-            
-          <!-- </div> -->
+<!--           <div class="modal-header">
+          
+          </div> -->
           <div class="modal-body">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title"><strong>Warning!</strong> Make sure you choose "Allow" to record audio.</h4>
+                <h4 class="modal-title"><strong>Warning!</strong> 
+                    <i class="icon-large icon-arrow-up"></i>
+                    <i class="icon-large icon-arrow-up"></i>
+                    <i class="icon-large icon-arrow-up"></i>
+                    <i class="icon-large icon-arrow-up"></i>
+                    <i class="icon-large icon-arrow-up"></i>
+                    <br/>
+                    Make sure you choose "Allow" to record audio.
+                </h4>  
           </div>
           <div class="modal-footer">
-            <div>
-                <button type="button" class="btn btn-primary btn-large" data-dismiss="modal">Start</button>
-            </div>
+                <button type="button" class="btn btn-primary btn-large" disabled="disabled" data-dismiss="modal">Start</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -164,6 +173,9 @@
             // StudentLayout.init();
             Capture.init("{{student.id}}", "{{interaction.id}}", JSON.parse(help_request));
 
+            setTimeout(function(){
+                $("#introModal button").removeAttr("disabled");
+            }, 3000);
         });
     </script>    
   </body>

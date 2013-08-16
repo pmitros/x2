@@ -48,21 +48,6 @@ var Capture = function() {
         });
     }
 
-
-    function isCaptureScreen() {
-        if (document.getElementById('record-screen').checked) {
-            screen_constraints = {
-                mandatory: { chromeMediaSource: 'screen' },
-                optional: []
-            };
-            videoConstraints.video = screen_constraints;
-        }
-    }
-
-    function capture_failure_handler(event){
-        console.log("capture failure");
-    }
-
     function bindEvents(){
         // $(document).on("startCapture", start_capture_handler);
         // $(document).on("endCapture", end_capture_handler);
@@ -71,6 +56,18 @@ var Capture = function() {
         $("#save-interaction-button").click(save_interaction_button_handler);
         $("#discard-interaction-button").click(discard_interaction_button_handler);
         $("#new-whiteboard-button").click(new_whiteboard_button_handler);
+
+        window.addEventListener("message", receiveMessage, false);
+        $(document).on("mouseup", function(){
+            console.log("mouseup detected.");
+            // $("iframe").trigger("mouseup");
+            // window.postMessage("mouse up detected", "http://localhost:3333/");
+            $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
+        });
+    }
+
+    function receiveMessage(event){
+        console.log(event.origin, event.data, event.source);
     }
 
     function new_whiteboard_button_handler(event){
@@ -129,6 +126,20 @@ var Capture = function() {
             console.log(data);
             window.location = "./view-layout";
         });
+    }
+
+    function isCaptureScreen() {
+        if (document.getElementById('record-screen').checked) {
+            screen_constraints = {
+                mandatory: { chromeMediaSource: 'screen' },
+                optional: []
+            };
+            videoConstraints.video = screen_constraints;
+        }
+    }
+
+    function capture_failure_handler(event){
+        console.log("capture failure");
     }
 
     function start_audio_capture(){

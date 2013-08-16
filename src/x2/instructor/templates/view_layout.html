@@ -10,6 +10,8 @@
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
     <link rel="stylesheet" href="{% static "css/style.css" %}" />    
+
+    <script src="{% static "js/vendor/modernizr.js" %}"></script>
   </head>
   <body>
     <div class="navbar">
@@ -20,6 +22,13 @@
         <li><a href="./capture">Capture Interaction</a></li> -->
         <!-- <li><a href="#">Manage Class</a></li> -->
       </ul>
+      <div class="pull-right profile-text">
+        <div>Instructor: {{ instructor.name }}</div>
+      </div>
+    </div>
+
+    <div id="alert" class="animation">
+        <span class="message text-center"></span><a class="close pull-right">[close]</a>
     </div>
 
     <div class="container">
@@ -30,7 +39,7 @@
                 <div class="section-title">Help Queue</div>
             </div>
             <div id="help-queue">
-                <div class="sort-option">
+<!--                 <div class="sort-option">
                     <label>sort by: </label>
                     <div class="btn-group">
                         
@@ -43,7 +52,7 @@
                         <li><a href="#">progress</a></li>
                       </ul>
                     </div>            
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="main col-12 col-sm-10 col-lg-10">
@@ -80,12 +89,13 @@
             </div>
           </div>
           <div class="modal-body modal-help">
-            <span class="modal-student-name"></span> needs help on <span class="help-resource"></span><br/>
+            <span class="modal-student-name"></span> needs help on learning sequence #<span class="help-resource"></span><br/>
             description: &quot;<span class="help-description"></span>&quot;
           </div>
           <div class="modal-footer">
             <button class='btn btn-primary start-help-button'>Help this student</button>
-            <button type='button' class='btn btn-primary end-help-button'>Mark as resolved</button>
+            <button class='btn btn-primary locate-button'>Locate this student</button>
+            <!-- <button type='button' class='btn btn-default end-help-button'>Mark as resolved</button> -->
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div><!-- /.modal-content -->
@@ -117,9 +127,12 @@
             // Capture.init();
             StudentLayout.init();
             HelpQueue.init();
-            Layout.init("{{course.id}}", "{{session.id}}", JSON.parse(blocks), JSON.parse(students), JSON.parse(session_students), true);
+            Layout.init("{{course.id}}", "{{session.id}}", "{{instructor.id}}", JSON.parse(blocks), JSON.parse(students), JSON.parse(session_students), true);
             Layout.poll_for_progress_updates();
-          
+
+            // showAlert("Student information is successfully loaded.");
+
+
 /*
             var socket = new io.Socket();
             socket.connect("http://localhost:3333");

@@ -65,8 +65,13 @@ def populate_session_students(session_id, students):
 @ensure_csrf_cookie
 def view_layout(request, course_slug, session_slug):
     try:
+        instructor_id = int(request.GET.get('iid'))
+    except (KeyError, TypeError):
+        instructor_id = 11
+    try:
         course = Course.objects.get(slug=course_slug)
         session = Session.objects.get(slug=session_slug)
+        instructor = Instructor.objects.get(id=instructor_id)
         students = Student.objects.filter(course=course.id)
         blocks = TableBlock.objects.filter(session=session.id)
         populate_session_students(session.id, students)
@@ -77,6 +82,7 @@ def view_layout(request, course_slug, session_slug):
         "view_layout.html",
         {"course": course,
         "session": session,
+        "instructor": instructor,
         "blocks": model_to_json(blocks),
         "students": model_to_json(students),
         "session_students": model_to_json(session_students)})
@@ -291,6 +297,7 @@ def ajax_capture_interaction_stop(request):
             # look at the recorded type and choose the extension accordingly
             filename = interaction_id + ".ogg"
             filepath = os.path.join(settings.MEDIA_ROOT, filename)
+            print "saving", filepath
             with open(filepath, "wb+") as fd:
                 for chunk in blob.chunks():
                     fd.write(chunk)
@@ -298,8 +305,11 @@ def ajax_capture_interaction_stop(request):
             interaction.ended_at = datetime.utcnow().replace(tzinfo=utc)
             interaction.save()
             url = settings.MEDIA_URL + filename
-        except:
-            print "error", url
+        except Exception as e:
+            import sys
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
             message = "database access error"
 
         try:

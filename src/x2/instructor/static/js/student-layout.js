@@ -11,6 +11,7 @@ var StudentLayout = function() {
         $(document).on("click", ".start-help-button", start_help_handler);
         $(document).on("click", ".end-help-button", end_help_handler);
         $(document).on("click", ".student-remove-button", student_remove_handler);
+        $(document).on("click", ".locate-button", locate_handler);
         // dismiss any open popover when clicked elsewhere on the screen
         /*
         $('body').on('click', function (e) {
@@ -36,6 +37,21 @@ var StudentLayout = function() {
         $(document).on("click", ".student", student_click_handler);
     }
 
+    function locate_handler(event){
+        $("#myModal").modal('hide');
+        var student_id =  $(this).closest("#myModal").attr("data-id");
+        var $student = $(".student[data-id='" + student_id + "']");
+        $student.addClass("brushing");
+        setTimeout(function(){
+            $student.removeClass("brushing");
+        }, 5000);
+        // brushing: highlight other blocks of this student
+        // $student.addClass("brushing new");
+        // $student.focus();
+        // $student.removeClass("new");
+        // $student.highlight();
+    }
+
     function student_click_handler(event){
         var student_id =  $(this).attr("data-id");
         var student = Layout.get_student_by_id(student_id);
@@ -43,6 +59,8 @@ var StudentLayout = function() {
         var help_request = Layout.get_help_request_by_student_id(student_id);
         if (help_request !== null)
             $("#myModal .modal-help").show();
+        else
+            $("#myModal .modal-help").hide();
         $("#myModal .modal-student-name").text(display_name(student["name"]));
         var $profile_img = $("<img/>").attr("src", "http://placehold.it/80x80");
         $("#myModal .modal-student-profile").html($profile_img);
@@ -58,16 +76,17 @@ var StudentLayout = function() {
 
     function start_help_handler(event){
         var student_id = $(event.target).closest("#myModal").attr("data-id");
+        var instructor_id = Layout.instructor_id;
         var help_request = Layout.get_help_request_by_student_id(student_id);
         console.log($(event.target), student_id);
         // TODO: add correct instructor ID
         window.location = "./capture?sid=" + student_id +
-                        "&iid=" + "11" +
+                        "&iid=" + instructor_id +
                         "&hr=" + help_request["id"];
     }
 
     function end_help_handler(event){
-        console.log(event);
+        // console.log(event);
         // var student_id = event
     }
 
@@ -235,6 +254,12 @@ var StudentLayout = function() {
         var $student = $(".student[data-id='" + student_id + "']");
         if ($student.length === 0)
             return;
+        if (!has_badge(student_id, badge_type)){
+            if (badge_type == "question")
+                showAlert($student.attr("data-name") + " requested help.");
+            else if (badge_type == "comment")
+                showAlert($student.attr("data-name") + " is getting help.");
+        }
         $student.find(".student-badge")
             .addClass("badge-" + badge_type)
             .html("<i class='icon-large icon-" + badge_type + "'></i>");
@@ -244,6 +269,12 @@ var StudentLayout = function() {
         var $student = $(".student[data-id='" + student_id + "']");
         if ($student.length === 0)
             return;
+        if (has_badge(student_id, badge_type)){
+            if (badge_type == "question")
+                showAlert($student.attr("data-name") + " canceled the help request.");
+            else if (badge_type == "comment")
+                showAlert($student.attr("data-name") + " successfully received help.");
+        }
         $student.find(".student-badge")
             .removeClass("badge-" + badge_type)
             .text("");
