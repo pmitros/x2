@@ -48,16 +48,20 @@ var Layout = function() {
                 var entry;
                 var type;
                 var value;
-                // handle progress updates
-                var results = JSON.parse(response["results"]);
-                for (name in results){
-                    console.log(name, results[name]);
-                    entry = results[name]["progress"];
-                    value = entry["complete"] + "/" + entry["total"];
-                    $(document).trigger(
-                        "student_status_update",
-                        [get_student_id_by_name(name), {"type": "update_progress", "value": value }]
-                    );
+                try{
+                    // handle progress updates
+                    var results = JSON.parse(response["results"]);
+                    for (name in results){
+                        console.log(name, results[name]);
+                        entry = results[name]["progress"];
+                        value = entry["complete"] + "/" + entry["total"];
+                        $(document).trigger(
+                            "student_status_update",
+                            [get_student_id_by_name(name), {"type": "update_progress", "value": value }]
+                        );
+                    }
+                } catch (e) {
+                    console.log("student queue info not available.");
                 }
                 // handle status updates: help requested, etc.
                 Layout.help_requests = JSON.parse(response["requests"]);
