@@ -174,7 +174,7 @@ def qwidget(request):
     student_id = get_student_id(request)
     lesson = "lessonA"
     course = "courseX"
-    template = "static/html/mblock.html"
+    template = "static/html/blockview.html"
     view_name = "student_view"
     class_id = "queuewidget"
 
