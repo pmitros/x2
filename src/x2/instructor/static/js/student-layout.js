@@ -80,9 +80,14 @@ var StudentLayout = function() {
         var help_request = Layout.get_help_request_by_student_id(student_id);
         console.log($(event.target), student_id);
         // TODO: add correct instructor ID
-        window.location = "./capture?sid=" + student_id +
-                        "&iid=" + instructor_id +
-                        "&hr=" + help_request["id"];
+        if (help_request === null) {
+            window.location = "./capture?sid=" + student_id +
+                            "&iid=" + instructor_id;
+        } else {
+            window.location = "./capture?sid=" + student_id +
+                            "&iid=" + instructor_id +
+                            "&hr=" + help_request["id"];
+        }
     }
 
     function end_help_handler(event){
