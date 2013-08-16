@@ -2,6 +2,7 @@
 
 var Capture = function() {
     var student_id;
+    var instructor_id;
     var interaction_id;
     var help_request;
     var whiteboard_count;
@@ -26,10 +27,11 @@ var Capture = function() {
     var screen_constraints;
 
 
-    function init(sid, iid, hr){
+    function init(sid, intid, instid, hr){
         whiteboard_count = 0;
         student_id = sid;
-        interaction_id = iid;
+        interaction_id = intid;
+        instructor_id = instid;
         help_request = hr[0];
         console.log(hr, help_request["id"]);
         if (hasGetUserMedia()) {
