@@ -36,12 +36,14 @@
     background-image: url('../img/Checkmark.svg');
     background-repeat: no-repeat;
     background-size: contain;
+    background-color: #eee;
 }
 
 .button_incorrect{
     background-image: url('../img/Cross.svg');
     background-repeat: no-repeat;
     background-size: contain;
+    background-color: #eee;
 }
 
 /*.thumb:hover{*/

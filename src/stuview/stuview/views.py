@@ -67,7 +67,7 @@ def populate(request):
 
     course = request.GET.get('course', 'courseX')
     lesson = request.GET.get('lesson', 'lessonA')
-    student_ids = ['student' + str(i) for i in range(1,6)]
+    student_ids = ['student' + str(i) for i in range(1,16)]
 
     for student_id in student_ids:
         usage_problem_1 = Usage("problemitem",
@@ -89,7 +89,7 @@ def populate(request):
 
         usage_problem_3 = Usage("problemitem",
                                 initial_state={'content': 'static/html/problem_3.html',
-                                               'thumb_caption':'Part-2: Calculating the Z-score',
+                                               'thumb_caption':'Part 2: Calculating the Z-score',
                                                'thumb_img':'static/img/p3.png',
                                                'student_id': student_id,
                                                'input': simplejson.dumps({
