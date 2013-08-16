@@ -127,13 +127,24 @@ def capture(request, course_slug, session_slug):
         interaction.t = instructor
         interaction.l = student
         interaction.save()
+    except ObjectDoesNotExist:
+        raise Http404
 
+    try:    
         help_request = HelpRequest.objects.get(id=hr_id)
         help_request.status = "in_progress"
         help_request.save()
-
     except ObjectDoesNotExist:
-        raise Http404
+        help_request = HelpRequest(
+            session_id=session.id,
+            student_id=student.id,
+            requested_at=datetime.utcnow().replace(tzinfo=utc),
+            description="started by the instructor" + instructor.name,
+            resource="0",
+            status="in_progress")
+        help_request.save()
+        hr_id = help_request.id
+
     return render_to_response(
         "capture_interaction.html",
         {"course": course,
