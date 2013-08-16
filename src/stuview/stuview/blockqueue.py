@@ -71,3 +71,6 @@ class QueueWidget(VerticalQueue):
         self.active_child_usage_id = usage_id
         #print self.active_child_usage_id
         self.save()
+
+    def get_active_inx(self):
+        return self.children.index(self.active_child_usage_id)

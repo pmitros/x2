@@ -297,6 +297,7 @@ def ajax_capture_interaction_stop(request):
             # look at the recorded type and choose the extension accordingly
             filename = interaction_id + ".ogg"
             filepath = os.path.join(settings.MEDIA_ROOT, filename)
+            print "saving", filepath
             with open(filepath, "wb+") as fd:
                 for chunk in blob.chunks():
                     fd.write(chunk)
@@ -304,8 +305,11 @@ def ajax_capture_interaction_stop(request):
             interaction.ended_at = datetime.utcnow().replace(tzinfo=utc)
             interaction.save()
             url = settings.MEDIA_URL + filename
-        except:
-            print "error", url
+        except Exception as e:
+            import sys
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno)
             message = "database access error"
 
         try:

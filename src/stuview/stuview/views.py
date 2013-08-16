@@ -70,10 +70,40 @@ def populate(request):
     student_ids = ['student' + str(i) for i in range(1,6)]
 
     for student_id in student_ids:
-        usage_problem_1 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 1', 'thumb_img':'static/img/problem_thumb.png'})
-        usage_problem_2 = Usage("problemitem", initial_state={'content': 'static/html/problem_2.html', 'thumb_caption':'Problem 2', 'thumb_img':'static/img/problem_thumb.png'})
-        usage_problem_3 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 3', 'thumb_img':'static/img/problem_thumb.png'})
-        usage_problem_4 = Usage("problemitem", initial_state={'content': 'static/html/problem_1.html', 'thumb_caption':'Problem 4', 'thumb_img':'static/img/problem_thumb.png'})
+        usage_problem_1 = Usage("problemitem",
+                                initial_state={'content': 'static/html/problem_1.html',
+                                               'thumb_caption':'Formulas and Definitions',
+                                               'thumb_img':'static/img/p1.png'})
+
+
+        # todo passing student_id couples a usage to a student_id -- not great
+        usage_problem_2 = Usage("problemitem",
+                                initial_state={'content': 'static/html/problem_2.html',
+                                               'thumb_caption':'Part 1: Sampling Distribution of the Sample Mean',
+                                               'thumb_img':'static/img/p2.png',
+                                               'student_id': student_id,
+                                               'input': simplejson.dumps({
+                                                   'input_mean': {'val': '', 'corr':514},
+                                                   'input_var': {'val': '', 'corr':456.3}
+                                               })})
+
+        usage_problem_3 = Usage("problemitem",
+                                initial_state={'content': 'static/html/problem_3.html',
+                                               'thumb_caption':'Part-2: Calculating the Z-score',
+                                               'thumb_img':'static/img/p3.png',
+                                               'student_id': student_id,
+                                               'input': simplejson.dumps({
+                                                   'input_zscore':{'val':'', 'corr':1.36}
+                                               })})
+
+        usage_problem_4 = Usage("problemitem",
+                                initial_state={'content': 'static/html/problem_4.html',
+                                               'thumb_caption':'Part: 3 Calculating the p-value',
+                                               'thumb_img':'static/img/p4.png',
+                                                'student_id': student_id,
+                                                'input':simplejson.dumps({
+                                                    'input_pvalue':{'val':'', 'corr':0.089}
+                                                })})
 
         usage = Usage("queuewidget", [usage_problem_1,
                                       usage_problem_2,

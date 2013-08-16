@@ -118,7 +118,15 @@ class Usage(object):
         # fields. This isolates us from the storage mechanism: however the
         # block saves its attributes, that's how the initial state will be
         # saved.
-        block = create_xblock(self)
+
+        # todo abstraction breaking, coupling usage to student_id, this is not intended
+        if 'student_id' in self.initial_state:
+            student_id = self.initial_state['student_id']
+            del self.initial_state['student_id']
+        else:
+            student_id = None
+
+        block = create_xblock(self, student_id)
         if self.initial_state:
             for name, value in self.initial_state.items():
                 setattr(block, name, value)
