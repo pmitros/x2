@@ -17,6 +17,7 @@ urlpatterns = patterns(
     'stuview.views',
     url(r'^$', 'index', name='index'),
     url(r'^qwidget', 'qwidget', name='qwidget'),
+    url(r'^bench', 'bench', name='bench'),
     url(r'^queue', 'queue', name='queue'),
     url(r'^populate', 'populate', name='populate'),
     url(r'^cleardb', 'cleardb', name='cleardb'),

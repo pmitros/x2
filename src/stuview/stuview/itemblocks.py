@@ -147,6 +147,7 @@ class TextBlock(ItemBlock):
 
 
 
+
 class VideoBlock(ItemBlock):
 
     def page_view(self):

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas 5 benchmarking </title>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <style type="text/css">
+
+        canvas {
+            border: 1px solid black;
+            cursor: crosshair;
+        }
+
+        .info {
+            float: left;
+            margin-right: 40px;
+        }
+
+        .info span {
+
+            font-weight: bold;
+        }
+    </style>
+
+
+    <script>
+        var lmb_down = false
+        var inline = false;
+        var last_point;
+        var last_timestamp = 0;
+        nevt = 0
+        runavg = 0
+
+        function get_ctx(){
+            return $('#canv').get(0).getContext('2d');
+        }
+
+        function time() {
+            var d = new Date();
+            return d.getTime();
+        }
+
+        function drawLine(from, to) {
+            var ctx = get_ctx()
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(to.x, to.y);
+            ctx.strokeStyle = '#00f'
+            ctx.stroke();
+        }
+
+        function on_clear() {
+            var ctx = get_ctx()
+            ctx.clearRect(0, 0, $("#canv").width(), $("#canv").height())
+
+            nevt = 0
+            runavg = 0
+        }
+
+        function resize_canvas() {
+            var iw = $(window).width();
+            var ih = $(window).height();
+
+            $('#canv')[0].width = 0.9 * iw
+            $('#canv')[0].height = 0.8 * ih
+        }
+
+        function on_mousedown(event) {
+            lmb_down = true
+            event.preventDefault()
+
+            console.log('mousedown')
+        }
+
+        function info_update(tm, draw) {
+            if (last_timestamp > 0) {
+
+                delta = tm - last_timestamp;
+                eps = 1000 / delta
+                runavg = (runavg * nevt + eps) / (nevt + 1)
+                nevt = nevt + 1
+
+                $("#perf").text(Math.round(eps))
+                $("#runavg").text(Math.round(runavg))
+                $("#draw").text(Math.round(draw))
+            }
+
+            last_timestamp = tm;
+        }
+
+        function on_mousemove(event) {
+            tm = time()
+            if (lmb_down) {
+                cur_point = {}
+                cur_point.x = event.pageX - $("#canv").offset().left
+                cur_point.y = event.pageY - $("#canv").offset().top
+
+                if (inline) {
+                    drawLine(last_point, cur_point)
+                }
+
+                inline = true
+                last_point = cur_point
+                info_update(tm, time() - tm)
+            }
+            event.preventDefault()
+        }
+        function on_mouseup(event) {
+
+            lmb_down = false
+            inline = false
+            last_timestamp = 0
+
+            console.log('mouseup')
+            event.preventDefault()
+        }
+
+        function multidraw(n) {
+
+            for (var i = 0; i < n; i = i+1) {
+
+                a = {}
+                b = {}
+                a.x = i % 100
+                a.y = i % 100 + 1
+
+                b.x = i % 100 + 50
+                b.y = i % 100 + 51
+
+                drawLine(a, b)
+            }
+        }
+        function run_lps_test(){
+            N = 10000
+            ta = time()
+            multidraw(N)
+            tb = time()
+
+            lpms = N / (tb - ta)
+
+            $("#mdraw").text(Math.round(lpms))
+            on_clear()
+        }
+
+        function init() {
+            $(window).resize(resize_canvas)
+            $('#canv').mousedown(on_mousedown)
+            $('#canv').mousemove(on_mousemove)
+            $(window).mouseup(on_mouseup)
+
+            canvas = $("#canv")[0]
+            canvas.addEventListener('touchstart', on_mousedown, false);
+            canvas.addEventListener('touchmove', on_mousemove, false);
+            window.addEventListener('touchend', on_mouseup, false);
+
+            run_lps_test()
+            resize_canvas();
+        }
+
+    </script>
+</head>
+
+<body onload="init();">
+
+<div style="overflow: hidden;">
+
+    <div class="info">Average events per second: <span id="runavg">??</span>
+    </div>
+    <div class="info">Frame drawing time <span id="draw">??</span></div>
+    <div class="info">lines per ms <span id="mdraw">??</span></div>
+    <div class="info">Events per second: <span id="perf">??</span></div>
+</div>
+<div>
+    <button id="clear" onclick="on_clear();">Clear</button>
+</div>
+<div>
+    <canvas id="canv" width="600" height="400"></canvas>
+</div>
+
+
+</body>
+
+
+</html>
+

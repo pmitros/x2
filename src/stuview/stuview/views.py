@@ -168,6 +168,10 @@ def allqinfo(request):
 
     return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 
+
+def bench(request):
+    return render_to_response('static/html/benchmark.html')
+
 @ensure_csrf_cookie
 def qwidget(request):
 
