@@ -22,6 +22,7 @@
         }
     </style>
 
+<script type='application/javascript' src='/static/js/fastclick.js'></script>
 
     <script>
         var lmb_down = false
@@ -143,6 +144,10 @@
         }
 
         function init() {
+
+                FastClick.attach(document.body);
+
+
             $(window).resize(resize_canvas)
             $('#canv').mousedown(on_mousedown)
             $('#canv').mousemove(on_mousemove)
