@@ -92,7 +92,7 @@
         }
 
         function point_to_list(p){
-            return [p.x, p.y, p.timestamp]
+            return [Math.round(p.x), Math.round(p.y), p.timestamp]
         }
 
         function on_mousedown(event) {
