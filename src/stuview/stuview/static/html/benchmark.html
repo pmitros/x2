@@ -26,11 +26,23 @@
 
     <script>
         var lmb_down = false
-        var inline = false;
+        var inline = false
         var last_point;
         var last_timestamp = 0;
         nevt = 0
         runavg = 0
+
+        CURVES = []
+        curcurv = []
+
+
+        function point(x,y,time){
+            return {
+                x: x,
+                y: y,
+                timestamp: time
+            }
+        }
 
         function get_ctx(){
             return $('#canv').get(0).getContext('2d');
@@ -66,11 +78,24 @@
             $('#canv')[0].height = 0.8 * ih
         }
 
-        function on_mousedown(event) {
-            lmb_down = true
-            event.preventDefault()
 
+
+        function relx(event){
+            return event.pageX - $("#canv").offset().left
+
+        }
+
+        function rely(event){
+            return event.pageY - $("#canv").offset().top
+        }
+
+        function on_mousedown(event) {
+            event.preventDefault()
+            lmb_down = true
+            inline = true
             console.log('mousedown')
+            curcurv = [] // start a new curve
+            last_point = point(relx(event), rely(event), time())
         }
 
         function info_update(tm, draw) {
@@ -93,14 +118,11 @@
             tm = time()
             if (lmb_down) {
                 cur_point = {}
-                cur_point.x = event.pageX - $("#canv").offset().left
-                cur_point.y = event.pageY - $("#canv").offset().top
+                cur_point.x = relx(event)
+                cur_point.y = rely(event)
 
-                if (inline) {
-                    drawLine(last_point, cur_point)
-                }
 
-                inline = true
+                drawLine(last_point, cur_point)
                 last_point = cur_point
                 info_update(tm, time() - tm)
             }
@@ -143,6 +165,132 @@
             on_clear()
         }
 
+        function line_from_two_points(a, b){
+
+            slope = (b.y - a.y)/(b.x- a.x)
+            intercept = b.y - slope*b.x
+
+            return {
+                slope: slope,
+                intercept: intercept
+            }
+        }
+
+        function midpoint(a,b){
+            x = (a.x + b.x)/2
+            y = (a.y + b.y)/2
+
+            return {
+                x: x,
+                y: y
+            }
+        }
+
+        function eval_line_at(line, x){
+            y = line.slope * x + line.intercept
+
+           return {
+               x: x,
+               y: y
+           }
+        }
+
+        function eval_quad_curve_at(curve, x){
+
+            y = curve.A*x*x + curve.B*x + curve.C
+
+            return {
+                x:x,
+                y:y
+            }
+        }
+
+        function quadratic_curve_from_initial_slope_and_two_points(slope, a, b){
+
+            // A*X^2 + B*X + C
+
+            A = (1/(b.x- a.x))*( (a.y- b.y)/(a.x- b.x) - slope)
+            B = slope - 2* a.x*A
+            C = b.y - A* a.x* a.x -B* a.x
+
+            return {
+                A: A,
+                B: B,
+                C: C
+            }
+        }
+
+        function draw_point(a){
+            ctx = get_ctx()
+            ctx.strokeStyle = '#000'
+            ctx.fillRect(a.x-1, d.y-1, 3,3)
+        }
+
+        function draw_curve(){
+
+            a = {x: 100, y:100}
+            b = {x: 200, y:200}
+            c = {x: 100, y:300}
+
+            d = {x: 200, y:400}
+
+            ctx  = get_ctx()
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#333'
+            ctx.beginPath()
+            ctx.moveTo(a.x, a.y)
+            ctx.quadraticCurveTo(b.x, b.y, c.x, c.y)
+
+            ctx.fillRect(d.x-1, d.y-1, 3, 3)
+            ctx.stroke()
+
+
+            // tangent one
+            t = line_from_two_points(b,c)
+
+            g = eval_line_at(t, 300)
+            h = eval_line_at(t, 100)
+            i = eval_line_at(t, 0)
+
+            ctx  = get_ctx()
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#33a'
+            ctx.beginPath()
+            ctx.moveTo(g.x, g.y)
+            ctx.lineTo(h.x, h.y)
+            ctx.lineTo(i.x, i.y)
+            ctx.stroke()
+
+
+            // direct line
+            ctx = get_ctx()
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#a33'
+            ctx.beginPath()
+            ctx.moveTo(c.x, c.y)
+            ctx.lineTo(d.x, d.y)
+            ctx.stroke()
+
+
+            // quad curve
+
+            curve = quadratic_curve_from_initial_slope_and_two_points(t.slope, c, d)
+
+            console.log(curve)
+
+            q1 = eval_quad_curve_at(curve, 0)
+            q2 = eval_quad_curve_at(curve, 50)
+            q3 = eval_quad_curve_at(curve, 100)
+            q4 = eval_quad_curve_at(curve, 200)
+            ctx = get_ctx()
+
+            draw_point(q1)
+
+            ctx.stroke()
+        }
+
+
+
         function init() {
 
                 FastClick.attach(document.body);
@@ -160,6 +308,7 @@
 
             run_lps_test()
             resize_canvas();
+
         }
 
     </script>
