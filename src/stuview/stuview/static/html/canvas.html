@@ -355,8 +355,8 @@
             }
 
             tt = test_target[0]
-            tt.addEventListener('MSPointerMove', trap, false)
-            test_target.trigger('mousemove')
+            tt.addEventListener('MSPointerDown', trap, false)
+            test_target.trigger('mousedown')
 
             test_target.remove()
 
