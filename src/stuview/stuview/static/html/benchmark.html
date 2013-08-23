@@ -129,6 +129,10 @@
             curcurv = [] // start a new curve
             last_point = getpoint(relx(event), rely(event), time())
 
+            if (mode == modes.point){
+                draw_point(last_point)
+            }
+
             if (collecting){curcurv.push(point_to_list(last_point))}
 
         }
