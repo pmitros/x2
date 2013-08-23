@@ -19,6 +19,7 @@ urlpatterns = patterns(
     url(r'^qwidget', 'qwidget', name='qwidget'),
     url(r'^bench', 'bench', name='bench'),
     url(r'^queue', 'queue', name='queue'),
+    url(r'^canvas', 'canvas', name='canvas'),
     url(r'^populate', 'populate', name='populate'),
     url(r'^cleardb', 'cleardb', name='cleardb'),
     url(r'^allqinfo', 'allqinfo', name='allqinfo'),

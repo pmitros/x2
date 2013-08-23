@@ -172,6 +172,9 @@ def allqinfo(request):
 def bench(request):
     return render_to_response('static/html/benchmark.html')
 
+def canvas(request):
+    return render_to_response('static/html/canvas.html')
+
 @ensure_csrf_cookie
 def qwidget(request):
 
