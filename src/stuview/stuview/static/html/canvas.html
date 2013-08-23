@@ -343,6 +343,8 @@
             }
         }
 
+        function hello(){ console.log('hello')}
+
         function ms_compatible(){
             var test_target = $('<div>')
             $('body').append(test_target)
@@ -353,10 +355,10 @@
             }
 
             tt = test_target[0]
-            tt.addEventListener('MSPointerDown', trap, false)
-            test_target.trigger('click')
+            tt.addEventListener('MSPointerMove', trap, false)
+            test_target.trigger('mouse')
 
-
+            test_target.remove()
 
             return compatible
         }
