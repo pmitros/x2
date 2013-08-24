@@ -40,6 +40,7 @@
 
         var PRESSURE_COLOR = false
         var PRESSURE_WIDTH = false
+        var PRESSURE_WEIGHT = 1
 
         CURVES = []
         curcurv = []
@@ -181,8 +182,7 @@
                         avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
 
                         if (PRESSURE_COLOR){
-                            var pw = 0.5
-                            alpha = (1-pw) + pw*avg_pressure
+                            alpha = (1-PRESSURE_WEIGHT) + PRESSURE_WEIGHT*avg_pressure
                             color = 'rgba(32,32,32,' + alpha + ')'
                         }
                         else{
