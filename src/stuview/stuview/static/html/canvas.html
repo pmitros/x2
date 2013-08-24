@@ -175,12 +175,12 @@
                 }
                 else if (mode == modes.line) {
                     if (PEN){
-                        avg_pressure = 0.5*(from.pressure + to.pressure)
+                        avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
                         alpha = ''+ Math.round(255*avg_pressure)
                         color = 'rgba(50,50,50,' + alpha + ')'
                         width = 1 + Math.round(4*avg_pressure)
 
-                        drawLine(from, to, color, width )
+                        drawLine(cur_point, last_point, color, width )
                     }
                     else {
                         drawLine(last_point, cur_point)
