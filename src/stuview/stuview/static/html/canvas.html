@@ -38,6 +38,9 @@
 
         var PEN = false // pointer enabled device
 
+        var PRESSURE_COLOR = false
+        var PRESSURE_WIDTH = false
+
         CURVES = []
         curcurv = []
         collecting = false
@@ -175,16 +178,24 @@
                 }
                 else if (mode == modes.line) {
                     if (PEN){
-                        console.log(last_point, cur_point)
 
-                        avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
-                        console.log(avg_pressure)
-                        alpha = ''+ Math.round(255*avg_pressure)
-                        color = 'rgba(50,50,50,' + alpha + ')'
-                        width = 1 + Math.round(4*avg_pressure)
+                        if (PRESSURE_COLOR){
+                            avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
+                            alpha = avg_pressure
+                            color = 'rgba(50,50,50,' + alpha + ')'
+                        }
+                        else{
+                            color = 'rgba(50,50,50,1)'
+                        }
 
-                        console.log(color, width)
-                        drawLine(cur_point, last_point, color )
+                        if (PRESSURE_WIDTH){
+                            width = 1 + Math.round(4*avg_pressure)
+                        }
+                        else{
+                            width = 2
+                        }
+
+                        drawLine(cur_point, last_point, color, width )
                     }
                     else {
                         drawLine(last_point, cur_point)
