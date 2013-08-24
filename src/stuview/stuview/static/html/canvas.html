@@ -179,7 +179,7 @@
                         alpha = ''+ Math.round(255*avg_pressure)
                         color = 'rgba(50,50,50,' + alpha + ')'
                         width = 1 + Math.round(4*avg_pressure)
-                        
+
                         drawLine(from, to, color, width )
                     }
                     else {
@@ -399,7 +399,7 @@
 
 
             if(PEN){
-                canvas = document.getElementById('#canv');
+                canvas = document.getElementById('canv');
                 canvas.addEventListener("MSPointerUp", on_mouseup, false);
                 canvas.addEventListener("MSPointerMove", on_mousemove, false);
                 canvas.addEventListener("MSPointerDown", on_mousedown, false);
