@@ -38,6 +38,8 @@
         nevt = 0
         runavg = 0
 
+        var PEN = false // pointer enabled device
+
         CURVES = []
         curcurv = []
         collecting = false
@@ -345,22 +347,32 @@
 
         function hello(){ console.log('hello')}
 
-        function ms_compatible(){
-            var test_target = $('<div>')
-            $('body').append(test_target)
 
-            compatible = false
-            function trap(evt){
-                compatible = true
+        function ie10_pointer(){
+            var ie10 = /MSIE (\d+)/.exec(navigator.userAgent)
+
+            if (ie10 != null){
+
+                version = parseInt( ie10[1])
+                if (version >= 10){
+                    ie10 = true
+                }
+                else{
+                    ie10 = false
+                }
+            }
+            else{
+                ie10 = false
             }
 
-            tt = test_target[0]
-            tt.addEventListener('MSPointerDown', trap, false)
-            test_target.trigger('mspointerdown')
+            var pointer = navigator.msPointerEnabled ? true : false
 
-            test_target.remove()
-
-            return compatible
+            if (ie10 && pointer){
+                return true
+            }
+            else {
+                return false
+            }
         }
 
         function init() {
@@ -369,7 +381,9 @@
                 FastClick.attach(document.body);
             });
 
-            console.log(ms_compatible())
+            PEN = ie10_pointer()
+            
+            console.log(PEN?'Pointer Enabled Device':'Pointer Disabled Device')
 
             $(window).resize(resize_canvas)
             $('#canv').mousedown(on_mousedown)
