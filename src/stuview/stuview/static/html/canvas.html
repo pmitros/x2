@@ -176,8 +176,9 @@
                 else if (mode == modes.line) {
                     if (PEN){
                         console.log(last_point, cur_point)
-                        console.log(avg_pressure)
+
                         avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
+                        console.log(avg_pressure)
                         alpha = ''+ Math.round(255*avg_pressure)
                         color = 'rgba(50,50,50,' + alpha + ')'
                         width = 1 + Math.round(4*avg_pressure)
