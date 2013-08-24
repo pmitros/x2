@@ -179,14 +179,14 @@
                 else if (mode == modes.line) {
                     if (PEN){
                         avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
-                        
-                        if (PRESSURE_COLOR){
 
-                            alpha = avg_pressure
-                            color = 'rgba(50,50,50,' + alpha + ')'
+                        if (PRESSURE_COLOR){
+                            var pw = 0.5
+                            alpha = (1-pw) + pw*avg_pressure
+                            color = 'rgba(32,32,32,' + alpha + ')'
                         }
                         else{
-                            color = 'rgba(50,50,50,1)'
+                            color = 'rgba(64,64,64,1)'
                         }
 
                         if (PRESSURE_WIDTH){
