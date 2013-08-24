@@ -132,7 +132,11 @@
         }
 
         function point_to_list(p){
-            return [Math.round(p.x), Math.round(p.y), p.timestamp]
+            pt = [Math.round(10*p.x)/10, Math.round(10*p.y)/10, p.timestamp]
+            if (p.pressure != undefined){
+                pt.push(p.pressure*1000)/1000
+            }
+            return pt
         }
 
 
