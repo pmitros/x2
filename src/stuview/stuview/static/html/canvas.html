@@ -74,8 +74,8 @@
             ctx.moveTo(from.x, from.y);
             ctx.lineTo(to.x, to.y);
 
-            ctx.strokeStyle = (lineColor == undefined)? lineColor : '#333'
-            ctx.lineWidth = (lineWidth == undefined)? lineWidth : 2
+            ctx.strokeStyle = (lineColor == undefined)? '#333' : lineColor
+            ctx.lineWidth = (lineWidth == undefined)? 2 : lineWidth
 
             ctx.stroke();
         }
