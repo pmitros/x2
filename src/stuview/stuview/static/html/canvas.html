@@ -178,9 +178,10 @@
                 }
                 else if (mode == modes.line) {
                     if (PEN){
-
+                        avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
+                        
                         if (PRESSURE_COLOR){
-                            avg_pressure = 0.5*(last_point.pressure + cur_point.pressure)
+
                             alpha = avg_pressure
                             color = 'rgba(50,50,50,' + alpha + ')'
                         }
