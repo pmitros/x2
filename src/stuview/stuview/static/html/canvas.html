@@ -26,8 +26,6 @@
         }
     </style>
 
-<script type='application/javascript' src='/static/js/fastclick.js'></script>
-
     <script>
         var lmb_down = false
         var inline = false
@@ -377,19 +375,14 @@
 
         function init() {
 
-            $(function() {
-                FastClick.attach(document.body);
-            });
-
             PEN = ie10_pointer()
-            
+
             console.log(PEN?'Pointer Enabled Device':'Pointer Disabled Device')
 
             $(window).resize(resize_canvas)
             $('#canv').mousedown(on_mousedown)
             $('#canv').mousemove(on_mousemove)
             $(window).mouseup(on_mouseup)
-
 
 
             canvas = $("#canv")[0]

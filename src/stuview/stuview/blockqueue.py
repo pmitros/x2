@@ -59,15 +59,12 @@ class QueueWidget(VerticalQueue):
         return {'total': total, 'complete': completed}
 
     def active_index(self):
-        print "requesting active index", self.active_child_usage_id, self.children
-
         if self.active_child_usage_id == '':
             return -1
         else:
             return self.children.index(self.active_child_usage_id)
 
     def set_active(self, usage_id):
-        print "setting active ", usage_id
         self.active_child_usage_id = usage_id
         #print self.active_child_usage_id
         self.save()
