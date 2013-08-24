@@ -134,7 +134,7 @@
         function point_to_list(p){
             pt = [Math.round(10*p.x)/10, Math.round(10*p.y)/10, p.timestamp]
             if (p.pressure != undefined){
-                pt.push(p.pressure*1000)/1000
+                pt.push( Math.round(p.pressure*1000)/1000)
             }
             return pt
         }
