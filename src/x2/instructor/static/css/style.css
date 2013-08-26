@@ -14,6 +14,24 @@ body {
     width: 100%;
     height: 800px;
     border: solid 1px #888888;
+    z-index: 2;
+    position: absolute;
+}
+
+#classroom-layout-overlay{
+    position: absolute;
+    width: 100%;
+    height: 800px;
+    background-image: url(/static/img/classroom.jpg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    -khtml-opacity: .30;
+    -moz-opacity: .30;
+    -ms-filter: "alpha(opacity=30)";
+    filter: alpha(opacity=30);
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.3);
+    opacity: .30;
+    z-index: 1;
 }
 
 #students-list {
