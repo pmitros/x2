@@ -175,6 +175,9 @@ def bench(request):
 def canvas(request):
     return render_to_response('static/html/canvas.html')
 
+def audio(request):
+    return render_to_response('static/html/audio.html')
+
 @ensure_csrf_cookie
 def qwidget(request):
 
