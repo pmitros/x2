@@ -23,9 +23,10 @@ var HelpQueue = function() {
             $student = $("#help-queue .student[data-id='" + HelpQueue.queue[i] + "']");
             if ($student.length === 0)
                 continue;
-            $student.css("top", i * ($student.height() + 10) + 85)
+            $student.css("top", i * ($student.height() + 10) + 50)
                 .css("left", "10%");
         }
+        $("#help-queue-count").text(HelpQueue.queue.length);
     }
 
     function addHandler(event, student_id){

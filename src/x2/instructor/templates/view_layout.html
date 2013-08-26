@@ -5,7 +5,7 @@
   <head>
     <title>Instructor View</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
@@ -14,18 +14,21 @@
     <script src="{% static "js/vendor/modernizr.js" %}"></script>
   </head>
   <body>
-    <div class="navbar">
-      <a class="navbar-brand" href="#">{{ course.slug }} Instructor</a>
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="./view-layout">View Class</a></li>
-<!--         <li><a href="./manage-layout">Manage Layout</a></li>
-        <li><a href="./capture">Capture Interaction</a></li> -->
-        <!-- <li><a href="#">Manage Class</a></li> -->
-      </ul>
-      <div class="pull-right profile-text">
-        <div>Instructor: {{ instructor.name }}</div>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+          <a class="navbar-brand" href="#">{{ course.slug }} Instructor</a>
       </div>
-    </div>
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="./view-layout">View Class</a></li>
+    <!--         <li><a href="./manage-layout">Manage Layout</a></li>
+            <li><a href="./capture">Capture Interaction</a></li> -->
+            <!-- <li><a href="#">Manage Class</a></li> -->
+          </ul>
+          <div class="navbar-right profile-text">
+            <div>Instructor: {{ instructor.name }}</div>
+          </div>
+
+    </nav>
 
     <div id="alert" class="animation">
         <span class="message text-center"></span><a class="close pull-right">[close]</a>
@@ -36,7 +39,7 @@
     <div class="row">
         <div class="sidebar col-12 col-sm-2 col-lg-2">
             <div class="section-header">
-                <div class="section-title">Help Queue</div>
+                <div class="section-title">Help Queue <span id="help-queue-count" class="badge">0</span></div>
             </div>
             <div id="help-queue">
 <!--                 <div class="sort-option">
@@ -95,7 +98,7 @@
           <div class="modal-footer">
             <button class='btn btn-primary start-help-button'>Help this student</button>
             <button class='btn btn-primary locate-button'>Locate this student</button>
-            <!-- <button type='button' class='btn btn-default end-help-button'>Mark as resolved</button> -->
+            <button type='button' class='btn btn-default mark-resolved-button'>Mark as resolved</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div><!-- /.modal-content -->
