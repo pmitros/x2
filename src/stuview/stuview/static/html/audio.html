@@ -3,9 +3,11 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Audio Testing</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
 </head>
 <body>
 
+<h1> Working working? working??</h1>
 
     <script>
         console.log('hello there')
@@ -15,6 +17,11 @@
                        navigator.webkitGetUserMedia);
 
         console.log(navigator.getMedia)
+
+         CFInstall.check({
+     mode: "overlay",
+     destination: "http://www.waikiki.com"
+   });
 
     </script>
 </body>
