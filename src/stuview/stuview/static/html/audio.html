@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="static/js/webrtc4all.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Audio Testing</title>
 </head>
 <body>
@@ -10,11 +10,12 @@
     <script>
         console.log('hello there')
 
-    var oSdpLocal, oSdpRemote;
-    var oPeerConnection;
 
-    // this is not part of the standard but is required
-    WebRtc4all_Init();
+        navigator.getMedia = ( navigator.getUserMedia ||
+                       navigator.webkitGetUserMedia);
+
+        console.log(navigator.getMedia)
+
     </script>
 </body>
 </html>
