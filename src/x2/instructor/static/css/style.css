@@ -89,6 +89,11 @@ button.menu-item {
     height: 80px;
 }
 
+.modal-student-profile img {
+    width: 160px;
+    height: 160px;
+}
+
 .student-badge {
     position: absolute;
     top: 0;
