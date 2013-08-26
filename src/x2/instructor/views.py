@@ -26,6 +26,7 @@ def socketio_subscribe_handler(request, socket, context, channel):
 
 student_data = []
 
+
 @on_message
 def socketio_message_handler(request, socket, context, message):
     print "message received", context, message

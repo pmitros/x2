@@ -9,7 +9,7 @@ var StudentLayout = function() {
         $(document).on("save_student", save_student_handler);
         $(document).on("student_status_update", status_update_handler);
         $(document).on("click", ".start-help-button", start_help_handler);
-        $(document).on("click", ".end-help-button", end_help_handler);
+        $(document).on("click", ".mark-resolved-button", mark_resolved_handler);
         $(document).on("click", ".student-remove-button", student_remove_handler);
         $(document).on("click", ".locate-button", locate_handler);
         // dismiss any open popover when clicked elsewhere on the screen
@@ -70,6 +70,10 @@ var StudentLayout = function() {
         $("#myModal .help-requested-at").text(display_help_time(help_request));
         $("#myModal .help-resource").text(display_help_resource(help_request));
         $("#myModal .help-description").text(display_help_description(help_request));
+        if ($(event.target).closest("#help-queue").length === 0) // in the classroom layout
+            $("#myModal .mark-resolved-button").hide();
+        else
+            $("#myModal .mark-resolved-button").show();
         $("#myModal").modal();
         $("#myModal").attr("data-id", student_id);
     }
@@ -90,9 +94,10 @@ var StudentLayout = function() {
         }
     }
 
-    function end_help_handler(event){
-        // console.log(event);
-        // var student_id = event
+    function mark_resolved_handler(event){
+        var student_id = $(event.target).closest("#myModal").attr("data-id");
+        console.log("marking", student_id, "as resolved");
+        $(document).trigger("help_resolved", [student_id]);
     }
 
     function student_remove_handler(event){
@@ -391,7 +396,8 @@ var StudentLayout = function() {
             remove_badge(student_id, "comment");
             data["badge"] = "";
         } else if (status["type"] === "start_interaction"){
-            $(document).trigger("addToHelpQueue", [student_id]);
+            // $(document).trigger("addToHelpQueue", [student_id]);
+            $(document).trigger("removeFromHelpQueue", [student_id]);
             if (session_student !== null)
                 session_student["badge"] = "comment";
             add_badge(student_id, "comment");
