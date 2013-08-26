@@ -67,7 +67,8 @@ def populate(request):
 
     course = request.GET.get('course', 'courseX')
     lesson = request.GET.get('lesson', 'lessonA')
-    student_ids = ['student' + str(i) for i in range(1,16)]
+    #student_ids = ['student' + str(i) for i in range(1,16)]
+    student_ids = ['Steven','Michael','Tom','Kyle','Hubert','Philip','Paul','Zach','Elena','Lydia','Merrie','Andrea','Carrie','Lauren','Amy']
 
     for student_id in student_ids:
         usage_problem_1 = Usage("problemitem",

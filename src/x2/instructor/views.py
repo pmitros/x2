@@ -386,6 +386,7 @@ def ajax_layout_students_progress(request):
             pending_requests = HelpRequest.objects.filter(
                 session_id=session.id,
                 status__in=["requested", "in_progress", "resolved"])
+            # multiple requests from a student: only get the most recent one
             requests = model_to_json(pending_requests)
         except ObjectDoesNotExist:
             print "no pending help requests"

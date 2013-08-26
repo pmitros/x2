@@ -65,6 +65,7 @@ var Capture = function() {
             // $("iframe").trigger("mouseup");
             // window.postMessage("mouse up detected", "http://localhost:3333/");
             $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
+            $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:2233/canvas/");
         });
     }
 
@@ -74,7 +75,8 @@ var Capture = function() {
 
     function new_whiteboard_button_handler(event){
         whiteboard_count += 1;
-        var board_url = "http://ls.edx.org:1337/" + interaction_id + "_" + whiteboard_count;
+//        var board_url = "http://ls.edx.org:1337/" + interaction_id + "_" + whiteboard_count;
+        var board_url = "http://ls.edx.org:2233/canvas/";
         console.log("opening new whiteboard at", board_url);
         $("#whiteboard").attr("src", board_url);
     }
