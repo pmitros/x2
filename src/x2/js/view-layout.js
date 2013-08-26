@@ -3,7 +3,7 @@ function create_student(student){
     var $student = $("<div/>")
                     .addClass("student ui-widget-content")
                     .attr("data-id", student);
-    var $profile_img = $("<img/>").attr("src", "http://ls.edx.org:3333/static/img/profile.png");
+    var $profile_img = $("<img/>").attr("src", "/static/img/profile.png");
     var $profile = $("<div/>").addClass("student-profile").append($profile_img);
     var $badge = $("<div/>").addClass("student-badge");
     var $progress = $("<div/>").addClass("student-progress").text("3/5");

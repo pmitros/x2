@@ -62,7 +62,7 @@ var StudentLayout = function() {
         else
             $("#myModal .modal-help").hide();
         $("#myModal .modal-student-name").text(display_name(student["name"]));
-        var $profile_img = $("<img/>").attr("src", "http://ls.edx.org:3333/static/img/profile.png");
+        var $profile_img = $("<img/>").attr("src", "/static/img/profile.png");
         $("#myModal .modal-student-profile").html($profile_img);
         $("#myModal .modal-student-group").text(display_group(session_student["group"]));
         $("#myModal .modal-student-progress").text(display_progress(session_student["progress"]));
@@ -123,7 +123,7 @@ var StudentLayout = function() {
                             .attr("data-id", student_id)
                             .attr("data-name", "anonymous")
                             .attr("data-group", "");
-            $profile_img = $("<img/>").attr("src", "http://ls.edx.org:3333/static/img/profile.png");
+            $profile_img = $("<img/>").attr("src", "/static/img/profile.png");
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
             $badge = $("<div/>").addClass("student-badge");
             $progress = $("<div/>").addClass("student-progress").text("n/a");
@@ -137,7 +137,7 @@ var StudentLayout = function() {
                             .attr("data-id", student_id)
                             .attr("data-name", student["name"])
                             .attr("data-group", session_student["group"]);
-            $profile_img = $("<img/>").attr("src", "http://ls.edx.org:3333/static/img/profile.png");
+            $profile_img = $("<img/>").attr("src", "/static/img/profile.png");
             $profile = $("<div/>").addClass("student-profile").append($profile_img);
             // TODO: remove duplicate code: use add_badge, add_group, etc.
             // if (session_student["badge"] !== "")

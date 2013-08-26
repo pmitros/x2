@@ -145,8 +145,8 @@ function formatDate(str) {
 function _prettyDate(date_str){
     var time_formats = [
     [60, 'just now', 1], // 60
-    [120, '1 minute ago', '1 minute from now'], // 60*2
-    [3600, 'minutes', 60], // 60*60, 60
+    [120, '1 min ago', '1 min from now'], // 60*2
+    [3600, 'mins', 60], // 60*60, 60
     [7200, '1 hour ago', '1 hour from now'], // 60*60*2
     [86400, 'hours', 3600], // 60*60*24, 60*60
     [172800, 'yesterday', 'tomorrow'], // 60*60*24*2
