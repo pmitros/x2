@@ -65,6 +65,7 @@ var Capture = function() {
             // $("iframe").trigger("mouseup");
             // window.postMessage("mouse up detected", "http://localhost:3333/");
             $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
+            $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:2233/canvas/");
         });
     }
 
