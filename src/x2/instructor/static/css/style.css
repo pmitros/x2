@@ -83,6 +83,12 @@ button.menu-item {
     width: 80px;
     height: 80px;
 }
+
+.student-profile img {
+    width: 80px;
+    height: 80px;
+}
+
 .student-badge {
     position: absolute;
     top: 0;
