@@ -35,19 +35,18 @@ var Capture = function() {
         help_request = hr[0];
         console.log(hr, help_request["id"]);
         if (hasGetUserMedia()) {
-          // Good to go!
+            window.URL = window.URL || window.webkitURL;
+            navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+                                      navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            bindEvents();
+            $("#capture-button").click();
+            $("#new-whiteboard-button").click();
+            $("#introModal").modal({
+            });
         } else {
-            alert('getUserMedia() is not supported in your browser');
+            // alert('getUserMedia() is not supported in your browser');
             console.log('getUserMedia() is not supported in your browser');
         }
-        window.URL = window.URL || window.webkitURL;
-        navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-                                  navigator.mozGetUserMedia || navigator.msGetUserMedia;
-        bindEvents();
-        $("#capture-button").click();
-        $("#new-whiteboard-button").click();
-        $("#introModal").modal({
-        });
     }
 
     function bindEvents(){
