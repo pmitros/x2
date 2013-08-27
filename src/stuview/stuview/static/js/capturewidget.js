@@ -1,14 +1,116 @@
 /*
 
- An HTML5 canvas for drawing
+ An HTML5 canvas for drawing and capturing
 
  */
 
 
+// get a timestamp
+function time() {
+    var d = new Date();
+    return d.getTime();
+}
+
+
+// paint_widget encapsulates drawing primitives for HTML5 canvas
+function paint_widget(canvas_id){
+
+    var canvas_id = canvas_id
+    var default_line_color = '#333'
+    var default_line_width = 2
+    var default_point_color = '#222'
+
+    function get_ctx() {
+        return $(canvas_id).get(0).getContext('2d'); // todo replace with static ctx?
+    }
+
+     this.draw_line = function(line) {
+         /*
+            line = {
+                from: point,
+                to: point,
+                color: string  // optional
+                width: int    // optional
+            }
+          */
+        var ctx = get_ctx()
+        ctx.beginPath();
+        ctx.moveTo(line.from.x, line.from.y);
+        ctx.lineTo(line.to.x, line.to.y);
+
+        ctx.strokeStyle = (line.color == undefined) ? default_line_color : line.color
+        ctx.lineWidth = (line.width == undefined) ? default_line_width : line.width
+        ctx.lineCap = 'round'
+
+        ctx.stroke();
+    }
+
+    this.draw_point = function(coord) {
+        var ctx = get_ctx()
+        ctx.beginPath();
+        ctx.fillStyle = default_point_color
+        ctx.fillRect(coord.x - 1, coord.y - 1, 3, 3)
+    }
+
+    this.clear = function(){
+        var ctx = get_ctx()
+        ctx.clearRect(0, 0, $(canvas_id).width(), $(canvas_id).height())
+    }
+}
+
+// smart_paint_widget wraps paint_widget to modify the drawing primitives
+// according to advanced input such as pressure
+function smart_paint_widget(canvas_id){
+
+    var canvas = new paint_widget(canvas_id)
+    var pressure_color = false  // Change color of lines dep on pressure?
+    var pressure_width = true  // Change width of lines dep on pressure?
+    var max_extra_line_width = 4
+
+    this.draw_line = function(line) {
+
+        /*
+            line = {
+               from: point,
+               to: point,
+               ...
+            }
+         */
+
+        avg_pressure = 0.5 * (line.from.pressure + line.to.pressure)
+
+        if (pressure_color) {
+            alpha = (1 - 0.5) + 0.5 * avg_pressure
+            line.color = 'rgba(32,32,32,' + alpha + ')' // todo use defaults
+        }
+        else {
+            line.color = 'rgba(64,64,64,1)'  // todo use defaults
+        }
+
+        if (pressure_width) {
+            line.width = 1 + Math.round(max_extra_line_width * avg_pressure) // todo use defaults
+        }
+        else {
+            line.width = 2 // todo use defaults
+        }
+
+        canvas.draw_line(line)
+    }
+
+    this.draw_point = canvas.draw_point
+    this.clear = canvas.clear
+}
+
+
+/* *****************************************************************************
+ *  capture_widget captures and displays input
+ * ****************************************************************************/
+
 function capture_widget(init){
 
-    var canvas_id = init.jqid
-
+    var canvas_dom_id = init.canvas_id
+    var canvas_id = '#' + canvas_dom_id
+    var canvas // drawing widget
 
     var lmb_down = false
     var inline = false
@@ -19,17 +121,13 @@ function capture_widget(init){
     nevt = 0
     runavg = 0
 
-    var PEN = false // pointer enabled device
+    var PEN = false // pointer enabled device // todo is necessary?
 
-    var PRESSURE_COLOR = false
-    var PRESSURE_WIDTH = true
-    var PRESSURE_WEIGHT = 1
+
 
     CURVES = []
     curcurv = []
     collecting = false
-
-    var CAPTURE
 
     function get_point(evt) {
 
@@ -46,52 +144,21 @@ function capture_widget(init){
         return pt
     }
 
-    function get_ctx() {
-        return $('#canv').get(0).getContext('2d');
-    }
-
-    function time() {
-        var d = new Date();
-        return d.getTime();
-    }
-
-    function drawLine(from, to, lineColor, lineWidth) { //todo pass dictionary
-        var ctx = get_ctx()
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-
-        ctx.strokeStyle = (lineColor == undefined) ? '#333' : lineColor
-        ctx.lineWidth = (lineWidth == undefined) ? 2 : lineWidth
-        ctx.lineCap = 'round'
-
-        ctx.stroke();
-    }
-
-
-    function draw_point(coord) {
-        var ctx = get_ctx()
-        ctx.beginPath();
-        ctx.fillStyle = '#222'
-        ctx.fillRect(coord.x - 1, coord.y - 1, 3, 3)
-    }
-
-
     function resize_canvas() {
         var iw = $(window).width();
         var ih = $(window).height();
 
-        $('#canv')[0].width = 0.9 * iw
-        $('#canv')[0].height = 0.8 * ih
+        $(canvas_id)[0].width = 0.9 * iw
+        $(canvas_id)[0].height = 0.8 * ih
     }
 
 
     function relx(event) {
-        return event.pageX - $("#canv").offset().left  //TODO compute statitically
+        return event.pageX - $(canvas_id).offset().left  //TODO compute statitically
     }
 
     function rely(event) {
-        return event.pageY - $("#canv").offset().top  //TODO compute statitically
+        return event.pageY - $(canvas_id).offset().top  //TODO compute statitically
     }
 
     function point_to_list(p) {
@@ -103,7 +170,7 @@ function capture_widget(init){
     }
 
 
-    function info_update(tm, draw) {
+    function info_update(tm) {
         if (last_timestamp > 0) {
 
             delta = tm - last_timestamp;
@@ -113,7 +180,6 @@ function capture_widget(init){
 
             $("#perf").text(Math.round(eps))
             $("#runavg").text(Math.round(runavg))
-            $("#draw").text(Math.round(draw))
         }
 
         last_timestamp = tm;
@@ -129,7 +195,7 @@ function capture_widget(init){
         last_point = get_point(event)
 
         if (mode == modes.point) {
-            draw_point(last_point)
+            canvas.draw_point(last_point)
         }
 
         if (collecting) {
@@ -143,33 +209,13 @@ function capture_widget(init){
             cur_point = get_point(event)
 
             if (mode == modes.point) {
-                draw_point(cur_point)
+                canvas.draw_point(cur_point)
             }
             else if (mode == modes.line) {
-                if (PEN) {
-                    avg_pressure = 0.5 * (last_point.pressure + cur_point.pressure)
-
-                    if (PRESSURE_COLOR) {
-                        alpha = (1 - PRESSURE_WEIGHT) + PRESSURE_WEIGHT * avg_pressure
-                        color = 'rgba(32,32,32,' + alpha + ')'
-                    }
-                    else {
-                        color = 'rgba(64,64,64,1)'
-                    }
-
-                    if (PRESSURE_WIDTH) {
-                        width = 1 + Math.round(4 * avg_pressure)
-                    }
-                    else {
-                        width = 2
-                    }
-
-                    drawLine(cur_point, last_point, color, width)
-                }
-                else {
-                    drawLine(last_point, cur_point)
-                }
-
+                canvas.draw_line({
+                        from: cur_point,
+                        to: last_point
+                    })
             }
             else {
                 alert("unknown drawing mode")
@@ -216,27 +262,10 @@ function capture_widget(init){
         return curves
     }
 
-    function replay(capture) {
 
-        for (i = 0; i < capture.length; i++) {
-            curve = capture[i]
-
-            for (j = 1; j < curve.length; j++) {
-                point = curve[j]
-                from = {}
-                to = {}
-                from.x = curve[j - 1][0]
-                from.y = curve[j - 1][1]
-                to.x = curve[j][0]
-                to.y = curve[j][1]
-
-                drawLine(from, to)
-            }
-        }
-    }
-
-
-    function ie10_pointer() {
+    // Returns true if this Internet Explorer 10 or greater running on a device
+    // with msPointer events enabled (like the surface pro)
+    function ie10_tablet_pointer() {
         var ie10 = /MSIE (\d+)/.exec(navigator.userAgent)
 
         if (ie10 != null) {
@@ -263,25 +292,23 @@ function capture_widget(init){
         }
     }
 
-    function rough() {
-        replay(CAPTURE)
-    }
 
-
+    // Initialize the widget (this function is called right after it is defined)
     function widget_init() {
 
-        PEN = ie10_pointer()
-
+        PEN = ie10_tablet_pointer()
         console.log(PEN ? 'Pointer Enabled Device' : 'Pointer Disabled Device')
 
 
         if (PEN) {
-            canvas = document.getElementById('canv');
-            canvas.addEventListener("MSPointerUp", on_mouseup, false);
-            canvas.addEventListener("MSPointerMove", on_mousemove, false);
-            canvas.addEventListener("MSPointerDown", on_mousedown, false);
+            canvas = new smart_paint_widget(canvas_id)
+            c = document.getElementById(canvas_dom_id);
+            c.addEventListener("MSPointerUp", on_mouseup, false);
+            c.addEventListener("MSPointerMove", on_mousemove, false);
+            c.addEventListener("MSPointerDown", on_mousedown, false);
         }
         else {
+            canvas = new paint_widget(canvas_id)
             $('#canv').mousedown(on_mousedown)
             $('#canv').mousemove(on_mousemove)
             $(window).mouseup(on_mouseup)
@@ -309,24 +336,29 @@ function capture_widget(init){
      *  Public Methods
      * *************************************************************************/
 
-    this.on_clear = function(){
-        var ctx = get_ctx()
-        ctx.clearRect(0, 0, $("#canv").width(), $("#canv").height())
+
+    // Erases the entire canvas
+    this.clear = function(){
+        canvas.clear()
 
         nevt = 0
         runavg = 0
     }
 
+
+    // Starts recording of strokes
     this.start_collecting = function() {
         collecting = true;
     }
 
+    // Stops recording of strokes and prints them
     this.stop_collecting = function(){
         collecting = false
         CURVES = norm_time(CURVES)
         console.log(JSON.stringify(CURVES))
     }
 
+    // Change the interpolation mode
     this.interpolation_mode = function(mode_str){
         mode = modes[mode_str]
     }

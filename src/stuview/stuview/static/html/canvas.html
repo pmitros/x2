@@ -26,11 +26,14 @@
 
         button {
             padding: 10px;
+            text-transform: uppercase;
         }
     </style>
 
 
     <script>
+
+
 
         //the main capturing widget
         var CANV;
@@ -39,7 +42,7 @@
         function init(){
 
             CANV = new capture_widget({
-                jqid: '#canv'
+                canvas_id: 'canv'
             })
         }
     </script>
@@ -50,14 +53,12 @@
 
 <div style="overflow: hidden;">
 
-    <div class="info">Average events per second: <span id="runavg">??</span>
-    </div>
-    <div class="info">Frame drawing time <span id="draw">??</span></div>
-    <div class="info">lines per ms <span id="mdraw">??</span></div>
+    <div class="info">Average events per second: <span id="runavg">??</span></div>
+
     <div class="info">Events per second: <span id="perf">??</span></div>
 </div>
 <div>
-    <button id="clear" onclick="CANV.on_clear();">Clear</button>
+    <button id="clear" onclick="CANV.clear();">Clear</button>
     <button onclick="CANV.interpolation_mode('line')">Lines</button>
     <button onclick="CANV.interpolation_mode('point')">Points</button>
     <button onclick="CANV.start_collecting()">start collecting</button>
