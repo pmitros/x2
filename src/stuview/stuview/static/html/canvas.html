@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Canvas 5 benchmarking </title>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src='/static/js/fastclick.js'></script>
     <style type="text/css">
 
         canvas {
@@ -27,6 +29,11 @@
     </style>
 
     <script>
+
+        $(function() {
+            FastClick.attach(document.body);
+        });
+
         var lmb_down = false
         var inline = false
         var last_point;
