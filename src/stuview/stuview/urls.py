@@ -20,6 +20,7 @@ urlpatterns = patterns(
     url(r'^bench', 'bench', name='bench'),
     url(r'^queue', 'queue', name='queue'),
     url(r'^canvas', 'canvas', name='canvas'),
+    url(r'^juhocanvas', 'juhocanvas', name='juhocanvas'),
     url(r'^audio', 'audio', name='audio'),
     url(r'^populate', 'populate', name='populate'),
     url(r'^cleardb', 'cleardb', name='cleardb'),
