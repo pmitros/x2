@@ -56,6 +56,25 @@ function paint_widget(canvas_id){
         var ctx = get_ctx()
         ctx.clearRect(0, 0, $(canvas_id).width(), $(canvas_id).height())
     }
+
+    this.relative_point = function(event){
+        pt = {
+            x: event.pageX - $(canvas_id).offset().left, // todo fix if canvas not in corner
+            y: event.pageY - $(canvas_id).offset().top,
+            t: time()
+        }
+
+        return pt
+    }
+
+
+    this.resize_canvas = function() {
+        var iw = $(window).width();
+        var ih = $(window).height();
+
+        $(canvas_id)[0].width = 0.9 * iw
+        $(canvas_id)[0].height = 0.8 * ih
+    }
 }
 
 // smart_paint_widget wraps paint_widget to modify the drawing primitives
@@ -97,8 +116,15 @@ function smart_paint_widget(canvas_id){
         canvas.draw_line(line)
     }
 
+    this.relative_point = function(event){
+        pt = canvas.relative_point(event)
+        pt.pressure  = event.pressure
+        return pt
+    }
+
     this.draw_point = canvas.draw_point
     this.clear = canvas.clear
+    this.resize_canvas = canvas.resize_canvas
 }
 
 
@@ -115,103 +141,59 @@ function capture_widget(init){
     var lmb_down = false
     var inline = false
     var last_point;
-    var last_timestamp = 0;
-    var modes = {'point': 1, 'line': 2}
-    var mode = modes['point']
-    nevt = 0
-    runavg = 0
-
-    var PEN = false // pointer enabled device // todo is necessary?
+    var VisualTypes = {
+        dots: 'dots',  // todo use ints to speed up?
+        lines: 'lines'
+    }
+    var active_visual_type = VisualTypes['lines']
 
 
+    var PEN = false // pointer enabled device
 
-    CURVES = []
-    curcurv = []
-    collecting = false
 
-    function get_point(evt) {
+    VISUALS = []
+    var current_visual;
 
-        pt = {
-            x: relx(evt),
-            y: rely(evt),
-            timestamp: time()
+
+    function empty_visual(){
+        return {
+            type: '',
+            doesItGetDeleted: false,
+            tDeletion: 0,
+            tEndEdit: 0,
+            tMin: 0,
+            properties:[],
+            vertices:[]
         }
-
-        if (PEN) {
-            pt.pressure = evt.pressure
-        }
-
-        return pt
     }
-
-    function resize_canvas() {
-        var iw = $(window).width();
-        var ih = $(window).height();
-
-        $(canvas_id)[0].width = 0.9 * iw
-        $(canvas_id)[0].height = 0.8 * ih
-    }
-
-
-    function relx(event) {
-        return event.pageX - $(canvas_id).offset().left  //TODO compute statitically
-    }
-
-    function rely(event) {
-        return event.pageY - $(canvas_id).offset().top  //TODO compute statitically
-    }
-
-    function point_to_list(p) {
-        pt = [Math.round(10 * p.x) / 10, Math.round(10 * p.y) / 10, p.timestamp]
-        if (p.pressure != undefined) {
-            pt.push(Math.round(p.pressure * 1000) / 1000)
-        }
-        return pt
-    }
-
-
-    function info_update(tm) {
-        if (last_timestamp > 0) {
-
-            delta = tm - last_timestamp;
-            eps = 1000 / delta
-            runavg = (runavg * nevt + eps) / (nevt + 1)
-            nevt = nevt + 1
-
-            $("#perf").text(Math.round(eps))
-            $("#runavg").text(Math.round(runavg))
-        }
-
-        last_timestamp = tm;
-    }
-
 
     function on_mousedown(event) {
         event.preventDefault()
         lmb_down = true
         inline = true
         //console.log('mousedown')
-        curcurv = [] // start a new curve
-        last_point = get_point(event)
 
-        if (mode == modes.point) {
+        current_visual = empty_visual()
+        current_visual.type = active_visual_type
+        last_point = canvas.relative_point(event)
+
+        current_visual.vertices.push(last_point)
+
+        if (active_visual_type == VisualTypes.dots) {
             canvas.draw_point(last_point)
-        }
-
-        if (collecting) {
-            curcurv.push(point_to_list(last_point))
         }
 
     }
     function on_mousemove(event) {
-        tm = time()
-        if (lmb_down) {
-            cur_point = get_point(event)
+        event.preventDefault()
 
-            if (mode == modes.point) {
+        if (lmb_down) {
+            cur_point = canvas.relative_point(event)
+
+            if (active_visual_type == VisualTypes.dots) {
                 canvas.draw_point(cur_point)
             }
-            else if (mode == modes.line) {
+            else if (active_visual_type == VisualTypes.lines) {
                 canvas.draw_line({
                         from: cur_point,
                         to: last_point
@@ -221,33 +203,52 @@ function capture_widget(init){
                 alert("unknown drawing mode")
             }
 
-            //
-
             last_point = cur_point
-            info_update(tm, time() - tm)
-
-            if (collecting) {
-                curcurv.push(point_to_list(last_point))
-            }
-
+            current_visual.vertices.push(last_point)
         }
-        event.preventDefault()
+
     }
     function on_mouseup(event) {
         event.preventDefault()
 
-        if (lmb_down && collecting) {
-            CURVES.push(curcurv)
+        if (lmb_down) {
+            VISUALS.push(current_visual)
         }
 
         lmb_down = false
         inline = false
-        last_timestamp = 0
 
         //console.log('mouseup')
 
     }
 
+
+    function draw_visuals(visuals){
+        for (var i=0; i<visuals.length; i++){
+            var visual = visuals[i]
+
+            if (visual.type == VisualTypes['dots']){
+                for(var j=0; j<visual.vertices.length; j++){
+                    var vertex = visual.vertices[j]
+                    canvas.draw_point(vertex)
+                }
+            }
+            else if(visual.type == VisualTypes['lines']){
+                for(var j=1; j<visual.vertices.length; j++){
+                    var from = visual.vertices[j-1]
+                    var to = visual.vertices[j]
+                    var line = {
+                        from: from,
+                        to: to
+                    }
+                    canvas.draw_line(line)
+                }
+            }
+            else {
+                console.log('unknown visual type')
+            }
+        }
+    }
 
     function norm_time(curves) {
 
@@ -297,17 +298,18 @@ function capture_widget(init){
     function widget_init() {
 
         PEN = ie10_tablet_pointer()
-        console.log(PEN ? 'Pointer Enabled Device' : 'Pointer Disabled Device')
-
 
         if (PEN) {
+            console.log('Pointer Enabled Device')
             canvas = new smart_paint_widget(canvas_id)
+
             c = document.getElementById(canvas_dom_id);
             c.addEventListener("MSPointerUp", on_mouseup, false);
             c.addEventListener("MSPointerMove", on_mousemove, false);
             c.addEventListener("MSPointerDown", on_mousedown, false);
         }
         else {
+            console.log('Pointer Disabled Device')
             canvas = new paint_widget(canvas_id)
             $('#canv').mousedown(on_mousedown)
             $('#canv').mousemove(on_mousemove)
@@ -326,7 +328,7 @@ function capture_widget(init){
 
          */
 
-        resize_canvas();
+        canvas.resize_canvas();
     }
 
     //Initialize the widget
@@ -340,27 +342,35 @@ function capture_widget(init){
     // Erases the entire canvas
     this.clear = function(){
         canvas.clear()
-
-        nevt = 0
-        runavg = 0
     }
-
 
     // Starts recording of strokes
     this.start_collecting = function() {
-        collecting = true;
+
     }
 
     // Stops recording of strokes and prints them
     this.stop_collecting = function(){
-        collecting = false
-        CURVES = norm_time(CURVES)
-        console.log(JSON.stringify(CURVES))
+
     }
 
     // Change the interpolation mode
-    this.interpolation_mode = function(mode_str){
-        mode = modes[mode_str]
+    this.set_active_visual_type = function(type_str){
+        active_visual_type = VisualTypes[type_str]
+    }
+
+    this.draw_all=function(){
+        draw_visuals(VISUALS)
+    }
+
+    this.undo=function(){
+
+        if(VISUALS.length > 0){
+            VISUALS.pop()
+            canvas.clear()
+            draw_visuals(VISUALS)
+        }
+
     }
 
 }

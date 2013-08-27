@@ -51,18 +51,15 @@
 
 <body onload="init();">
 
-<div style="overflow: hidden;">
 
-    <div class="info">Average events per second: <span id="runavg">??</span></div>
-
-    <div class="info">Events per second: <span id="perf">??</span></div>
-</div>
 <div>
     <button id="clear" onclick="CANV.clear();">Clear</button>
-    <button onclick="CANV.interpolation_mode('line')">Lines</button>
-    <button onclick="CANV.interpolation_mode('point')">Points</button>
+    <button onclick="CANV.set_active_visual_type('lines')">Lines</button>
+    <button onclick="CANV.set_active_visual_type('dots')">Dots</button>
     <button onclick="CANV.start_collecting()">start collecting</button>
     <button onclick="CANV.stop_collecting()">stop collecting</button>
+    <button onclick="CANV.draw_all()">draw all</button>
+    <button onclick="CANV.undo()">undo</button>
 </div>
 <div>
     <canvas id="canv" width="600" height="400"></canvas>
