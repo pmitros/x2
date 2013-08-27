@@ -176,6 +176,9 @@ def bench(request):
 def canvas(request):
     return render_to_response('static/html/canvas.html')
 
+def juhocanvas(request):
+    return render_to_response('static/html/juhocanvas.html')
+
 def audio(request):
     return render_to_response('static/html/audio.html')
 
