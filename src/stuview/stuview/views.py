@@ -11,7 +11,7 @@ from StringIO import StringIO
 
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.utils import simplejson
 
 from .runtime import Usage, create_xblock
@@ -179,15 +179,10 @@ def canvas(request):
 def juhocanvas(request):
     return render_to_response('static/html/juhocanvas.html')
 
+@ensure_csrf_cookie
 def audio(request):
-    return render_to_response('static/jrecorder/audio.html')
+    return render_to_response('static/msmedia/audio.html')
 
-def acceptaudio(request):
-
-    if request.method == 'POST':
-        print 'got a post request'
-
-    return HttpResponse("OK")
 
 @ensure_csrf_cookie
 def qwidget(request):
