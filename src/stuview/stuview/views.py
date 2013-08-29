@@ -180,7 +180,7 @@ def juhocanvas(request):
     return render_to_response('static/html/juhocanvas.html')
 
 def audio(request):
-    return render_to_response('static/html/audio.html')
+    return render_to_response('static/jrecorder/audio.html')
 
 @ensure_csrf_cookie
 def qwidget(request):
