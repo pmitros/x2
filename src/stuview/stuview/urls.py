@@ -22,6 +22,7 @@ urlpatterns = patterns(
     url(r'^canvas', 'canvas', name='canvas'),
     url(r'^juhocanvas', 'juhocanvas', name='juhocanvas'),
     url(r'^audio', 'audio', name='audio'),
+    url(r'^acceptaudio', 'acceptaudio', name='acceptaudio'),
     url(r'^populate', 'populate', name='populate'),
     url(r'^cleardb', 'cleardb', name='cleardb'),
     url(r'^allqinfo', 'allqinfo', name='allqinfo'),

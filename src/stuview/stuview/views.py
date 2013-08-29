@@ -182,6 +182,13 @@ def juhocanvas(request):
 def audio(request):
     return render_to_response('static/jrecorder/audio.html')
 
+def acceptaudio(request):
+
+    if request.method == 'POST':
+        print 'got a post request'
+
+    return HttpResponse("OK")
+
 @ensure_csrf_cookie
 def qwidget(request):
 
