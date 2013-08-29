@@ -1,6 +1,6 @@
-// Capture audio and sketch pad
+// Capture audio inside iframe
 
-var Capture = function() {
+var CaptureIframe = function() {
     var student_id;
     var instructor_id;
     var interaction_id;
@@ -34,57 +34,51 @@ var Capture = function() {
         instructor_id = instid;
         help_request = hr[0];
         console.log(hr, help_request["id"]);
-
-        var board_url = "http://ls.edx.org:2233/canvas/";
-        console.log("opening new whiteboard at", board_url);
-        $("#whiteboard").attr("src", board_url);
-
-        // if (hasGetUserMedia()) {
-        //     window.URL = window.URL || window.webkitURL;
-        //     navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-        //                               navigator.mozGetUserMedia || navigator.msGetUserMedia;
-        //     bindEvents();
-        //     $("#capture-button").click();
-        //     $("#new-whiteboard-button").click();
-        //     $("#introModal").modal({
-        //     });
-        // } else {
-        //     // alert('getUserMedia() is not supported in your browser');
-        //     console.log('getUserMedia() is not supported in your browser');
-        // }
+        if (hasGetUserMedia()) {
+            window.URL = window.URL || window.webkitURL;
+            navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+                                      navigator.mozGetUserMedia || navigator.msGetUserMedia;
+            bindEvents();
+            $("#capture-button").click();
+            // $("#new-whiteboard-button").click();
+            // $("#introModal").modal({
+            // });
+        } else {
+            // alert('getUserMedia() is not supported in your browser');
+            console.log('getUserMedia() is not supported in your browser');
+        }
     }
 
     function bindEvents(){
         // $(document).on("startCapture", start_capture_handler);
         // $(document).on("endCapture", end_capture_handler);
-        // $("#capture-button").click(capture_button_handler);
-        // $("#video-capture-button").click(video_capture_button_handler);
-        $("#save-interaction-button").click(save_interaction_button_handler);
-        $("#discard-interaction-button").click(discard_interaction_button_handler);
+        $("#capture-button").click(capture_button_handler);
+        $("#video-capture-button").click(video_capture_button_handler);
+        // $("#save-interaction-button").click(save_interaction_button_handler);
+        // $("#discard-interaction-button").click(discard_interaction_button_handler);
         // $("#new-whiteboard-button").click(new_whiteboard_button_handler);
 
-        window.addEventListener("message", receiveMessage, false);
-        $(document).on("mouseup", function(){
-            console.log("mouseup detected.");
-            // $("iframe").trigger("mouseup");
-            // window.postMessage("mouse up detected", "http://localhost:3333/");
-            // $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
-            $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:2233/canvas/");
-        });
+        // window.addEventListener("message", receiveMessage, false);
+        // $(document).on("mouseup", function(){
+        //     console.log("mouseup detected.");
+        //     // $("iframe").trigger("mouseup");
+        //     // window.postMessage("mouse up detected", "http://localhost:3333/");
+        //     // $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
+        //     $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:2233/canvas/");
+        // });
     }
 
-    function receiveMessage(event){
-        console.log(event.origin, event.data, event.source);
-    }
+    // function receiveMessage(event){
+    //     console.log(event.origin, event.data, event.source);
+    // }
 
-/*
-    function new_whiteboard_button_handler(event){
-        whiteboard_count += 1;
-//        var board_url = "http://ls.edx.org:1337/" + interaction_id + "_" + whiteboard_count;
-        var board_url = "http://ls.edx.org:2233/canvas/";
-        console.log("opening new whiteboard at", board_url);
-        $("#whiteboard").attr("src", board_url);
-    }
+//     function new_whiteboard_button_handler(event){
+//         whiteboard_count += 1;
+// //        var board_url = "http://ls.edx.org:1337/" + interaction_id + "_" + whiteboard_count;
+//         var board_url = "http://ls.edx.org:2233/canvas/";
+//         console.log("opening new whiteboard at", board_url);
+//         $("#whiteboard").attr("src", board_url);
+//     }
 
     function capture_button_handler(event){
         if ($(this).hasClass("recording")){
@@ -109,7 +103,7 @@ var Capture = function() {
             start_video_capture();
         }
     }
-*/
+
     function discard_interaction_button_handler(event){
         // window.location = "./view-layout";
         window.location = "./view-layout?iid=" + instructor_id;
@@ -138,7 +132,6 @@ var Capture = function() {
         });
     }
 
-/*
     function isCaptureScreen() {
         if (document.getElementById('record-screen').checked) {
             screen_constraints = {
@@ -156,15 +149,23 @@ var Capture = function() {
     function start_audio_capture(){
         if (!audioStream)
             navigator.getUserMedia(audioConstraints, function(stream) {
-                if (window.IsChrome) stream = new window.MediaStream(stream.getAudioTracks());
+                if (window.IsChrome)
+                    stream = new window.MediaStream(stream.getAudioTracks());
+
                 audioStream = stream;
-                audio.src = URL.createObjectURL(audioStream);
-                audio.play();
-                // "audio" is a default type
-                recorder = window.RecordRTC(stream, {
-                    type: 'audio'
-                });
-                recorder.startRecording();
+
+                if (isIE()) {
+                    audioStream.msStartRecording();
+                    console.log(audio.src);
+                } else {
+                    audio.src = URL.createObjectURL(audioStream);
+                    audio.play();
+                    // "audio" is a default type
+                    recorder = window.RecordRTC(stream, {
+                        type: 'audio'
+                    });
+                    recorder.startRecording();
+                }
             }, function() {
             });
         else {
@@ -206,15 +207,25 @@ var Capture = function() {
 
     function stop_audio_capture(){
         audio.src = '';
-        recorder.stopRecording(function(url) {
-            // console.log(url);
-            // document.getElementById('audio-url-preview').innerHTML = '<a href="' + url + '" target="_blank">play recording</a>';
-            upload_file(recorder.getBlob());
-        });
         // TODO: update interaction information
+        if (isIE()){
+            audioStream.msStopRecording(upload_file);
+            // setTimeout("audioStream.msStopRecording(upload_file)", 200);
+        } else {
+            recorder.stopRecording(function(url) {
+                // console.log(url);
+                // document.getElementById('audio-url-preview').innerHTML = '<a href="' + url + '" target="_blank">play recording</a>';
+                upload_file(recorder.getBlob());
+            });
+        }
     }
 
+
     function upload_file(blob){
+        if (isIE()){
+            playMediaObject.Play(blob);
+        }
+
         console.log(blob, help_request["id"]);
         var formData = new FormData();
         formData.append('interaction_id', interaction_id);
@@ -240,7 +251,6 @@ var Capture = function() {
            contentType: false,
            success: function(response) {
                 console.log(response["message"]);
-                // document.getElementById('audio-url-preview').innerHTML = '<a href="' + response["url"] + '" target="_blank">play recording</a>';
                 $("#myModal .modal-title").text("Interaction successfully recorded.");
                 $("#myModal .modal-body #preview-audio").attr("src", response["url"]);
                 $('#myModal').modal({
@@ -281,7 +291,7 @@ var Capture = function() {
     //     localStream.stop();
     //     audio.play();
     // }
-*/
+
 
     return {
         init: init

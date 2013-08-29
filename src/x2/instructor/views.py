@@ -103,6 +103,60 @@ def manage_layout(request, course_slug, session_slug):
         "blocks": model_to_json(blocks)})
 
 
+# TODO: duplicate code with capture(). Refactor.
+def capture_iframe(request, course_slug, session_slug):
+    try:
+        student_id = int(request.GET.get('sid'))
+    except (KeyError, TypeError):
+        student_id = 1
+    try:
+        instructor_id = int(request.GET.get('iid'))
+    except (KeyError, TypeError):
+        instructor_id = 11  # juho
+    try:
+        hr_id = int(request.GET.get('hr'))
+    except (KeyError, TypeError):
+        hr_id = -1
+    try:
+        course = Course.objects.get(slug=course_slug)
+        session = Session.objects.get(slug=session_slug)
+        student = Student.objects.get(id=student_id)
+        instructor = Instructor.objects.get(id=instructor_id)
+        interaction = Interaction(
+            started_at=datetime.utcnow().replace(tzinfo=utc),
+            ended_at=datetime.utcnow().replace(tzinfo=utc),
+            is_rejected=True)
+        interaction.t = instructor
+        interaction.l = student
+        interaction.save()
+    except ObjectDoesNotExist:
+        raise Http404
+
+    try:    
+        help_request = HelpRequest.objects.get(id=hr_id)
+        help_request.status = "in_progress"
+        help_request.save()
+    except ObjectDoesNotExist:
+        help_request = HelpRequest(
+            session_id=session.id,
+            student_id=student.id,
+            requested_at=datetime.utcnow().replace(tzinfo=utc),
+            description="started by the instructor" + instructor.name,
+            resource="0",
+            status="in_progress")
+        help_request.save()
+        hr_id = help_request.id
+
+    return render_to_response(
+        "capture_iframe.html",
+        {"course": course,
+        "session": session,
+        "student": student,
+        "instructor": instructor,
+        "interaction": interaction,
+        "help_request": model_to_json([help_request])})
+
+
 def capture(request, course_slug, session_slug):
     try:
         student_id = int(request.GET.get('sid'))
@@ -153,6 +207,7 @@ def capture(request, course_slug, session_slug):
         "student": student,
         "instructor": instructor,
         "interaction": interaction,
+        "hr_id": hr_id,
         "help_request": model_to_json([help_request])})
 
 
@@ -296,6 +351,7 @@ def ajax_capture_interaction_stop(request):
     """
     store captured audio data
     """
+    print "interaction stop"
     message = "success"
     url = "#"
     # TODO: update whiteboard, ended_at information
@@ -325,9 +381,14 @@ def ajax_capture_interaction_stop(request):
             message = "database access error"
 
         try:
-            help_request = HelpRequest.objects.get(id=request.POST['hr_id'])
-            help_request.status = "resolved"
-            help_request.save()
+            # mark all help requests from this student as resolved
+            # help_request = HelpRequest.objects.get(id=request.POST['hr_id'])
+            # help_request.status = "resolved"
+            # help_request.save()
+            help_requests = HelpRequest.objects.filter(student=request.POST['student_id'])
+            for hr in help_requests:
+                hr.status = "resolved"
+                hr.save()
         except:
             print "help request processing error"
             message = "help request processing error"
@@ -385,9 +446,36 @@ def ajax_layout_students_progress(request):
         try:
             pending_requests = HelpRequest.objects.filter(
                 session_id=session.id,
-                status__in=["requested", "in_progress", "resolved"])
-            # multiple requests from a student: only get the most recent one
-            requests = model_to_json(pending_requests)
+                status__in=["requested", "in_progress"])
+            # TODO: add "resolved" and show them as previous resolved requests
+
+            # handling multiple requests from a student
+            # if in discussion, show only that and ignore all others
+            # if not in discussion, show only the most recent unattended request
+            from collections import Counter
+            request_count = Counter()
+            most_recent_request = {}
+            progress_count = Counter()
+            filtered_requests = []
+            # count in-progress and requested items per student
+            for pr in pending_requests:
+                # if "in_progress", ignore all "requested"
+                if pr.status == "in_progress":
+                    filtered_requests.append(pr)
+                    progress_count[pr.student.id] += 1
+                elif pr.status == "requested":
+                    request_count[pr.student.id] += 1
+                    if pr.student.id not in most_recent_request:
+                        most_recent_request[pr.student.id] = pr
+                    if most_recent_request[pr.student.id].requested_at <= pr.requested_at:
+                        most_recent_request[pr.student.id] = pr
+
+            for student_id in most_recent_request:
+                if student_id not in progress_count:
+                    filtered_requests.append(most_recent_request[student_id])
+
+            requests = model_to_json(filtered_requests)
+
         except ObjectDoesNotExist:
             print "no pending help requests"
 

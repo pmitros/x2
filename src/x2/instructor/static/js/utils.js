@@ -1,3 +1,43 @@
+
+
+function getInternetExplorerVersion()
+// Returns the version of Internet Explorer or a -1
+// (indicating the use of another browser).
+{
+  var rv = -1; // Return value assumes failure.
+  if (navigator.appName == 'Microsoft Internet Explorer')
+  {
+    var ua = navigator.userAgent;
+    var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+    if (re.exec(ua) != null)
+      rv = parseFloat( RegExp.$1 );
+  }
+  return rv;
+}
+
+function isIE(){
+    if (getInternetExplorerVersion() === -1)
+        return false;
+    return true;
+}
+
+function checkVersion()
+{
+  var msg = "You're not using Internet Explorer.";
+  var ver = getInternetExplorerVersion();
+
+  if ( ver > -1 )
+  {
+    if ( ver >= 8.0 ) 
+      msg = "You're using a recent copy of Internet Explorer."
+    else
+      msg = "You should upgrade your copy of Internet Explorer.";
+  }
+  alert( msg );
+}
+
+
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -130,7 +170,7 @@ function bindSortableTableEvents(){
             is_ascending = $option.attr("data-default") == "ascending";
             $option.html("&nbsp;");
         }
-    });    
+    });
 }
 
 
@@ -144,7 +184,7 @@ function formatDate(str) {
 
 function _prettyDate(date_str){
     var time_formats = [
-    [60, 'just now', 1], // 60
+    [60, 'just now', '1'], // 60
     [120, '1 min ago', '1 min from now'], // 60*2
     [3600, 'mins', 60], // 60*60, 60
     [7200, '1 hour ago', '1 hour from now'], // 60*60*2
@@ -161,7 +201,7 @@ function _prettyDate(date_str){
     [58060800000, 'centuries', 2903040000] // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
     ];
     var time = ('' + date_str).replace(/-/g,"/").replace(/[TZ]/g," ").replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-    if(time.substr(time.length-4,1)==".") time =time.substr(0,time.length-4);
+    if(time.substr(time.length-4,1)==".") time = time.substr(0,time.length-4);
     var seconds = (new Date - new Date(time)) / 1000;
     var token = 'ago', list_choice = 1;
     if (seconds < 0) {
@@ -170,6 +210,7 @@ function _prettyDate(date_str){
         list_choice = 2;
     }
     var i = 0, format;
+    console.log(time, seconds, format, list_choice);
     while (format = time_formats[i++])
     if (seconds < format[0]) {
       if (typeof format[2] == 'string')

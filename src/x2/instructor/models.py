@@ -123,7 +123,7 @@ class Interaction(models.Model):
     whiteboard_path = models.URLField(blank=True)
     instructor_summary = models.CharField(max_length=1024, blank=True, null=True)
     student_summary = models.CharField(max_length=1024, blank=True, null=True)
-    
+
     def toJSON(self):
         return json.dumps(self, default=dthandler, sort_keys=True)
 

@@ -4,7 +4,6 @@
 <html>
   <head>
     <title>Instructor View</title>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" /> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
@@ -25,6 +24,12 @@
             -moz-user-select: moz-none;
             -ms-user-select: none;
             user-select: none;            
+        }
+        #audio-rtc {
+            display: none;
+            width: 100%;
+            height: 40px;
+            border: 0;            
         }
         #whiteboard {
             width: 100%;
@@ -79,14 +84,30 @@
             </div>
         </div> -->
         <div class="main col-12 col-sm-12 col-lg-12">
+<!--             <div id="statusPanel" style="border: 1px solid red; width: 100%">
+              Test running....
+            </div>
+
+            <div id="parent">
+              <div id="prev">before</div><div id="toBeReplaced"> 
+                fallback content goes here 
+              </div><div id="after">after</div>
+            </div> -->
+
             <div class="section-header">
                 <span class="section-title col-12 col-sm-6 col-lg-6">Sketchpad</span>
                 <span class="col-12 col-sm-6 col-lg-6">
+<!--                     <OBJECT ID="ChromeFrame" WIDTH="100%" HEIGHT="400px" CODEBASE="http://www.google.com"
+                              CLASSID="CLSID:E0A900DF-9611-4446-86BD-4B1D47E7DB2A">
+                          <PARAM NAME="src" VALUE="./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}">
+                          <embed ID="ChromeFramePlugin" WIDTH="100%" HEIGHT="400px" NAME="ChromeFrame"
+                              SRC="./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}" TYPE="application/chromeframe">
+                          </embed>
+                    </OBJECT>    -->    
+                    <!-- <iframe id="audio-rtc" src="./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}">
+                    </iframe>  -->
                     <audio id="audio" class="menu-item" autoplay loop controls></audio>
                     <button id="capture-button" class="menu-item btn btn-medium btn-danger">Record Audio</button>
-                    <button id="new-whiteboard-button" class="menu-item btn btn-medium btn-primary">New Whiteboard</button>
-                    
-                    <!-- <div id="audio-url-preview"></div> -->
                 </span>                
             </div>
             <!-- <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe> -->
@@ -153,26 +174,98 @@
     <script src="{% static "js/vendor/jquery-1.10.2.min.js" %}"></script>
     <script src="{% static "js/vendor/jquery-ui.min.js" %}"></script>
     <script src="{% static "js/vendor/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/vendor/socket.io.js" %}"></script>
-    <script src="{% static "js/vendor/RecordRTC.js" %}"></script>    
-    <!-- Optionally enable responsive features in IE8 -->
-    <!-- // <script src="js/respond.js"></script> -->
     <script src="{% static "js/layout.js" %}"></script>
     <script src="{% static "js/touch-device.js" %}"></script>
     <script src="{% static "js/student-layout.js" %}"></script>
-    <script src="{% static "js/block-layout.js" %}"></script>
-    <script src="{% static "js/help-queue.js" %}"></script>
-    <script src="{% static "js/capture.js" %}"></script>
+    <script src="{% static "js/block-layout.js" %}"></script>    
     <script src="{% static "js/utils.js" %}"></script>
+    <script src="{% static "js/capture.js" %}"></script>
+    <script src="{% static "js/capture-iframe.js" %}"></script>
+
+    <script src="{% static "js/vendor/InitActiveXObjects.js" %}"></script>
+    <script src="{% static "js/vendor/Common.js" %}"></script>
+    <script src="{% static "js/vendor/MsGetUserMedia.js" %}"></script>
+    
+
+
+<!--     // <script type="text/javascript" src="{% static "js/vendor/chrome_frame_tester_helpers.js" %}"></script>
+    // <script type="text/javascript" src="{% static "js/vendor/CFInstance.js" %}"></script> -->
+
     <script>
-        $(document).ready(function(){
-            console.log("{{student.id}}");
-            console.log("{{interaction.id}}");
-            // var interaction = JSON.stringify({{interaction|safe}});
+    // function GetChromeFrame() {
+    //     var chromeFrame = window.document.ChromeFrame;
+    //     return chromeFrame;
+    // }
+      
+    // function OnChromeFrameMessage(text) {
+    //     window.alert("In host:  \r\nMessage from ChromeFrame: " + text);
+      
+    //     var chromeFrame = GetChromeFrame();
+    //     chromeFrame.PostMessageToFrame("Hello from host");
+    //     return "OK";
+    // }
+      
+    // function OnNavigate() {
+    //     var chromeFrame = GetChromeFrame();
+    //     chromeFrame.src = "./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}";
+    // }
+      
+    // function onLoad() {
+    //     OnNavigate();
+    // }    
+        $(document).ready(function(){      
+            // var testName = "CFInstanceBasic";
+            // (function(){
+            //   try{
+            //     var cf = new CFInstance({
+            //       src: "./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}",
+            //       node: "toBeReplaced"
+            //     });
+
+            //     if (document.getElementById("parent") != cf.parentNode ) {
+            //       onFailure(testName, 1, "parent node mismatch");
+            //       return;
+            //     }
+
+            //     if (document.getElementById("prev").nextSibling != cf) {
+            //       onFailure(testName, 1, "sibling node mismatch");
+            //       return;
+            //     }
+
+            //     if (document.getElementById("after").previousSibling != cf) {
+            //       onFailure(testName, 1, "sibling node mismatch");
+            //       return;
+            //     }
+
+            //     onSuccess(testName, 1);
+
+            //   } catch (e) {
+            //     onFailure(testName, 1,
+            //               "CFInstance constructor failed with error: "+e);
+            //   } 
+            // })();
+
+            // if (isIE()){
+            //     var chromeFrame = GetChromeFrame();
+            //     chromeFrame.onmessage = OnChromeFrameMessage;
+            //     OnNavigate();
+            //     console.log("IE detected");
+            // } else {
+            //     $("#ChromeFrame").hide();
+            //     $("#audio-rtc").show();
+            // }
+            // $("#introModal").modal({
+            // });
+            // console.log("{{student.id}}", "{{instructor.id}}", "{{hr_id}}");
+        //     console.log("{{interaction.id}}");
+            // $(document).on("mousemove", function(e){console.log("mouse", e["originalEvent"]["mozPressure"])});
+            // $(document).on("touchmove", function(e){console.log("touch", e["mozPressure"])});
+            var interaction = JSON.stringify({{interaction|safe}});
             var help_request = JSON.stringify({{help_request|safe}});
             TouchDevice.init();
-            // StudentLayout.init();
+            StudentLayout.init();
             Capture.init("{{student.id}}", "{{interaction.id}}", "{{instructor.id}}", JSON.parse(help_request));
+            CaptureIframe.init("{{student.id}}", "{{interaction.id}}", "{{instructor.id}}", JSON.parse(help_request));
 
             setTimeout(function(){
                 $("#introModal button").removeAttr("disabled");
