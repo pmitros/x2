@@ -1,0 +1,49 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instructor View</title>
+    <!-- <meta http-equiv="X-UA-Compatible" content="chrome=1" />  -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
+    <link rel="stylesheet" href="{% static "css/style.css" %}" /> 
+  </head>
+  <body>
+    <audio id="audio" class="menu-item" autoplay loop controls></audio>
+    <button id="capture-button" class="menu-item btn btn-medium btn-danger">Record Audio</button>
+<!-- <button id="new-whiteboard-button" class="menu-item btn btn-medium btn-primary">New Whiteboard</button> -->
+
+        <script src="{% static "js/vendor/jquery-1.10.2.min.js" %}"></script>
+        <script src="{% static "js/vendor/jquery-ui.min.js" %}"></script>
+        <script src="{% static "js/vendor/bootstrap.min.js" %}"></script>
+        <script src="{% static "js/vendor/socket.io.js" %}"></script>
+        <script src="{% static "js/vendor/RecordRTC.js" %}"></script>    
+        <!-- Optionally enable responsive features in IE8 -->
+        <!-- // <script src="js/respond.js"></script> -->
+        <script src="{% static "js/layout.js" %}"></script>
+        <script src="{% static "js/touch-device.js" %}"></script>
+        <script src="{% static "js/student-layout.js" %}"></script>
+        <script src="{% static "js/block-layout.js" %}"></script>
+        <script src="{% static "js/help-queue.js" %}"></script>
+        <script src="{% static "js/capture-iframe.js" %}"></script>
+        <script src="{% static "js/utils.js" %}"></script>
+
+        <script>
+            $(document).ready(function(){
+                console.log("{{student.id}}");
+                console.log("{{interaction.id}}");
+                // var interaction = JSON.stringify({{interaction|safe}});
+                var help_request = JSON.stringify({{help_request|safe}});
+                TouchDevice.init();
+                // StudentLayout.init();
+                CaptureIframe.init("{{student.id}}", "{{interaction.id}}", "{{instructor.id}}", JSON.parse(help_request));
+            });
+        </script>      
+
+  
+  </body>
+</html>

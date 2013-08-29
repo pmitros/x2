@@ -351,6 +351,7 @@ def ajax_capture_interaction_stop(request):
     """
     store captured audio data
     """
+    print "interaction stop"
     message = "success"
     url = "#"
     # TODO: update whiteboard, ended_at information
