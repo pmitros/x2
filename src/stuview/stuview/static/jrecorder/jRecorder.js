@@ -86,9 +86,9 @@
 		
 						jRecorderSettings = settings;
 						
-                            var ismsie = (/MSIE (\d+)/.exec(navigator.userAgent))?true:false
+        var ie10 = /MSIE (\d+)/.exec(navigator.userAgent)
 						
-							if(ismsie && Number($.browser.version) <= 8) {
+							if( ie10 != null && parseInt(ie10[1])<=8) {
 							var objStr = '<object  name="'+ settings['recorder_name'] +'" id="' + settings['recorder_id'] + '" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="'+ settings['rec_width'] +'" height="'+ settings['rec_height']+'"></object>';
 
 							var paramStr = [
