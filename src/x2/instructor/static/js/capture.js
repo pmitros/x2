@@ -34,36 +34,41 @@ var Capture = function() {
         instructor_id = instid;
         help_request = hr[0];
         console.log(hr, help_request["id"]);
-        if (hasGetUserMedia()) {
-            window.URL = window.URL || window.webkitURL;
-            navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-                                      navigator.mozGetUserMedia || navigator.msGetUserMedia;
-            bindEvents();
-            $("#capture-button").click();
-            $("#new-whiteboard-button").click();
-            $("#introModal").modal({
-            });
-        } else {
-            // alert('getUserMedia() is not supported in your browser');
-            console.log('getUserMedia() is not supported in your browser');
-        }
+
+        var board_url = "http://ls.edx.org:2233/canvas/";
+        console.log("opening new whiteboard at", board_url);
+        $("#whiteboard").attr("src", board_url);
+
+        // if (hasGetUserMedia()) {
+        //     window.URL = window.URL || window.webkitURL;
+        //     navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia ||
+        //                               navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        //     bindEvents();
+        //     $("#capture-button").click();
+        //     $("#new-whiteboard-button").click();
+        //     $("#introModal").modal({
+        //     });
+        // } else {
+        //     // alert('getUserMedia() is not supported in your browser');
+        //     console.log('getUserMedia() is not supported in your browser');
+        // }
     }
 
     function bindEvents(){
         // $(document).on("startCapture", start_capture_handler);
         // $(document).on("endCapture", end_capture_handler);
-        $("#capture-button").click(capture_button_handler);
-        $("#video-capture-button").click(video_capture_button_handler);
+        // $("#capture-button").click(capture_button_handler);
+        // $("#video-capture-button").click(video_capture_button_handler);
         $("#save-interaction-button").click(save_interaction_button_handler);
         $("#discard-interaction-button").click(discard_interaction_button_handler);
-        $("#new-whiteboard-button").click(new_whiteboard_button_handler);
+        // $("#new-whiteboard-button").click(new_whiteboard_button_handler);
 
         window.addEventListener("message", receiveMessage, false);
         $(document).on("mouseup", function(){
             console.log("mouseup detected.");
             // $("iframe").trigger("mouseup");
             // window.postMessage("mouse up detected", "http://localhost:3333/");
-            $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
+            // $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
             $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:2233/canvas/");
         });
     }
@@ -72,6 +77,7 @@ var Capture = function() {
         console.log(event.origin, event.data, event.source);
     }
 
+/*
     function new_whiteboard_button_handler(event){
         whiteboard_count += 1;
 //        var board_url = "http://ls.edx.org:1337/" + interaction_id + "_" + whiteboard_count;
@@ -103,7 +109,7 @@ var Capture = function() {
             start_video_capture();
         }
     }
-
+*/
     function discard_interaction_button_handler(event){
         // window.location = "./view-layout";
         window.location = "./view-layout?iid=" + instructor_id;
@@ -132,6 +138,7 @@ var Capture = function() {
         });
     }
 
+/*
     function isCaptureScreen() {
         if (document.getElementById('record-screen').checked) {
             screen_constraints = {
@@ -211,6 +218,7 @@ var Capture = function() {
         console.log(blob, help_request["id"]);
         var formData = new FormData();
         formData.append('interaction_id', interaction_id);
+        formData.append('student_id', student_id);
         formData.append('hr_id', help_request["id"]);
         formData.append('audio_file', blob);
         // xhr.send(formData);
@@ -273,7 +281,7 @@ var Capture = function() {
     //     localStream.stop();
     //     audio.play();
     // }
-
+*/
 
     return {
         init: init
