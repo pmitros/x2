@@ -281,7 +281,8 @@ Microsoft.MediaCapture = function () {
         window.addEventListener("onunload", mediaStream.msStop);
 
         // Result confirm
-        var isConfirm = confirm("Would you like to start working with your media devices?");
+        //var isConfirm = confirm("Would you like to start working with your media devices?");
+        var isConfirm = true; 
 		var isDevicesFind = false;
 
         if (successCb != null && typeof (successCb) != "function") {
