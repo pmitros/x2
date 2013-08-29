@@ -156,7 +156,6 @@ var CaptureIframe = function() {
 
                 if (isIE()) {
                     audioStream.msStartRecording();
-                    console.log(audio.src);
                 } else {
                     audio.src = URL.createObjectURL(audioStream);
                     audio.play();
