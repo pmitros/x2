@@ -9,7 +9,7 @@ import mimetypes
 import pkg_resources
 from StringIO import StringIO
 
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.utils import simplejson
@@ -182,6 +182,37 @@ def juhocanvas(request):
 @ensure_csrf_cookie
 def audio(request):
     return render_to_response('static/msmedia/audio.html')
+
+
+@ensure_csrf_cookie
+def jaudio(request):
+    return render_to_response('static/jrecorder/jaudio.html')
+
+@csrf_exempt
+def acceptaudio(request):
+
+    if 'audioid' not in request.GET:
+        return HttpResponseBadRequest('audioid not in GET')
+
+
+    print 'body:', len(request.body)
+    # audioid = request.GET['audioid']
+    # print audioid, len(request.POST.keys())
+    #
+    # # if len(request.POST.keys() != 1):
+    # #     return HttpResponseBadRequest('only one key expected in POST')
+    # #
+    # wavdata = request.POST.keys()[0]
+    # fname = audioid + '.wav'
+    #
+    with open('test.wav', 'w+') as fout:
+        fout.write(request.body)
+        fout.close()
+    # #
+    # #
+    # # print fname, wavdata
+    #
+    # # return HttpResponse(simplejson.dupms({'saved':True}), mimetype='application/json')
 
 
 @ensure_csrf_cookie
