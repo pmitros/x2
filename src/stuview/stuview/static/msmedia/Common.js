@@ -32,7 +32,8 @@ Blob = function(data) {
 
 // Default handler for media capture API errors.
 function defOnError(error) {
-    alert(error.toString());
+    //alert(error.toString());
+    console.log(error.toString());
 }
 
 // SpeechRecognitionResult

@@ -282,7 +282,7 @@ Microsoft.MediaCapture = function () {
 
         // Result confirm
         //var isConfirm = confirm("Would you like to start working with your media devices?");
-        var isConfirm = true; 
+        var isConfirm = true;
 		var isDevicesFind = false;
 
         if (successCb != null && typeof (successCb) != "function") {
@@ -505,7 +505,7 @@ Microsoft.MediaCapture = function () {
         },
 
         onFail: function (error) {
-            alert(error.toString());
+            console.log(error.toString());
         }
     }
 		
@@ -542,7 +542,7 @@ Microsoft.MediaCapture = function () {
 
         onFail: function (error) {
             isReady = false;
-            alert(error.toString());
+            console.log(error.toString());
         }
     }
 		

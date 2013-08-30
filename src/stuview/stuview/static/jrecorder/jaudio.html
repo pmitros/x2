@@ -38,7 +38,7 @@
     $.jRecorder(
 
             {
-                host: '/acceptaudio',  //replace with your server path please
+                host: '/acceptaudio?audioid=stud123',  //replace with your server path please
 
                 callback_started_recording: function () {
                     callback_started();
@@ -172,7 +172,7 @@ $('#stop').click(function(){
     $('#record').click(function () {
 
 
-        $.jRecorder.record(30);
+        $.jRecorder.record(600);
 
 
     })
