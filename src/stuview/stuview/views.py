@@ -214,6 +214,7 @@ def acceptaudio(request):
     #
     # # return HttpResponse(simplejson.dupms({'saved':True}), mimetype='application/json')
 
+    return HttpResponse('OK')
 
 @ensure_csrf_cookie
 def qwidget(request):
