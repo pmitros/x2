@@ -504,7 +504,7 @@ Microsoft.MediaCapture = function () {
         },
 
         onFail: function (error) {
-            alert(error.toString());
+            console.log(error.toString());
         }
     }
 		
@@ -541,7 +541,7 @@ Microsoft.MediaCapture = function () {
 
         onFail: function (error) {
             isReady = false;
-            alert(error.toString());
+            console.log(error.toString());
         }
     }
 		
