@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/manage-layout$', 'instructor.views.manage_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture$', 'instructor.views.capture'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture-iframe$', 'instructor.views.capture_iframe'),
+    url(r'^instructor', 'instructor.views.instructor'),
 
     # url(r'^x2/ajax/layout/create$', 'instructor.views.create_layout'),
     url(r'^x2/ajax/layout/blocks/update$', 'instructor.views.ajax_layout_blocks_update'),

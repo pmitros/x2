@@ -89,6 +89,12 @@ def view_layout(request, course_slug, session_slug):
         "session_students": model_to_json(session_students)})
 
 
+@ensure_csrf_cookie
+def instructor(request):
+    """a version of view_layout that for a shorter url"""
+    return view_layout(request, '6.00x', 'sep-1-2013')
+
+
 def manage_layout(request, course_slug, session_slug):
     try:
         course = Course.objects.get(slug=course_slug)
@@ -293,6 +299,10 @@ def ajax_layout_session_student_update(request):
                 message = "database access error"
     return HttpResponse(
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
+
+
+
+
 
 
 #@csrf_protect
