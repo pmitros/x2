@@ -217,7 +217,7 @@ def capture(request, course_slug, session_slug):
         "help_request": model_to_json([help_request])})
 
 def capture_shorturl(request):
-    return capture(request '6.00x', 'sep-1-2013')
+    return capture(request, '6.00x', 'sep-1-2013')
 
 @csrf_protect
 def ajax_layout_blocks_update(request):
