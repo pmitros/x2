@@ -90,7 +90,7 @@ def view_layout(request, course_slug, session_slug):
 
 
 @ensure_csrf_cookie
-def instructor(request):
+def instructor_shorturl(request):
     """a version of view_layout that for a shorter url"""
     return view_layout(request, '6.00x', 'sep-1-2013')
 
@@ -216,6 +216,8 @@ def capture(request, course_slug, session_slug):
         "hr_id": hr_id,
         "help_request": model_to_json([help_request])})
 
+def capture_shorturl(request):
+    return capture(request '6.00x', 'sep-1-2013')
 
 @csrf_protect
 def ajax_layout_blocks_update(request):
