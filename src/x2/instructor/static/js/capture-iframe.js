@@ -14,8 +14,8 @@ var CaptureIframe = function() {
     var audioStream;
     var videoStream;
     var audioConstraints = {
-        audio: true,
-        video: false
+        "audio": true,
+        "video": false
     };
     var videoConstraints = {
         audio: false,
@@ -156,7 +156,6 @@ var CaptureIframe = function() {
 
                 if (isIE()) {
                     audioStream.msStartRecording();
-                    console.log(audio.src);
                 } else {
                     audio.src = URL.createObjectURL(audioStream);
                     audio.play();
@@ -209,8 +208,8 @@ var CaptureIframe = function() {
         audio.src = '';
         // TODO: update interaction information
         if (isIE()){
-            audioStream.msStopRecording(upload_file);
-            // setTimeout("audioStream.msStopRecording(upload_file)", 200);
+            // audioStream.msStopRecording(upload_file);
+            setTimeout(audioStream.msStopRecording(upload_file), 200);
         } else {
             recorder.stopRecording(function(url) {
                 // console.log(url);
@@ -220,23 +219,145 @@ var CaptureIframe = function() {
         }
     }
 
+    function roughSizeOfObject( object ) {
+
+        var objectList = [];
+
+        var recurse = function( value )
+        {
+            var bytes = 0;
+
+            if ( typeof value === 'boolean' ) {
+                bytes = 4;
+            }
+            else if ( typeof value === 'string' ) {
+                bytes = value.length * 2;
+            }
+            else if ( typeof value === 'number' ) {
+                bytes = 8;
+            }
+            else if
+            (
+                typeof value === 'object'
+                && objectList.indexOf( value ) === -1
+            )
+            {
+                objectList[ objectList.length ] = value;
+
+                for( i in value ) {
+                    bytes+= 8; // an assumed existence overhead
+                    bytes+= recurse( value[i] )
+                }
+            }
+
+            return bytes;
+        }
+
+        return recurse( object );
+    }
+
+
+var filename = "";
+var resultBlob;
+
+    function onInitFs(fs) {
+        console.log(filename);
+      fs.root.getFile(filename, {}, function(fileEntry) {
+
+        // Get a File object representing the file,
+        // then use FileReader to read its contents.
+        fileEntry.file(function(file) {
+           var reader = new FileReader();
+
+           reader.onloadend = function(e) {
+             var txtArea = document.createElement('textarea');
+             txtArea.value = this.result;
+             document.body.appendChild(txtArea);
+           };
+
+           reader.readAsText(file);
+        }, errorHandler);
+
+      }, errorHandler);
+
+    }
+
+    function errorHandler(event){
+        console.log(event);
+    }    
 
     function upload_file(blob){
         if (isIE()){
-            playMediaObject.Play(blob);
+            // var size = 0, key;
+            // for (key in blob) {
+            //     if (blob.hasOwnProperty(key)) size++;
+            // }
+            // resultBlob = blob;
+            // console.dir(blob);
+            // console.log(blob.size);
+            // filename = createURLComObject.CreateAudioURL(blob);
+            // console.log(filename);
+            // var reader = new FileReader();
+            
+            // reader.onloadend = function(evt){
+            //     console.log(evt);
+            // }
+            // console.log(reader);
+            // reader.readAsText(blob);
+            // console.log(window.Blob(blob));
+            
+            // var myArray = new ArrayBuffer(blob.length);
+            // var writer = new Uint8Array(myArray);
+            // for (var i=0; i<blob.length; i++){
+                // longInt8View[i] = i % 255;
+                // writer[i] = blob.charCodeAt(i);
+                // writer[i] = blob[i];
+                // if (i%1000==0)
+                //     console.log(blob[i]);
+            // }
+            // console.log(typeof blob, myArray, myArray.length);
+            // console.log(writer.length, writer, myArray.length);
+            // resultBlob = new Blob([blob], {type: "application/octet-binary"});
+            resultBlob = new Blob([blob], {type: "text/plain"});
+            console.log(resultBlob);
+            console.log(typeof resultBlob, typeof blob, blob.length, resultBlob.length);
+            // playMediaObject.Play(blob);
+            // window.requestFileSystem(window.TEMPORARY, 1024*1024, onInitFs, errorHandler);
         }
 
-        console.log(blob, help_request["id"]);
+        console.log(blob, blob.length, help_request["id"]);
         var formData = new FormData();
         formData.append('interaction_id', interaction_id);
         formData.append('student_id', student_id);
         formData.append('hr_id', help_request["id"]);
-        formData.append('audio_file', blob);
+        formData.append('audio_file', resultBlob);
         // xhr.send(formData);
+
+        // var reader = new FileReader();
+        // reader.addEventListener("loadend", function() {
+        //     console.log(typeof reader.result, reader.result);
+        //    // reader.result contains the contents of blob as a typed array
+        // });
+        // reader.readAsArrayBuffer(resultBlob);
+
+        var oReq = new XMLHttpRequest();
+        oReq.open("POST", "/x2/ajax/capture/interaction/stop", true);
+        oReq.setRequestHeader("Content-Length", blob.length);
+        oReq.onload = function(oEvent) {
+          if (oReq.status == 200) {
+            console.log("Uploaded!");
+          } else {
+            console.log("Error " + oReq.status + " occurred uploading your file.<br \/>");
+          }
+        };
+
+        oReq.send(blob);
+        
         var csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
             crossDomain: false, // obviates need for sameOrigin test
             beforeSend: function(xhr, settings) {
+                console.log(settings.type, csrfSafeMethod(settings.type), csrftoken);
                 if (!csrfSafeMethod(settings.type)) {
                     xhr.setRequestHeader("X-CSRFToken", csrftoken);
                 }
@@ -265,6 +386,7 @@ var CaptureIframe = function() {
                });
            }
         });
+
     }
 
     function stop_video_capture(){

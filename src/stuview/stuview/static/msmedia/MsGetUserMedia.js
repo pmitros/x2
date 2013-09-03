@@ -120,6 +120,7 @@ Microsoft.MediaCapture = function () {
 
         //Only audio
         if (!init.video) {
+            console.log(urlAudio, playstream)
             stopRecording(playstream.data);
         }
     }

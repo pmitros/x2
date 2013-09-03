@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
@@ -346,7 +346,8 @@ def ajax_layout_help_request_new(request):
     return response
 
 
-@csrf_protect
+# @csrf_protect
+@csrf_exempt
 def ajax_capture_interaction_stop(request):
     """
     store captured audio data

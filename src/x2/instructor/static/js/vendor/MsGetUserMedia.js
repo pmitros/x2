@@ -117,6 +117,7 @@ Microsoft.MediaCapture = function () {
         if (!init.audio) {
             stopRecording(vdoBlob);
         }
+        
 
         //Only audio
         if (!init.video) {
