@@ -41,3 +41,7 @@ nosetests.xml
 
 #testdbs
 *db.sql
+*mp3
+*wav
+*ogg
+*.db
