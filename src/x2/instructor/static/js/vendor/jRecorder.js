@@ -10,6 +10,13 @@
  * Author: Sajith Amma
  * Version: 1.1
  * Date: 14 December 2011
+
+Version changes
+
+Added preview option right after recording.
+Added seperate function sendData to trigger to send data to server (it won't send automcatically to server)
+
+
  */
 
 /* Code is not verified using http://www.jshint.com/ */
@@ -86,9 +93,9 @@
 		
 						jRecorderSettings = settings;
 						
-        var ie10 = /MSIE (\d+)/.exec(navigator.userAgent)
 						
-							if( ie10 != null && parseInt(ie10[1])<=8) {
+						
+							if($.browser.msie && Number($.browser.version) <= 8) {
 							var objStr = '<object  name="'+ settings['recorder_name'] +'" id="' + settings['recorder_id'] + '" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="'+ settings['rec_width'] +'" height="'+ settings['rec_height']+'"></object>';
 
 							var paramStr = [
