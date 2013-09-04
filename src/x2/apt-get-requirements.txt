@@ -1,1 +1,2 @@
 sudo apt-get install libav-tools
+sudo apt-get install libevent-dev 

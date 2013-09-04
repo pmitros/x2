@@ -97,18 +97,10 @@
             <div class="section-header">
                 <span class="section-title col-12 col-sm-6 col-lg-6">Sketchpad</span>
                 <span class="col-12 col-sm-6 col-lg-6">
-<!--                     <OBJECT ID="ChromeFrame" WIDTH="100%" HEIGHT="400px" CODEBASE="http://www.google.com"
-                              CLASSID="CLSID:E0A900DF-9611-4446-86BD-4B1D47E7DB2A">
-                          <PARAM NAME="src" VALUE="./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}">
-                          <embed ID="ChromeFramePlugin" WIDTH="100%" HEIGHT="400px" NAME="ChromeFrame"
-                              SRC="./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}" TYPE="application/chromeframe">
-                          </embed>
-                    </OBJECT>    -->    
-                    <!-- <iframe id="audio-rtc" src="./capture-iframe?sid={{student.id}}&iid={{instructor.id}}&hr={{hr_id}}">
-                    </iframe>  -->
-                    <audio id="audio" class="menu-item" autoplay loop controls></audio>
-                    <button id="capture-button" class="menu-item btn btn-medium btn-danger">Record Audio</button>
-                </span>                
+            <!--    <audio id="audio" class="menu-item" autoplay loop controls></audio> -->
+                <button id="capture-button" class="menu-item btn btn-medium btn-success">Start Recording</button>
+                </span>
+                    <div id="levelbar" style="height:10px; width:0px;background-color:red; float:left;"></div>
             </div>
             <!-- <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe> -->
             <!-- <iframe id="whiteboard" src="http://ls.edx.org:1337/{{ interaction.id }}" width="100%" height="800"></iframe> -->
@@ -183,17 +175,12 @@
     <script src="{% static "js/block-layout.js" %}"></script>    
     <script src="{% static "js/utils.js" %}"></script>
     <script src="{% static "js/capture.js" %}"></script>
-    <script src="{% static "js/capture-iframe.js" %}"></script>
-
-    <script src="{% static "js/vendor/InitActiveXObjects.js" %}"></script>
-    <script src="{% static "js/vendor/Common.js" %}"></script>
-    <script src="{% static "js/vendor/MsGetUserMedia.js" %}"></script>
+    <script src="/static/js/vendor/jRecorder.js"></script>
 
 
-<!--     // <script type="text/javascript" src="{% static "js/vendor/chrome_frame_tester_helpers.js" %}"></script>
-    // <script type="text/javascript" src="{% static "js/vendor/CFInstance.js" %}"></script> -->
 
     <script>
+
     // function GetChromeFrame() {
     //     var chromeFrame = window.document.ChromeFrame;
     //     return chromeFrame;
@@ -267,7 +254,6 @@
             TouchDevice.init();
             StudentLayout.init();
             Capture.init("{{student.id}}", "{{interaction.id}}", "{{instructor.id}}", JSON.parse(help_request));
-            CaptureIframe.init("{{student.id}}", "{{interaction.id}}", "{{instructor.id}}", JSON.parse(help_request));
 
             setTimeout(function(){
                 $("#introModal button").removeAttr("disabled");

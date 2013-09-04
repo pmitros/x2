@@ -7,24 +7,9 @@ var Capture = function() {
     var help_request;
     var whiteboard_count;
 
-    var localStream;
-    var audio = document.querySelector('audio');
-    var video = document.querySelector('video');
-    var recorder;
-    var audioStream;
-    var videoStream;
-    var audioConstraints = {
-        audio: true,
-        video: false
-    };
-    var videoConstraints = {
-        audio: false,
-        video: {
-            mandatory: { },
-            optional: []
-        }
-    };
-    var screen_constraints;
+    //var board_url = "http://ls.edx.org:2233/canvas/";
+    var board_url = "http://localhost:2233/canvas/";
+    var recording_state = 'off' // 'on', 'off', 'almost_on', 'almost_off'
 
 
     function init(sid, intid, instid, hr){
@@ -35,9 +20,13 @@ var Capture = function() {
         help_request = hr[0];
         console.log(hr, help_request["id"]);
 
-        var board_url = "http://ls.edx.org:2233/canvas/";
+
         console.log("opening new whiteboard at", board_url);
         $("#whiteboard").attr("src", board_url);
+
+        init_jrecorder()
+        bindEvents()
+
 
         // if (hasGetUserMedia()) {
         //     window.URL = window.URL || window.webkitURL;
@@ -54,10 +43,57 @@ var Capture = function() {
         // }
     }
 
+    function init_jrecorder(){
+
+        $.jRecorder(
+
+            {
+                host: 'localhost:2233/acceptaudio?audioid=stud123',
+
+                callback_started_recording: function () {
+                    recording_state = 'on'
+                    $('#capture-button').text("Stop Recording")
+                    $('#capture-button').addClass('btn-danger')
+                    console.log('started recording')
+                },
+                callback_stopped_recording: function () {
+                    recording_state = 'off'
+                    $('#capture-button').addClass('btn-success')
+                    console.log('stopped recording')
+                    $('#capture-button').text("Done")
+                },
+                callback_activityLevel: function (level) {
+                    //console.log('activity level: ', level)
+
+                   if (level == -1) {
+                        $('#levelbar').css("width", "0px");
+                    }
+                    else {
+                        $('#levelbar').css("width", (level * 1) + "px");
+                    }
+
+                },
+                callback_activityTime: function (time) {
+                    console.log('activity time: ', time)
+                },
+
+                callback_finished_sending: function (time) {
+                    console.log('finished sending: ', time)
+                },
+
+
+                swf_path: '/static/js/vendor/jRecorder.swf',
+
+            }
+
+
+        );
+    }
+
     function bindEvents(){
         // $(document).on("startCapture", start_capture_handler);
         // $(document).on("endCapture", end_capture_handler);
-        // $("#capture-button").click(capture_button_handler);
+        $("#capture-button").click(capture_button_handler);
         // $("#video-capture-button").click(video_capture_button_handler);
         $("#save-interaction-button").click(save_interaction_button_handler);
         $("#discard-interaction-button").click(discard_interaction_button_handler);
@@ -69,12 +105,34 @@ var Capture = function() {
             // $("iframe").trigger("mouseup");
             // window.postMessage("mouse up detected", "http://localhost:3333/");
             // $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
-            $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:2233/canvas/");
+            $("iframe")[0].contentWindow.postMessage("mouseup", board_url);
         });
     }
 
     function receiveMessage(event){
         console.log(event.origin, event.data, event.source);
+    }
+
+    function capture_button_handler(event){
+
+        if(recording_state == 'off'){
+            recording_state = 'almost_on'
+            console.log(recording_state)
+            $('#capture-button').text("please wait")
+            $('#capture-button').removeClass('btn-success')
+            $.jRecorder.record(600)
+        }
+        else if (recording_state == 'on') {
+            recording_state = 'almost_off'
+            console.log(recording_state)
+            $('#capture-button').text("please wait")
+            $('#capture-button').removeClass('btn-danger')
+            $.jRecorder.stop()
+        }
+        else {
+            console.log('still waiting')
+        }
+
     }
 
 /*
