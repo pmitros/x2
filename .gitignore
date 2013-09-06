@@ -45,3 +45,8 @@ nosetests.xml
 *wav
 *ogg
 *.db
+
+publish.sh
+RECOVER_*
+.DS_Store
+.svn
