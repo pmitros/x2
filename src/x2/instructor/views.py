@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.core.exceptions import ObjectDoesNotExist
@@ -195,7 +195,7 @@ def capture(request, course_slug, session_slug):
         help_request = HelpRequest.objects.get(id=hr_id)
         help_request.status = "in_progress"
         help_request.save()
-    except ObjectDoesNotExist:
+    except ObjectDoesNotExist:  # todo make ad-hoc interactions explicit
         help_request = HelpRequest(
             session_id=session.id,
             student_id=student.id,
@@ -429,6 +429,42 @@ def ajax_capture_interaction_accept(request):
     return HttpResponse(
         json.dumps({'message': message}, ensure_ascii=False), mimetype='application/json')
 
+@csrf_exempt
+def ajax_capture_interaction_store_media(request):
+
+    try:
+        media_type = request.GET['media_type']
+    except KeyError as e:
+        return HttpResponseBadRequest(str(e))
+
+
+    if media_type == 'audio_wav':
+        # jRecorder is sending us an audio file
+        wav_blob = request.body
+        print 'received audio of size: ', len(wav_blob)
+
+        try:
+            interaction_id = request.GET['interaction_id']
+        except KeyError as e:
+            return HttpResponseBadRequest(e)
+
+        interaction = Interaction.objects.get(id=interaction_id)
+        filename = interaction_id + '.wav'
+        filepath = os.path.join(settings.MEDIA_ROOT, filename)
+
+        with open(filepath, "wb+") as fd:
+            fd.write(wav_blob)
+        interaction.audio_path = filename
+        interaction.ended_at = datetime.utcnow().replace(tzinfo=utc)
+        interaction.save()
+        url = settings.MEDIA_URL + filename
+
+        return HttpResponse(json.dumps({'url': url}, ensure_ascii=False),
+                             mimetype='application/json')
+    else:
+        return HttpResponseBadRequest('unknown media type')
+
+
 
 @csrf_protect
 def ajax_layout_students_progress(request):
@@ -494,5 +530,3 @@ def ajax_layout_students_progress(request):
 
     return HttpResponse(
         json.dumps({'results': results, 'requests': requests}, ensure_ascii=False), mimetype='application/json')
-
-

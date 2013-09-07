@@ -20,6 +20,11 @@ var Capture = function() {
         help_request = hr[0];
         console.log(hr, help_request["id"]);
 
+        console.log('student: ', student_id)
+        console.log('instructor: ', instructor_id)
+        console.log('interaction_id: ', interaction_id)
+        console.log('help_request: ', help_request)
+
 
         console.log("opening new whiteboard at", board_url);
         $("#whiteboard").attr("src", board_url);
@@ -48,7 +53,7 @@ var Capture = function() {
         $.jRecorder(
 
             {
-                host: 'localhost:2233/acceptaudio?audioid=stud123',
+                host: escape('/x2/ajax/capture/interaction/store_media?media_type=audio_wav&interaction_id='+interaction_id),
 
                 callback_started_recording: function () {
                     recording_state = 'on'
@@ -61,6 +66,8 @@ var Capture = function() {
                     $('#capture-button').addClass('btn-success')
                     console.log('stopped recording')
                     $('#capture-button').text("Done")
+                    console.log('sending data')
+                    $.jRecorder.sendData()
                 },
                 callback_activityLevel: function (level) {
                     //console.log('activity level: ', level)
