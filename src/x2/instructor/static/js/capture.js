@@ -7,8 +7,10 @@ var Capture = function() {
     var help_request;
     var whiteboard_count;
 
+
     //var board_url = "http://ls.edx.org:2233/canvas/";
-    var board_url = "http://localhost:2233/canvas/";
+    //var board_url = "http://localhost:2233/canvas/";
+    var board_url = 'http://' + document.domain + ':2233/canvas'
     var recording_state = 'off' // 'on', 'off', 'almost_on', 'almost_off'
 
 
@@ -26,8 +28,8 @@ var Capture = function() {
         console.log('help_request: ', help_request)
 
 
-        console.log("opening new whiteboard at", board_url);
-        $("#whiteboard").attr("src", board_url);
+//        console.log("opening new whiteboard at", board_url);
+//        $("#whiteboard").attr("src", board_url);
 
         init_jrecorder()
         bindEvents()
@@ -68,6 +70,7 @@ var Capture = function() {
                     $('#capture-button').text("Done")
                     console.log('sending data')
                     $.jRecorder.sendData()
+
                 },
                 callback_activityLevel: function (level) {
                     //console.log('activity level: ', level)
@@ -106,19 +109,19 @@ var Capture = function() {
         $("#discard-interaction-button").click(discard_interaction_button_handler);
         // $("#new-whiteboard-button").click(new_whiteboard_button_handler);
 
-        window.addEventListener("message", receiveMessage, false);
-        $(document).on("mouseup", function(){
-            console.log("mouseup detected.");
-            // $("iframe").trigger("mouseup");
-            // window.postMessage("mouse up detected", "http://localhost:3333/");
-            // $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
-            $("iframe")[0].contentWindow.postMessage("mouseup", board_url);
-        });
+//        window.addEventListener("message", receiveMessage, false);
+//        $(document).on("mouseup", function(){
+//            console.log("mouseup detected.");
+//            // $("iframe").trigger("mouseup");
+//            // window.postMessage("mouse up detected", "http://localhost:3333/");
+//            // $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
+//            $("iframe")[0].contentWindow.postMessage("mouseup", board_url);
+//        });
     }
 
-    function receiveMessage(event){
-        console.log(event.origin, event.data, event.source);
-    }
+//    function receiveMessage(event){
+//        console.log(event.origin, event.data, event.source);
+//    }
 
     function capture_button_handler(event){
 
@@ -134,7 +137,9 @@ var Capture = function() {
             console.log(recording_state)
             $('#capture-button').text("please wait")
             $('#capture-button').removeClass('btn-danger')
-            $.jRecorder.stop()
+            $.jRecorder.stop() //sends audio to server todo separate
+
+
         }
         else {
             console.log('still waiting')

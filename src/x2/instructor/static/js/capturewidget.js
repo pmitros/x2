@@ -311,8 +311,8 @@ function capture_widget(init){
         else {
             console.log('Pointer Disabled Device')
             canvas = new paint_widget(canvas_id)
-            $('#canv').mousedown(on_mousedown)
-            $('#canv').mousemove(on_mousemove)
+            $(canvas_id).mousedown(on_mousedown)
+            $(canvas_id).mousemove(on_mousemove)
             $(window).mouseup(on_mouseup)
         }
 
@@ -328,7 +328,7 @@ function capture_widget(init){
 
          */
 
-        canvas.resize_canvas();
+       canvas.resize_canvas();
     }
 
     //Initialize the widget
@@ -373,9 +373,6 @@ function capture_widget(init){
 
     }
 
-    this.get_recording(){
-        return VISUALS;
-    }
 }
 
 

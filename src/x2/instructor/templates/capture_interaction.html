@@ -48,6 +48,11 @@
         .section-header {
             padding-top: 10px;
         }
+
+        canvas {
+            border: 1px solid black;
+            cursor: crosshair;
+        }
     </style>   
   </head>
   <body>
@@ -104,7 +109,19 @@
             </div>
             <!-- <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe> -->
             <!-- <iframe id="whiteboard" src="http://ls.edx.org:1337/{{ interaction.id }}" width="100%" height="800"></iframe> -->
-            <iframe id="whiteboard"></iframe>
+            <!--<iframe id="whiteboard"></iframe>-->
+
+
+            <div>
+                <button id="clear" onclick="CANV.clear();">Clear</button>
+                <button onclick="CANV.set_active_visual_type('lines')">Lines</button>
+                <button onclick="CANV.set_active_visual_type('dots')">Dots</button>
+                <button onclick="CANV.start_collecting()">start collecting</button>
+                <button onclick="CANV.stop_collecting()">stop collecting</button>
+                <button onclick="CANV.draw_all()">draw all</button>
+                <button onclick="CANV.undo()">undo</button>
+            </div>
+            <canvas id='drawing_board'></canvas>
         </div>
     </div>
 
@@ -175,6 +192,7 @@
     <script src="{% static "js/block-layout.js" %}"></script>    
     <script src="{% static "js/utils.js" %}"></script>
     <script src="{% static "js/capture.js" %}"></script>
+    <script src="{% static "js/capturewidget.js" %}"></script>
     <script src="/static/js/vendor/jRecorder.js"></script>
 
 
@@ -253,11 +271,19 @@
             var help_request = JSON.stringify({{help_request|safe}});
             TouchDevice.init();
             StudentLayout.init();
-            Capture.init("{{student.id}}", "{{interaction.id}}", "{{instructor.id}}", JSON.parse(help_request));
+            Capture.init("{{student.id}}",
+                    "{{interaction.id}}",
+                    "{{instructor.id}}",
+                    JSON.parse(help_request));
 
             setTimeout(function(){
                 $("#introModal button").removeAttr("disabled");
             }, 3000);
+
+            CANV = new capture_widget({
+                canvas_id: 'drawing_board'
+            });
+
         });
     </script>    
   </body>
