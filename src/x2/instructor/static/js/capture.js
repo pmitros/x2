@@ -10,16 +10,18 @@ var Capture = function() {
 
     //var board_url = "http://ls.edx.org:2233/canvas/";
     //var board_url = "http://localhost:2233/canvas/";
-    var board_url = 'http://' + document.domain + ':2233/canvas'
+    //var board_url = 'http://' + document.domain + ':2233/canvas'
+    var capture_widget;
     var recording_state = 'off' // 'on', 'off', 'almost_on', 'almost_off'
 
 
-    function init(sid, intid, instid, hr){
+    function init(sid, intid, instid, hr, cw){
         whiteboard_count = 0;
         student_id = sid;
         interaction_id = intid;
         instructor_id = instid;
         help_request = hr[0];
+        capture_widget = cw; // the capturing canvas or other widget
         console.log(hr, help_request["id"]);
 
         console.log('student: ', student_id)
@@ -126,24 +128,48 @@ var Capture = function() {
     function capture_button_handler(event){
 
         if(recording_state == 'off'){
+            // Start recording
             recording_state = 'almost_on'
             console.log(recording_state)
             $('#capture-button').text("please wait")
             $('#capture-button').removeClass('btn-success')
             $.jRecorder.record(600)
         }
-        else if (recording_state == 'on') {
+        else if (recording_state == 'on')
+        {
+            // Stop recording
             recording_state = 'almost_off'
             console.log(recording_state)
             $('#capture-button').text("please wait")
             $('#capture-button').removeClass('btn-danger')
             $.jRecorder.stop() //sends audio to server todo separate
 
+            var canvas_capture = capture_widget.get_record()
+            store_canvas_capture(canvas_capture)
 
         }
         else {
             console.log('still waiting')
         }
+
+    }
+
+    function store_canvas_capture(capture){
+
+        var json_canvas_capture = JSON.stringify(capture)
+
+        var host = '/x2/ajax/capture/interaction/store_media?media_type=canvascapture_json';
+        var data  = {
+            capture: json_canvas_capture,
+            interaction_id: interaction_id
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: host,
+            data: data,
+            success: function (e){console.log('posted capture success')}
+        })
 
     }
 

@@ -455,12 +455,34 @@ def ajax_capture_interaction_store_media(request):
         with open(filepath, "wb+") as fd:
             fd.write(wav_blob)
         interaction.audio_path = filename
-        interaction.ended_at = datetime.utcnow().replace(tzinfo=utc)
+        interaction.ended_at = datetime.utcnow().replace(tzinfo=utc) # todo use client's time
         interaction.save()
         url = settings.MEDIA_URL + filename
 
         return HttpResponse(json.dumps({'url': url}, ensure_ascii=False),
                              mimetype='application/json')
+    elif media_type == 'canvascapture_json':
+
+        try:
+            interaction_id = request.POST['interaction_id']
+            canvas_capture = request.POST['capture']
+        except KeyError as e:
+            return HttpResponseBadRequest(str(e))
+
+        print 'received video of size ', len(canvas_capture)
+        interaction = Interaction.objects.get(id=interaction_id)
+        filename = interaction_id + '.can'
+        filepath = os.path.join(settings.MEDIA_ROOT, filename)
+        with open(filepath, "wb+") as fd:
+            fd.write(canvas_capture)
+        interaction.video_path = filename
+        interaction.save()
+
+        url = settings.MEDIA_URL + filename
+        return HttpResponse(json.dumps({'url': url}, ensure_ascii=False),
+                             mimetype='application/json')
+
+
     else:
         return HttpResponseBadRequest('unknown media type')
 

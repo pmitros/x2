@@ -271,18 +271,22 @@
             var help_request = JSON.stringify({{help_request|safe}});
             TouchDevice.init();
             StudentLayout.init();
+
+            CANV = new capture_widget({
+                canvas_id: 'drawing_board'
+            });
             Capture.init("{{student.id}}",
                     "{{interaction.id}}",
                     "{{instructor.id}}",
-                    JSON.parse(help_request));
+                    JSON.parse(help_request),
+                    CANV
+            );
 
             setTimeout(function(){
                 $("#introModal button").removeAttr("disabled");
             }, 3000);
 
-            CANV = new capture_widget({
-                canvas_id: 'drawing_board'
-            });
+
 
         });
     </script>    

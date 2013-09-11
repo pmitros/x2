@@ -1,0 +1,268 @@
+body{
+    padding:50px;
+    margin: 0;
+    overflow: hidden;
+    font-family: sans-serif;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.video{
+    border:1px solid #eee;
+    cursor: default;
+    background-color: #fff;
+}
+.video.zooming{
+    cursor: url('images/magnify.cur'), -webkit-zoom-in;
+    cursor: url('images/magnify.cur'), -moz-zoom-in;
+}
+
+.lecture{
+    margin: auto auto;
+}
+
+/**stuff overlayed on top of everything**/
+
+.zoomRect {
+    position: absolute;
+    float: left;
+    visibility: hidden;
+}
+
+.speedDisplay{
+    position:absolute;
+    color: #fff;
+    text-shadow:
+        -1px -1px 2px #000,
+        1px -1px 2px #000,
+        -1px 1px 2px #000,
+        1px 1px 2px #000;
+    width: 100px;
+    font-size: 30px;
+    padding-left:20px;
+}
+
+.captions{
+    position:absolute;
+    margin-left:1px;
+    color: #fff;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 3px #000,
+        1px 1px 0 #000;
+    visibility:hidden;
+    text-align:center;
+}
+
+.onScreenStatus{
+    position: absolute;
+    z-index:5;
+    visibility: hidden;
+}
+
+/**lower bar of controls**/
+
+.controls{
+    width:425px;
+    height:60px;
+}
+
+.buttons{
+    float:left;
+    width:125px;
+}
+
+input[type='button']{
+    width:50px;
+    height:50px;
+    margin:3px;
+    border:0px #fff solid;
+    padding:0px;
+    background-color:transparent;
+    opacity: .5;
+    background-repeat:no-repeat;
+}
+
+input[type='button']:hover{
+    border:0px #aaa solid;
+    opacity: .7;
+}
+
+input[type='button']:active{
+    border:0px #444 solid;
+    opacity:1;
+}
+input[type='button']:focus{
+    border:0px #444 solid;
+    opacity:1;
+}
+
+#slider{
+    width:300px;
+    float:left;
+    margin-top:-5px;
+    border-radius:0;
+    height:5px;
+    position:absolute;
+}
+
+#slider .tick {
+    z-index:1;
+    background: #4f3;
+    border: none;
+    position: absolute;
+    height: 100%;
+    width: 2px;
+    left: 0%;
+    opacity: .3;
+}
+
+#slider .ui-slider-handle {
+    width: 0.6em;
+    border: none;
+    background: #999;
+    height: 300%;
+    margin-top:-5px;
+    top: 0;
+    margin-left: -0.3em;
+}
+
+.start{
+    background-image: url('images/play.png');
+}
+
+#totalTime{
+    margin-top:20px;
+    float:left;
+    width: 100px;
+    margin-left:5px;
+}
+
+.buttons button{
+    background-repeat:no-repeat;
+    position:absolute;
+    opacity:0.5;
+    border: 0;
+    border-radius:0;
+    background-color:transparent;
+}
+
+.buttons button:hover{
+    opacity:0.7;
+}
+.buttons button:active{
+    opacity:1;
+}
+.buttons button:focus{
+    opacity:1;
+}
+
+.slowDown{
+    background-image: url('images/slow.png');
+    width:25px;
+    margin:1px;
+}
+
+.speedUp{
+    background-image: url('images/ff.png');
+    width:25px;
+    margin:1px;
+    margin-left:30px;
+}
+
+.help{
+    background-image: url('images/help.png');
+}
+
+.volume{
+    background-image: url('images/vol.png');
+    width:30px;
+    height:30px;
+    background-size: 30px;
+    background-repeat:no-repeat;
+    border: 0;
+    background-color: transparent;
+    opacity: .7;
+}
+
+.volume:hover{
+    opacity: 1;
+}
+
+.volumeSlider{
+    height:10px;
+    width:100px;
+    z-index:3;
+}
+
+.volumeSlider .ui-slider-handle{
+    width:.5em;
+    margin-left:-.25em;
+    background: #999;
+    border: none;
+    height:100%;
+    margin-top:5px;
+}
+
+/**side controls**/
+
+.URLinfo{
+    visibility:hidden;
+    float:right;
+    font-size: 12px;
+    position:absolute;
+    background-color: #ddd;
+    padding:5px;
+    border-radius:10px;
+    border-right-color: #ddd;
+    border-right-style: solid;
+    z-index: 5;
+}
+
+.URLs{
+    resize: none;
+}
+
+.transBtns{
+    position:relative;
+    background-color: rgba(255,255,255,0);
+    border-width: 0;
+    padding: 0;
+    opacity: 0.5;
+    -webkit-transition: -webkit-transform 0.5s ease-in-out;
+    transition: transform 0.5s ease-in-out;
+    z-index: 6;
+}
+.transBtns img{
+    height:100%;
+    width:100%;
+}
+.transBtns:hover{
+    opacity: 1;
+}
+
+.sideButtons{
+    position:absolute;
+}
+
+/**ABOUT MODAL**/
+
+.ui-dialog{
+    z-index: 9000;
+}
+
+#description-dialog h3{
+    margin:0;
+}
+
+#description-dialog img{
+    height:40px;
+    width:40px;
+    position:relative;
+    top:10px;
+}

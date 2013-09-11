@@ -119,7 +119,7 @@ class Interaction(models.Model):
     ended_at = models.DateTimeField(blank=True)
     is_rejected = models.BooleanField(default=True)
     audio_path = models.URLField(blank=True)
-    video_path = models.URLField(blank=True)
+    video_path = models.URLField(blank=True) # also stores vertex data not video
     whiteboard_path = models.URLField(blank=True)
     instructor_summary = models.CharField(max_length=1024, blank=True, null=True)
     student_summary = models.CharField(max_length=1024, blank=True, null=True)

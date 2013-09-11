@@ -373,6 +373,10 @@ function capture_widget(init){
 
     }
 
+    this.get_record = function(){
+        return VISUALS
+    }
+
 }
 
 
