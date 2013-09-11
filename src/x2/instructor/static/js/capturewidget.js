@@ -82,8 +82,8 @@ function paint_widget(canvas_id){
 function smart_paint_widget(canvas_id){
 
     var canvas = new paint_widget(canvas_id)
-    var pressure_color = false  // Change color of lines dep on pressure?
-    var pressure_width = true  // Change width of lines dep on pressure?
+    var pressure_color = false  // Change color of strokes dep on pressure?
+    var pressure_width = true  // Change width of strokes dep on pressure?
     var max_extra_line_width = 4
 
     this.draw_line = function(line) {
@@ -138,14 +138,18 @@ function capture_widget(init){
     var canvas_id = '#' + canvas_dom_id
     var canvas // drawing widget
 
+    var recording_start_time;
+    var recording_stop_time;
+    var is_recording = false;
+
     var lmb_down = false
     var inline = false
     var last_point;
     var VisualTypes = {
         dots: 'dots',  // todo use ints to speed up?
-        lines: 'lines'
+        stroke: 'stroke'
     }
-    var active_visual_type = VisualTypes['lines']
+    var active_visual_type = VisualTypes['stroke']
 
 
     var PEN = false // pointer enabled device
@@ -168,6 +172,8 @@ function capture_widget(init){
     }
 
     function on_mousedown(event) {
+        if (! is_recording){return;}
+
         event.preventDefault()
         lmb_down = true
         inline = true
@@ -185,6 +191,7 @@ function capture_widget(init){
 
     }
     function on_mousemove(event) {
+        if (! is_recording){return;}
         event.preventDefault()
 
         if (lmb_down) {
@@ -193,7 +200,7 @@ function capture_widget(init){
             if (active_visual_type == VisualTypes.dots) {
                 canvas.draw_point(cur_point)
             }
-            else if (active_visual_type == VisualTypes.lines) {
+            else if (active_visual_type == VisualTypes.stroke) {
                 canvas.draw_line({
                         from: cur_point,
                         to: last_point
@@ -209,6 +216,7 @@ function capture_widget(init){
 
     }
     function on_mouseup(event) {
+        if (! is_recording){return;}
         event.preventDefault()
 
         if (lmb_down) {
@@ -227,13 +235,13 @@ function capture_widget(init){
         for (var i=0; i<visuals.length; i++){
             var visual = visuals[i]
 
-            if (visual.type == VisualTypes['dots']){
+            if (visual.type == VisualTypes.dots){
                 for(var j=0; j<visual.vertices.length; j++){
                     var vertex = visual.vertices[j]
                     canvas.draw_point(vertex)
                 }
             }
-            else if(visual.type == VisualTypes['lines']){
+            else if(visual.type == VisualTypes.stroke){
                 for(var j=1; j<visual.vertices.length; j++){
                     var from = visual.vertices[j-1]
                     var to = visual.vertices[j]
@@ -263,6 +271,94 @@ function capture_widget(init){
         return curves
     }
 
+
+    function export_recording_to_pentimento_format(){
+
+        console.log('start export to pentimento')
+        var canvas_height = $(canvas_id).height()
+        var canvas_width = $(canvas_id).width()
+
+        var result = {
+            pageFlips: undefined,
+            visuals: undefined,
+            cameraTransforms: undefined,
+            height: canvas_height,
+            width: canvas_width,
+            durationInSeconds: (recording_stop_time - recording_start_time)/1000
+        }
+
+
+        //pageFlips
+        result.pageFlips = []
+        result.pageFlips[0] = {
+            page: 1,
+            time: -100000.0
+        }
+
+        //cameraTransforms
+        result.cameraTransforms=[]
+        result.cameraTransforms[0] = {
+            tx: 0.0,
+            ty: 0.0,
+            m21: 0.0,
+            m22: 1.0,
+            m11: 1.0,
+            m12: 0.0,
+            time: -100000.0
+        }
+
+        //visuals
+        result.visuals = []
+
+
+        for (var i=0; i<VISUALS.length; i++){
+            if (VISUALS[i].type == VisualTypes.stroke){
+
+                var v = {}
+                v.type = 'stroke'
+                v.tDeletion = 0
+                v.tMin = (VISUALS[i].vertices[0].t - recording_start_time)/1000
+                var nverts = VISUALS[i].vertices.length
+                v.tEndEdit = (VISUALS[i].vertices[nverts-1].t - recording_start_time)/1000
+                v.doesItGetDeleted = false
+                v.properties = []
+                v.properties[0] = {
+                    red: 0,
+                    green: 0,
+                    blue: 0,
+                    alpha: 1,
+                    redFill: 0,
+                    blueFill: 0,
+                    greenFill: 0,
+                    alphaFill: 1,
+                    thickness: 10,
+                    time: v.tEndEdit - v.tMin,
+                    type: 'basicProperty'
+                }
+
+                v.vertices = []
+                for (var j=0; j<VISUALS[i].vertices.length; j++){
+
+                    var vertex = {
+                        x: VISUALS[i].vertices[j].x,
+                        y: VISUALS[i].vertices[j].y,
+                        t: (VISUALS[i].vertices[j].t - recording_start_time)/1000,
+                        pressure: (VISUALS[i].vertices[j].pressure == undefined)? 0.8 : VISUALS[i].vertices[j].pressure
+                    }
+
+                    v.vertices.push(vertex)
+                }
+
+                result.visuals.push(v)
+            }
+            else {
+                console.log('skipping unsupported pentimento visual type: ' + visual.type)
+            }
+        }
+
+        console.log('end export to pentimento')
+        return result
+    }
 
     // Returns true if this Internet Explorer 10 or greater running on a device
     // with msPointer events enabled (like the surface pro)
@@ -373,8 +469,19 @@ function capture_widget(init){
 
     }
 
-    this.get_record = function(){
-        return VISUALS
+    this.get_recording = function(){
+        var pentimento_record = export_recording_to_pentimento_format()
+        return pentimento_record
+    }
+
+    this.start_recording = function (){
+        is_recording = true;
+        recording_start_time = time();
+    }
+
+    this.stop_recording = function(){
+        is_recording = false;
+        recording_stop_time = time();
     }
 
 }

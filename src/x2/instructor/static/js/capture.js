@@ -134,6 +134,7 @@ var Capture = function() {
             $('#capture-button').text("please wait")
             $('#capture-button').removeClass('btn-success')
             $.jRecorder.record(600)
+            capture_widget.start_recording()
         }
         else if (recording_state == 'on')
         {
@@ -144,7 +145,8 @@ var Capture = function() {
             $('#capture-button').removeClass('btn-danger')
             $.jRecorder.stop() //sends audio to server todo separate
 
-            var canvas_capture = capture_widget.get_record()
+            capture_widget.stop_recording()
+            var canvas_capture = capture_widget.get_recording()
             store_canvas_capture(canvas_capture)
 
         }
