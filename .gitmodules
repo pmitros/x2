@@ -1,0 +1,3 @@
+[submodule "src/pentimento"]
+	path = src/pentimento
+	url = https://github.com/lilisun/pentimento.git
