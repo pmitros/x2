@@ -38,19 +38,6 @@ class Student(Agent):
     def toJSON(self):
         return json.dumps(self, default=dthandler, sort_keys=True)
 
-
-class Instructor(Agent):
-    pass
-
-
-class Group(Agent):
-    pass
-
-
-class Assistant(Agent):
-    pass
-
-
 class Session(models.Model):
     name = models.CharField(max_length=255)
     slug = models.CharField(max_length=32)
