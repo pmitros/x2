@@ -7,9 +7,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from instructor.models import *
 from datetime import datetime
 from django.utils.timezone import utc
+
+import sys
 import os
 import json
 import urllib2
+
 from django_socketio.events import on_connect, on_message, on_subscribe, on_unsubscribe, on_error, on_disconnect, on_finish
 
 
@@ -449,15 +452,28 @@ def ajax_capture_interaction_store_media(request):
             return HttpResponseBadRequest(e)
 
         interaction = Interaction.objects.get(id=interaction_id)
-        filename = interaction_id + '.wav'
-        filepath = os.path.join(settings.MEDIA_ROOT, filename)
+        wav_filename = interaction_id + '.wav'
+        mp3_filename = interaction_id + '.mp3'
+        ogg_filename = interaction_id + '.ogg'
+        wav_filepath = os.path.join(settings.MEDIA_ROOT, wav_filename)
+        mp3_filepath = os.path.join(settings.MEDIA_ROOT, mp3_filename)
+        ogg_filepath = os.path.join(settings.MEDIA_ROOT, ogg_filename)
 
-        with open(filepath, "wb+") as fd:
+        with open(wav_filepath, "wb+") as fd:
             fd.write(wav_blob)
-        interaction.audio_path = filename
+        interaction.audio_path = wav_filename
         interaction.ended_at = datetime.utcnow().replace(tzinfo=utc) # todo use client's time
         interaction.save()
-        url = settings.MEDIA_URL + filename
+
+        if not os.fork():
+        #if True:
+            commands = ['avconv -i '+ wav_filepath + ' ' +mp3_filepath, 'avconv -i '+ wav_filepath + ' ' +ogg_filepath]
+            for cmd in commands: 
+                print cmd
+                os.system(cmd)
+            sys.exit(-1)
+
+        url = settings.MEDIA_URL + wav_filename
 
         return HttpResponse(json.dumps({'url': url}, ensure_ascii=False),
                              mimetype='application/json')
