@@ -1,4 +1,5 @@
 from django.db import models
+import django.contrib.auth.models
 import json
 import datetime
 
@@ -16,10 +17,10 @@ class Course(models.Model):
 class Agent(models.Model):
     name = models.CharField(max_length=255)
     course = models.ForeignKey(Course)
-    email = models.EmailField()
+    #email = models.EmailField()
     location = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)
-    # parent = models.ForeignKey('self', null=True, default=None)
+    profile_img_path = models.CharField(max_length=500, blank=True)
 
     def toJSON(self):
         return json.dumps(self, default=dthandler, sort_keys=True)    
@@ -27,9 +28,18 @@ class Agent(models.Model):
     def __unicode__(self):
         return self.name
 
+class Learner(models.Model):
+    ''' Student (below) will be obsoleted by this '''
+    agent = models.ForeignKey(Agent)    
+    needs_help = models.BooleanField()
+    # not used
+    interaction_in_progress = models.BooleanField()
+
+class Individual(models.Model):
+    agent = models.ForeignKey(Agent)    
+    user = models.ForeignKey(django.contrib.auth.models.User)
 
 class Student(Agent):
-    profile_img_path = models.CharField(max_length=500, blank=True)
     # not used
     needs_help = models.BooleanField()
     # not used
