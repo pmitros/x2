@@ -3,7 +3,6 @@ from instructor.models import *
 
 admin.site.register(Agent)
 admin.site.register(Student)
-admin.site.register(Instructor)
 admin.site.register(Course)
 admin.site.register(TableBlock)
 admin.site.register(HelpRequest)
