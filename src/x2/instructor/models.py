@@ -17,7 +17,7 @@ class Course(models.Model):
 class Agent(models.Model):
     name = models.CharField(max_length=255)
     course = models.ForeignKey(Course)
-    #email = models.EmailField()
+    email = models.EmailField()
     location = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)
     profile_img_path = models.CharField(max_length=500, blank=True)
@@ -38,6 +38,10 @@ class Learner(models.Model):
 class Individual(models.Model):
     agent = models.ForeignKey(Agent)    
     user = models.ForeignKey(django.contrib.auth.models.User)
+
+class Instructor(Agent):
+#    agent = models.ForeignKey(Agent)
+    pass
 
 class Student(Agent):
     # not used
