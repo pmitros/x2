@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Canvas 5 benchmarking </title>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src='/static/js/fastclick.js'></script>
+    <script src='/static/js/capturewidget.js'></script>
+    <style type="text/css">
+
+        canvas {
+            border: 1px solid black;
+            cursor: crosshair;
+        }
+
+        .info {
+            float: left;
+            margin-right: 40px;
+        }
+
+        .info span {
+
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px;
+            text-transform: uppercase;
+        }
+    </style>
+
+
+    <script>
+
+
+
+        //the main capturing widget
+        var CANV;
+
+
+        function init(){
+
+            CANV = new capture_widget({
+                canvas_id: 'canv'
+            })
+        }
+
+
+
+    </script>
+
+</head>
+
+<body onload="init();">
+
+
+<div>
+    <button id="clear" onclick="CANV.clear();">Clear</button>
+    <button onclick="CANV.set_active_visual_type('lines')">Lines</button>
+    <button onclick="CANV.set_active_visual_type('dots')">Dots</button>
+    <button onclick="CANV.start_collecting()">start collecting</button>
+    <button onclick="CANV.stop_collecting()">stop collecting</button>
+    <button onclick="CANV.draw_all()">draw all</button>
+    <button onclick="CANV.undo()">undo</button>
+</div>
+<div>
+    <canvas id="canv" width="600" height="400"></canvas>
+</div>
+
+
+</body>
+
+
+</html>
+

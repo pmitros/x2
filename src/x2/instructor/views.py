@@ -525,7 +525,7 @@ def ajax_layout_students_progress(request):
         #         print e, "error returned"
 
         try:
-            results = urllib2.urlopen("http://ls.edx.org:2233/allqinfo").read()
+            results = urllib2.urlopen("http://localhost:8000/allqinfo").read()
         except (urllib2.HTTPError, urllib2.URLError) as e:
             print e, "error returned"
 

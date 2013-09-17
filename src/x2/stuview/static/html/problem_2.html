@@ -1,0 +1,97 @@
+<div class='content'>
+    <h1>Part 1: The sampling distribution of the sample mean</h1>
+
+    <p>
+        <i>
+            You are not expected to know how to solve this problem. You are
+            expected
+            to have questions. Use the "Ask for help" button to summon help.
+        </i>
+
+    </p>
+
+    <p>
+        The nation average SAT score in Mathematics is <b> μ=514 </b> with
+        standard deviation of <b> σ=117 </b>.
+        A math teacher in Springfield High has a class of <b> 30 students </b>who
+        have received scores as follows:
+    </p>
+
+    <p>
+    <table border=1px>
+        <tr>
+            <td>Student 1</td>
+            <td>544</td>
+        </tr>
+        <tr>
+            <td>Student 2</td>
+            <td>590</td>
+        </tr>
+        <tr>
+            <td>...</td>
+            <td>...</td>
+        </tr>
+        <tr>
+            <td>Student 30</td>
+            <td>522</td>
+        </tr>
+        <tr>
+            <td>class average</td>
+            <td>S=543</td>
+        </tr>
+    </table>
+    </p>
+
+    <p>
+        The teacher wants to find out whether her students were better than
+        average,
+        which would mean that he did a good job teaching. She calculates the
+        average
+        score of his class, let's call it the "class average": <b>S=543</b>,
+        which is obviously higher than the nation average <b>μ=514.</b>
+    </p>
+
+    <p>
+        However, the teacher is still not convinced. She is worried that the
+        higher scores
+        might be a fluke due to randomness, and that her students are actually
+        average. What
+        the teacher wants to calculate is the probability that if the students
+        are indeed average
+        they will get scores at least as good as the ones they got. In
+        statistics this probability
+        is called a p-value. If the p-value is sufficiently small (less than
+        0.05), we will reject the
+        hypothesis that the students are average, which in our case would mean
+        that they are better.
+    </p>
+
+
+    <p>
+        We calculate the p-value using the following steps:
+    <ol>
+        <li>Assume that students were indeed average in the sense that each
+            student's score
+            came from a normal (or Gaussian) distribution: <b>N(μ=514, σ²=117²)</b></li>
+        <li>
+            Derive the sampling distribution of the class average: <b>S</b>
+            (Hint: think of the central limit theorem, or use the formulas from page 1).
+            <br/>
+            <b> Answer </b>: the distribution is Normal with:
+            <br/>
+
+            mean = <input type="text" id="input_mean"
+                          value="{{ input.input_mean.val }}"/>
+            <button input_src="input_mean" class='check_button'>check</button>
+            <br/>
+            variance = <input type=text id="input_var"
+                              value="{{ input.input_var.val }}"/>
+            <button input_src="input_var" class='check_button'>check</button>
+        </li>
+
+    </ol>
+    </p>
+
+
+</div>
+

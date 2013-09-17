@@ -1,0 +1,8 @@
+[xblock.v1]
+verticalqueue = blockqueue:VerticalQueue
+videoitem = itemblocks:VideoBlock
+problemitem = itemblocks:ProblemBlock
+blockqueuebase = blockqueue:BlockQueueBase
+queuewidget = blockqueue:QueueWidget
+textitem = itemblocks:TextBlock
+

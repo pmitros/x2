@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>Microsoft HTML5 Media Capture Prototype - Audio Capture Demo</title>
+    <link href="/static/msmedia/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script src="/static/msmedia/jquery.min.js"></script>
+    <script src="/static/msmedia/jquery-ui.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/msmedia/InitActiveXObjects.js"></script>
+    <script type="text/javascript">
+    </script>
+    <style>
+        body
+        {
+            color: #000;
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 12px;
+        }
+        #container
+        {
+            margin: 0 auto;
+            width: 700px;
+        }
+    </style>
+    <style type="text/css">
+        #slider
+        {
+            margin: 10px;
+            border-color: #000000;
+        }
+        #myhandle
+        {
+            position: absolute;
+            z-index: 100;
+            height: 25px;
+            width: 35px;
+            top: auto;
+            color: Blue;
+        }
+        .ui-slider-horizontal .ui-state-default</style>
+    <script language="javascript" type="text/javascript" src="/static/msmedia/Common.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/msmedia/MsGetUserMedia.js"></script>
+</head>
+<body onload="onLoad()">
+    <div id="container">
+        <div id="input_box">
+            <table border="1" cellpadding="10" cellspacing="10" align="center">
+                <tr>
+                    <td align="center">
+                        <span style="font-size: large; font-weight: bold;">Capture Audio Demo</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="equilizer" style="display: none;">
+                            <img src="/static/msmedia/vu-meter-1.gif" width="100%" height="35" /></div>
+                        <div id="slider">
+                        </div>
+                        <div style="text-align: center;">
+                            <img name="record" src="/static/msmedia/Mic_On.png" title="Press to start audio capture" onclick="StartCapture();" />&nbsp;&nbsp;
+                            <img name="stop" src="/static/msmedia/Stop_Off.png" title="Press to stop audio capture" onclick="StopCapture();" />&nbsp;&nbsp;
+                            <img name="play" src="/static/msmedia/Play_Off.png" title="Press to playback captured audio"
+                                onclick="PlaySound();" />&nbsp;&nbsp;
+                        </div>
+                    </td>
+                </tr>
+				<tr>
+                    <td align="center" id="spanMessage"  style="display: none">
+                        <span style="font-size: 10pt;  font-weight: bold;">Capture data is being processed. Please wait...</span>
+                    </td> 
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script language="javascript" type="text/javascript">
+
+        var options = {
+            "video": false,
+            "audio": true
+        };
+
+        var msMediaStream;
+        var resultBlob;
+
+        function onLoad() {
+            navigator.msGetUserMedia(options, microphoneStarted);
+        }
+
+        function microphoneStarted(mediaStream) {
+            msMediaStream = mediaStream;
+        }
+
+        function movepic(img_name, img_src) {
+            document[img_name].src = img_src;
+        }
+
+        // Recording from value
+        function StartCapture() {
+            try {
+                if (/Mic_On.png/.test(document["record"].src)) {
+                    movepic("record", "/static/msmedia/Mic_Off.png");
+                    movepic("stop", "/static/msmedia/Stop_On.png");
+                    movepic("play", "/static/msmedia/Play_Off.png");
+
+                    msMediaStream.msStartRecording();
+                    document.getElementById("equilizer").style.display = "block";
+                    document.getElementById("slider").style.display = "none";
+                }
+            }
+            catch (ex) {
+                alert(ex.message);
+            }
+        }
+
+        function PlaySound() {
+            if (/Play_On.png/.test(document["play"].src)) {
+                if (resultBlob) {
+                    movepic("play", "/static/msmedia/Play_Off.png");
+                    movepic("record", "/static/msmedia/Mic_Off.png");
+
+                    playMediaObject.Play(resultBlob);
+                }
+            }
+
+            movepic("play", "/static/msmedia/Play_On.png");
+            movepic("record", "/static/msmedia/Mic_On.png");
+        }
+
+        function StopCapture() {
+            if (/Stop_On.png/.test(document["stop"].src)) {
+				movepic("stop", "/static/msmedia/Stop_Off.png");
+				document.getElementById("spanMessage").style.display = "block";	
+				// Need to have time to redraw the browser DOM elements before the calling to the COM object.
+				setTimeout("msMediaStream.msStopRecording(msStopRecordCallback)", 200);
+            }
+        }
+
+        function msStopRecordCallback(blob) {
+            resultBlob = blob;
+			document.getElementById("spanMessage").style.display = "none";	
+            movepic("record", "/static/msmedia/Mic_On.png");
+            movepic("play", "/static/msmedia/Play_On.png");
+            document.getElementById("equilizer").style.display = "none";
+        }
+    </script>
+</body>
+</html>
