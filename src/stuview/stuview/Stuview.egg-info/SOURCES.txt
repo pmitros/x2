@@ -1,7 +1,0 @@
-setup.py
-Stuview.egg-info/PKG-INFO
-Stuview.egg-info/SOURCES.txt
-Stuview.egg-info/dependency_links.txt
-Stuview.egg-info/entry_points.txt
-Stuview.egg-info/requires.txt
-Stuview.egg-info/top_level.txt

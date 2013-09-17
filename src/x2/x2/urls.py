@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -35,7 +36,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^x2/admin/', include(admin.site.urls)),
-
+    url("", include('stuview.urls')),
     url("", include('django_socketio.urls')),
 )
 
@@ -44,3 +45,5 @@ if settings.DEBUG:
     urlpatterns += patterns('',
         (r'^x2/media/(?P<path>.*)$', 'django.views.static.serve', {
         'document_root': settings.MEDIA_ROOT}))
+
+urlpatterns += staticfiles_urlpatterns()
