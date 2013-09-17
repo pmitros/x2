@@ -568,3 +568,6 @@ def ajax_layout_students_progress(request):
 
     return HttpResponse(
         json.dumps({'results': results, 'requests': requests}, ensure_ascii=False), mimetype='application/json')
+
+def index(request):
+    return render_to_response("sitemap.html", {})
