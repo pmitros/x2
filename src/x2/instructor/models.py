@@ -3,6 +3,26 @@ import django.contrib.auth.models
 import json
 import datetime
 
+def new_course(slug, name):
+    c = Course()
+    c.slug = slug
+    c.name = name
+    c.save()
+
+def new_student(name):
+    s = Student()
+    s.name = name
+    s.save()
+
+def new_instructor(name):
+    i = Instructor()
+    i.name = name
+    i.save()
+
+def new_session(slug):
+    s = Session()
+    s.slug = slug
+    s.save()
 
 class Course(models.Model):
     name = models.CharField(max_length=255)
@@ -28,16 +48,16 @@ class Agent(models.Model):
     def __unicode__(self):
         return self.name
 
-class Learner(models.Model):
-    ''' Student (below) will be obsoleted by this '''
-    agent = models.ForeignKey(Agent)    
-    needs_help = models.BooleanField()
-    # not used
-    interaction_in_progress = models.BooleanField()
+# class Learner(models.Model):
+#     ''' Student (below) will be obsoleted by this '''
+#     agent = models.ForeignKey(Agent)    
+#     needs_help = models.BooleanField()
+#     # not used
+#     interaction_in_progress = models.BooleanField()
 
-class Individual(models.Model):
-    agent = models.ForeignKey(Agent)    
-    user = models.ForeignKey(django.contrib.auth.models.User)
+# class Individual(models.Model):
+#     agent = models.ForeignKey(Agent)    
+#     user = models.ForeignKey(django.contrib.auth.models.User)
 
 class Instructor(Agent):
 #    agent = models.ForeignKey(Agent)
