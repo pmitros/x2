@@ -20,9 +20,10 @@ Required: HTML5-supporting web browser, and node.js
     Install requirements from src/x2/apt-get-requirements.txt
     mkvirtualenv x2
     workon x2
-    pip install -r src/XBlock/requirements.txt
     pip install -r src/x2/stuview/requirements.txt
-    pip install -r ./src/x2/requirements.txt
+    pip install -r src/x2/requirements.txt
+    cd src/XBlock
+    pip install -r requirements.txt
 
 ### Install packages in virtualenv. 
 
@@ -32,13 +33,18 @@ Run
 
 In src/XBlock, src/x2/textbook, src/x2/stuview
 
-### Customize settings. 
+### Customize settings if necessary
 
 In `src/x2/x2/settings.py`, 
 
 * update TEMPLATE_DIR to include an absolute path to the template directory.
 * update MEDIA_ROOT to include an absolute path to the media directory.
 * update DATABASES to suit your database setup.
+
+### Set up databases
+
+    python manage.py syncdb
+    python manage.py migrate
 
 ### Load initial data
 
@@ -50,7 +56,7 @@ Run the loaddata command with `src/x2/instructor-datadump.json`
     
 For more information, visit https://docs.djangoproject.com/en/1.5/ref/django-admin/#loaddata-fixture-fixture
 
-For student view, navigate to: 
+For student view, navigate to (note: after running server in step below): 
 
     http://localhost:8000/populate
 
@@ -60,7 +66,7 @@ In `src/x2`, run
 
     python manage.py runserver 0.0.0.0:8000
 
-### Run Walma server (optional).
+### Run Walma server (optional -- not currently used).
 
 The capture interface uses the open source Walma Whiteboard.
 Make sure to install and run Walma by visiting https://github.com/opinsys/walma
@@ -75,7 +81,7 @@ Refer to https://github.com/muaz-khan/WebRTC-Experiment/tree/master/RecordRTC fo
 
 ### Access the interfaces from your web browser.
 
-    http://localhost:3333/instructor/6.00x/sep-1-2013/view-layout
-    http://localhost:2233/qwidget?id=Amy
+    http://localhost:8000/x2/instructor/6.00x/sep-1-2013/view-layout
+    http://localhost:8000/qwidget?student=Amy
 
 6.00x is the course slug, sep-1-2013 is the session slug: they depend on the Course and Session table data.
