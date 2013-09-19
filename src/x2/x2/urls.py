@@ -1,18 +1,20 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^$', 'instructor.views.index'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/view-layout$', 'instructor.views.view_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/manage-layout$', 'instructor.views.manage_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture$', 'instructor.views.capture'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture-iframe$', 'instructor.views.capture_iframe'),
     url(r'^teacher', 'instructor.views.instructor_shorturl'),
     url(r'^capture', 'instructor.views.capture_shorturl'),
-
+ 
     # url(r'^x2/ajax/layout/create$', 'instructor.views.create_layout'),
     url(r'^x2/ajax/layout/blocks/update$', 'instructor.views.ajax_layout_blocks_update'),
     url(r'^x2/ajax/layout/students/update$', 'instructor.views.ajax_layout_students_update'),
@@ -34,7 +36,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^x2/admin/', include(admin.site.urls)),
-
+    url("", include('stuview.urls')),
     url("", include('django_socketio.urls')),
 )
 
@@ -44,3 +46,5 @@ if settings.DEBUG:
         (r'^x2/media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
         (r'^captest/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/edx/x2/src/capture-widget/src'}),
     )
+
+urlpatterns += staticfiles_urlpatterns()

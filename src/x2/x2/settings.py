@@ -20,9 +20,12 @@ DATABASES = {
     }
 }
 
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -89,7 +92,7 @@ SECRET_KEY = 'fst6*wwsdi2$h$@zefbvpt%i_*l^a5ef7yf2c==26@(@4=(s5k'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,6 +115,9 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     "/edx/x2/src/x2/instructor/templates",
+    'workbench/templates',
+    'xblock/templates',
+    'stuview'
 )
 
 INSTALLED_APPS = (
@@ -122,6 +128,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'south',
+    'django_nose',
+    'stuview',
+    'xblock',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -129,6 +138,8 @@ INSTALLED_APPS = (
     'django_socketio',
     'instructor',
 )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
