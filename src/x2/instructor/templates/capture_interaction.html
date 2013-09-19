@@ -53,6 +53,14 @@
             border: 1px solid black;
             cursor: crosshair;
         }
+
+        .modal-dialog{
+            width: 800px;
+        }
+
+        #video-iframe{
+            border: none;
+        }
     </style>   
   </head>
   <body>
@@ -128,31 +136,49 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="myModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Interaction successfully captured!</h4>
-          </div>
-          <div class="modal-body">
-            <div>Preview the recorded audio:</div>
-            <audio id="preview-audio" autoplay loop controls></audio>
-            <div class="more-info">some other information</div>
-            <br/>
-            <div>Leave a summary of this interaction (optional)</div>
-            <textarea rows="3" cols="50" id="summary"></textarea>
-          </div>
-          <div class="modal-footer">
-            <div>Would you like to save this interaction and share with others?<br/></div>
-            <div>
-                <button type="button" class="btn btn-default" id="discard-interaction-button" data-dismiss="modal">Discard</button>
-                <button type="button" class="btn btn-primary" id="save-interaction-button" data-dismiss="modal">Save this interaction</button>
+    <div class="modal fade" id="post-capture-modal">
+        <div class="modal-dialog" id="post-capture-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"> Review Interaction</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle" data-toggle="collapse"
+                                   href="#video-collapse" id='video-toggle'>
+                                    Show Video
+                                </a>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div id="video-collapse" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <iframe id="video-iframe" width="800" height="400">Please wait</iframe>
+                        </div>
+                    </div>
+
+                </div> <!-- modal body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            id="discard-interaction-button" data-dismiss="modal">
+                        Discard
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            id="save-interaction-button" data-dismiss="modal">Save
+                    </button>
+                </div>
             </div>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+
 
     <!-- Modal -->
     <div class="modal fade" id="introModal">

@@ -1389,7 +1389,7 @@ var Grapher = function() {
     *   HTML template
     *
     *************************/
-    var template="<a class='menulink' href='index.html'>back to menu</a><div class='lecture'>"
+    var template="<div class='lecture'>"
         + "<canvas class='video'></canvas>"
         + "<div class='onScreenStatus'> <img src='images/pause.png' id='pauseIcon' width='0px' height='0px'> </div>"
         + "<br> <div class='captions'>test captions</div>"

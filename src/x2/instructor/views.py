@@ -413,9 +413,10 @@ def ajax_capture_interaction_stop(request):
 
 @ensure_csrf_cookie
 def interactions(request):
-    all_interactions = Interaction.objects.all()
+    accepted_interactions = Interaction.objects.filter(is_rejected=False)
+
     return render_to_response('view_interaction_list.html',
-                       {'interactions': all_interactions})
+                       {'interactions': accepted_interactions})
 
 
 @csrf_protect

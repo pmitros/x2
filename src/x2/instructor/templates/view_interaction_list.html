@@ -11,7 +11,11 @@
 
 <ul class="list-group">
     {% for interaction in interactions %}
-    <li class="list-group-item"><a target='_blank' href="/player/play.html?n={{interaction.id}}">{{interaction.ended_at}}</a></li>
+    <li class="list-group-item"><a target='_blank' href="/player/play.html?n={{interaction.id}}">
+        {{interaction.id}}: &nbsp; &nbsp; &nbsp;
+        {{interaction.ended_at}} &nbsp; &nbsp; &nbsp;
+        {{interaction.instructor_summary}}
+    </a></li>
     {% endfor %}
 </ul>
 

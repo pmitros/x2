@@ -108,22 +108,26 @@ var Capture = function() {
         $("#capture-button").click(capture_button_handler);
         // $("#video-capture-button").click(video_capture_button_handler);
         $("#save-interaction-button").click(save_interaction_button_handler);
-        $("#discard-interaction-button").click(discard_interaction_button_handler);
+        //$("#discard-interaction-button").click(discard_interaction_button_handler);
+        $("#discard-interaction-button").click(discard_interaction_button_handler)
         // $("#new-whiteboard-button").click(new_whiteboard_button_handler);
 
-//        window.addEventListener("message", receiveMessage, false);
-//        $(document).on("mouseup", function(){
-//            console.log("mouseup detected.");
-//            // $("iframe").trigger("mouseup");
-//            // window.postMessage("mouse up detected", "http://localhost:3333/");
-//            // $("iframe")[0].contentWindow.postMessage("mouseup", "http://ls.edx.org:1337");
-//            $("iframe")[0].contentWindow.postMessage("mouseup", board_url);
-//        });
+        $('#video-toggle').one('click', load_video_player_iframe)
+        $('#video-iframe').load(resize_video_iframe_to_content)
     }
 
-//    function receiveMessage(event){
-//        console.log(event.origin, event.data, event.source);
-//    }
+    function load_video_player_iframe(){
+        var url = "/player/play.html?n=" + interaction_id;
+        $("#video-iframe").attr('src', url)
+
+    }
+
+    function resize_video_iframe_to_content(){
+        var width = $('#video-iframe').contents().find('canvas.video').outerWidth()
+        width += 200
+        console.log('resizing', width)
+        $('#post-capture-dialog').css('width', width)
+    }
 
     function capture_button_handler(event){
 
@@ -148,7 +152,7 @@ var Capture = function() {
             capture_widget.stop_recording()
             var canvas_capture = capture_widget.get_recording()
             store_canvas_capture(canvas_capture)
-
+            $("#post-capture-modal").modal()
         }
         else {
             console.log('still waiting')
@@ -175,50 +179,18 @@ var Capture = function() {
 
     }
 
-/*
-    function new_whiteboard_button_handler(event){
-        whiteboard_count += 1;
-//        var board_url = "http://ls.edx.org:1337/" + interaction_id + "_" + whiteboard_count;
-        var board_url = "http://ls.edx.org:2233/canvas/";
-        console.log("opening new whiteboard at", board_url);
-        $("#whiteboard").attr("src", board_url);
-    }
-
-    function capture_button_handler(event){
-        if ($(this).hasClass("recording")){
-            $(this).removeClass("recording");
-            $(this).text("Record Audio");
-            stop_audio_capture();
-        } else {
-            $(this).addClass("recording");
-            $(this).text("Stop Recording");
-            start_audio_capture();
-        }
-    }
-
-    function video_capture_button_handler(event){
-        if ($(this).hasClass("recording")){
-            $(this).removeClass("recording");
-            $(this).text("Record Video");
-            stop_video_capture();
-        } else {
-            $(this).addClass("recording");
-            $(this).text("Stop Recording");
-            start_video_capture();
-        }
-    }
-*/
     function discard_interaction_button_handler(event){
-        // window.location = "./view-layout";
-        window.location = "./view-layout?iid=" + instructor_id;
+        console.log("discarded")
+        location.reload(false)
     }
 
     function save_interaction_button_handler(event){
         //TODO: update the status
-        console.log("saved", $("#myModal #summary").val());
+
         var data = {
             "interaction_id": interaction_id,
-            "instructor_summary": $("#myModal #summary").val()
+            //"instructor_summary": $("#myModal #summary").val()
+            instructor_summary: 'instructor summary'
         };
         var csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
@@ -232,8 +204,11 @@ var Capture = function() {
 
         $.post("/x2/ajax/capture/interaction/accept", {"data": JSON.stringify(data)}, function(data){
             console.log(data);
-            window.location = "./view-layout?iid=" + instructor_id;
+            //window.location = "./view-layout?iid=" + instructor_id;
+            location.reload(false)
         });
+
+
     }
 
 /*
