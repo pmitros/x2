@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'django_socketio',
     'instructor',
+    'player',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

@@ -411,6 +411,12 @@ def ajax_capture_interaction_stop(request):
     return HttpResponse(
         json.dumps({'message': message, 'url': url}, ensure_ascii=False), mimetype='application/json')
 
+@ensure_csrf_cookie
+def interactions(request):
+    all_interactions = Interaction.objects.all()
+    return render_to_response('view_interaction_list.html',
+                       {'interactions': all_interactions})
+
 
 @csrf_protect
 def ajax_capture_interaction_accept(request):

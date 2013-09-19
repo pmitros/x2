@@ -14,6 +14,8 @@ urlpatterns = patterns('',
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture-iframe$', 'instructor.views.capture_iframe'),
     url(r'^teacher', 'instructor.views.instructor_shorturl'),
     url(r'^capture', 'instructor.views.capture_shorturl'),
+    url(r'^interactions', 'instructor.views.interactions'),
+
  
     # url(r'^x2/ajax/layout/create$', 'instructor.views.create_layout'),
     url(r'^x2/ajax/layout/blocks/update$', 'instructor.views.ajax_layout_blocks_update'),
@@ -27,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^x2/ajax/layout/students/progress$', 'instructor.views.ajax_layout_students_progress'),
     # url(r'^ajax/layout/remove$', 'instructor.views.remove_layout'),
 
+
     # Examples:
     # url(r'^$', 'x2.views.home', name='home'),
     # url(r'^x2/', include('x2.foo.urls')),
@@ -38,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^x2/admin/', include(admin.site.urls)),
     url("", include('stuview.urls')),
     url("", include('django_socketio.urls')),
+    url('', include('player.urls')),
 )
 
 if settings.DEBUG:
