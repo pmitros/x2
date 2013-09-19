@@ -41,5 +41,6 @@ urlpatterns = patterns('',
 if settings.DEBUG:
     # static files (images, css, javascript, etc.)
     urlpatterns += patterns('',
-        (r'^x2/media/(?P<path>.*)$', 'django.views.static.serve', {
-        'document_root': settings.MEDIA_ROOT}))
+        (r'^x2/media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+        (r'^captest/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/edx/x2/src/capture-widget/src'}),
+    )

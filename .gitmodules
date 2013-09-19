@@ -1,3 +1,6 @@
 [submodule "src/pentimento"]
 	path = src/pentimento
 	url = https://github.com/lilisun/pentimento.git
+[submodule "src/capture-widget"]
+	path = src/capture-widget
+	url = git@github.com:stkomarov/capture-widget.git

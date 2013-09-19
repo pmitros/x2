@@ -341,7 +341,7 @@ function capture_widget(init){
 
                     var vertex = {
                         x: VISUALS[i].vertices[j].x,
-                        y: VISUALS[i].vertices[j].y,
+                        y: canvas_height - VISUALS[i].vertices[j].y,
                         t: (VISUALS[i].vertices[j].t - recording_start_time)/1000,
                         pressure: (VISUALS[i].vertices[j].pressure == undefined)? 0.8 : VISUALS[i].vertices[j].pressure
                     }
