@@ -1,34 +1,53 @@
 {% extends "theme_bootstrap/base.html" %}
+{% load staticfiles %}
 {% load account_tags %}
+{% load bootstrap_tags %}
 
 {% load i18n %}
 
+{% block style_base %}
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"  type="text/css"/>
+    <script src="//codeorigin.jquery.com/jquery-2.0.3.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    {% block extra_style %}{% endblock %}
+{% endblock %}
+
+{% block script_base %}
+    <script src="{% static "pinax/js/theme.js" %}"></script>
+    {% block extra_script %}{% endblock %}
+{% endblock %}
+
+
 {% block topbar_base %}
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+    <div class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="#"><img width=13% height=13% src="/static/logo.svg"></img></a>
-          <div class="nav-collapse collapse">
-            <p class="navbar-text pull-right">
-	      {% if user.is_authenticated %}
-	        {% user_display request.user %}
-	      {% else %}
-                <a href="/account/login"><span class="glyphicon glyphicon-log-in"></span>Log in</a>
-	      {% endif %} 
-            </p>
-          </div>
+          <a class="navbar-brand" href="/"><img width=13% height=13% src="/static/logo.svg"></img></a>
         </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url "account_login" %}">Login</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
     </div>
 {% endblock %}
 
 {% block extra_body_base %}
-    {% block extra_body %}{% endblock %}
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-6">
+      {% block extra_body %}{% endblock %}
+      </div>
+      <div class="col-md-2"></div>
+    </div>
 {% endblock %}
 
 {% block footer %}
@@ -36,5 +55,6 @@
 2013. <a href="http://www.gnu.org/licenses/agpl-3.0.html">Licensing
 information</a> for all content and code on this site. This is an
 experimental site platform from edX Learning Sciences used for
-development of advanced technologies. </small> {% endblock %}
+development of advanced technologies. </small> 
+{% endblock %}
 
