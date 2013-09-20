@@ -138,7 +138,14 @@ INSTALLED_APPS = (
     'django_socketio',
     'instructor',
     'player',
+    'marketing',
+    'account',
+    'pinax_theme_bootstrap',
+    'django_forms_bootstrap',
+    'pinax_theme_bootstrap_account',
 )
+
+THEME_ACCOUNT_CONTACT_EMAIL = "piotr@mitros.org"
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 

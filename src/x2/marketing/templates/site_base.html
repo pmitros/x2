@@ -1,0 +1,40 @@
+{% extends "theme_bootstrap/base.html" %}
+{% load account_tags %}
+
+{% load i18n %}
+
+{% block topbar_base %}
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#"><img width=13% height=13% src="/static/logo.svg"></img></a>
+          <div class="nav-collapse collapse">
+            <p class="navbar-text pull-right">
+	      {% if user.is_authenticated %}
+	        {% user_display request.user %}
+	      {% else %}
+                <a href="/account/login"><span class="glyphicon glyphicon-log-in"></span>Log in</a>
+	      {% endif %} 
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block extra_body_base %}
+    {% block extra_body %}{% endblock %}
+{% endblock %}
+
+{% block footer %}
+<small>Copyright &copy;
+2013. <a href="http://www.gnu.org/licenses/agpl-3.0.html">Licensing
+information</a> for all content and code on this site. This is an
+experimental site platform from edX Learning Sciences used for
+development of advanced technologies. </small> {% endblock %}
+

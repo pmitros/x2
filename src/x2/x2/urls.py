@@ -7,7 +7,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'instructor.views.index'),
+    url(r'^$', 'marketing.views.index', name='home'),
+    url(r'debug_index^$', 'instructor.views.index'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/view-layout$', 'instructor.views.view_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/manage-layout$', 'instructor.views.manage_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture$', 'instructor.views.capture'),
@@ -28,7 +29,7 @@ urlpatterns = patterns('',
     url(r'^x2/ajax/capture/interaction/accept$', 'instructor.views.ajax_capture_interaction_accept'),
     url(r'^x2/ajax/layout/students/progress$', 'instructor.views.ajax_layout_students_progress'),
     # url(r'^ajax/layout/remove$', 'instructor.views.remove_layout'),
-
+    url(r'^account/', include('account.urls')),
 
     # Examples:
     # url(r'^$', 'x2.views.home', name='home'),
