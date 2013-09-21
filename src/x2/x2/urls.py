@@ -8,7 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'marketing.views.index', name='home'),
-    url(r'debug_index^$', 'instructor.views.index'),
+    url(r'^debug_index$', 'instructor.views.index'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/view-layout$', 'instructor.views.view_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/manage-layout$', 'instructor.views.manage_layout'),
     url(r'^x2/instructor/(?P<course_slug>.+)/(?P<session_slug>.+)/capture$', 'instructor.views.capture'),
