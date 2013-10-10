@@ -228,7 +228,7 @@
     $.jRecorder.callback_activityTime = function (time) {
 
         //put back flash while recording
-        $('#' + jRecorderSettings['recorderlayout_id']).css('z-index', -1);
+        $('#' + jRecorderSettings['recorderlayout_id']).css('z-index', -100);
 
         jRecorderSettings['callback_activityTime'](time);
 
