@@ -8,5 +8,4 @@ def create_course(slug, name):
 
 class Course(models.Model):
     name = models.CharField(max_length=255)
-    slug = models.CharField(max_length=32)
-    
+    slug = models.CharField(max_length=32, unique = True)
