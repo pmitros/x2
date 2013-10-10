@@ -8,7 +8,8 @@
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />
+    <!--<link rel="stylesheet" href="{% static "css/jquery-ui.css" %}" />-->
+      <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="{% static "css/style.css" %}" /> 
     <style>
         html{
@@ -23,7 +24,8 @@
             -khtml-user-select: none;
             -moz-user-select: moz-none;
             -ms-user-select: none;
-            user-select: none;            
+            user-select: none;
+            -ms-touch-action: none;
         }
         #audio-rtc {
             display: none;
@@ -52,6 +54,7 @@
         canvas {
             border: 1px solid black;
             cursor: crosshair;
+
         }
 
         .modal-dialog{
@@ -129,7 +132,7 @@
                 <button onclick="CANV.draw_all()">draw all</button>
                 <button onclick="CANV.undo()">undo</button>
             </div>
-            <canvas id='drawing_board'></canvas>
+            <canvas id='drawing_board' style="touch-action:none;"></canvas>
         </div>
     </div>
 
@@ -159,6 +162,16 @@
                         <div class="panel-body">
                             <iframe id="video-iframe" width="800" height="400">Please wait</iframe>
                         </div>
+                    </div>
+
+                    <div id="tag-selector">
+                        <input type="checkbox" id="problem1" /><label for="problem1">Problem 1</label>
+                        <input type="checkbox" id="problem2" /><label for="problem2">Problem 2</label>
+                        <input type="checkbox" id="problem3" /><label for="problem3">Problem 3</label>
+                        <input type="checkbox" id="problem4" /><label for="problem4">Problem 4</label>
+                        <input type="checkbox" id="problem5" /><label for="problem5">Problem 5</label>
+                        <input type="checkbox" id="problem6" /><label for="problem6">Problem 6</label>
+
                     </div>
 
                 </div> <!-- modal body -->

@@ -36,6 +36,7 @@ var Capture = function() {
         init_jrecorder()
         bindEvents()
 
+        //$('#tag-selector').buttonset()
 
         // if (hasGetUserMedia()) {
         //     window.URL = window.URL || window.webkitURL;
@@ -86,7 +87,7 @@ var Capture = function() {
 
                 },
                 callback_activityTime: function (time) {
-                    console.log('activity time: ', time)
+                   // console.log('activity time: ', time)
                 },
 
                 callback_finished_sending: function (time) {

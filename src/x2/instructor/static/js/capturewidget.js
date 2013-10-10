@@ -75,6 +75,13 @@ function paint_widget(canvas_id){
         $(canvas_id)[0].width = 0.9 * iw
         $(canvas_id)[0].height = 0.8 * ih
     }
+
+    this.get_ctx = get_ctx;
+
+    this.transform = function(mat) {
+        var ctx = get_ctx();
+        ctx.transform(mat.m11, mat.m12, mat.m21, mat.m22, mat.dx, mat.dy)
+    }
 }
 
 // smart_paint_widget wraps paint_widget to modify the drawing primitives
@@ -125,6 +132,8 @@ function smart_paint_widget(canvas_id){
     this.draw_point = canvas.draw_point
     this.clear = canvas.clear
     this.resize_canvas = canvas.resize_canvas
+    this.get_ctx = canvas.get_ctx;
+    this.transform = canvas.transform;
 }
 
 
@@ -142,9 +151,18 @@ function capture_widget(init){
     var recording_stop_time;
     var is_recording = false;
 
+    var LMB = 1;
+    var MMB = 2;
+    var RMB = 3;
+
+    var TOUCH = 2;
+
     var lmb_down = false
     var inline = false
     var last_point;
+
+    var pan_last_point;
+
     var VisualTypes = {
         dots: 'dots',  // todo use ints to speed up?
         stroke: 'stroke'
@@ -172,9 +190,17 @@ function capture_widget(init){
     }
 
     function on_mousedown(event) {
+        event.preventDefault()
         if (! is_recording){return;}
 
-        event.preventDefault()
+        if(event.which == MMB){
+            return on_pan_start(event);
+        }
+
+        if(PEN && event.pointerType == TOUCH){
+            return on_pan_start(event);
+        }
+
         lmb_down = true
         inline = true
         //console.log('mousedown')
@@ -191,8 +217,19 @@ function capture_widget(init){
 
     }
     function on_mousemove(event) {
+        //event.preventDefault()
+
+        console.log(event.pointerType)
+
         if (! is_recording){return;}
-        event.preventDefault()
+
+        if(event.which == MMB){
+            return on_pan_move(event);
+        }
+
+        if(PEN && event.pointerType == TOUCH){
+            return on_pan_move(event);
+        }
 
         if (lmb_down) {
             cur_point = canvas.relative_point(event)
@@ -216,9 +253,16 @@ function capture_widget(init){
 
     }
     function on_mouseup(event) {
-        if (! is_recording){return;}
         event.preventDefault()
+        if (! is_recording){return;}
 
+        if(event.which == MMB){
+            return;
+        }
+
+        if(PEN && event.pointerType == TOUCH){
+            return on_pan_end(event);
+        }
         if (lmb_down) {
             VISUALS.push(current_visual)
         }
@@ -228,6 +272,58 @@ function capture_widget(init){
 
         //console.log('mouseup')
 
+    }
+
+    function on_pan_start(event){
+        pan_last_point = canvas.relative_point(event);
+
+    }
+
+    function translation_matrix(dx,dy){
+
+        // a c e          m11  m21  dx
+        // b d f          m12  m22  dy
+        // 0 0 1           0    0   1
+
+        return {
+            m11: 1,  //a
+            m12: 0,  //b
+            m21: 0,  //c
+            m22: 1,  //d
+            dx: dx,  //e
+            dy: dy   //f
+        }
+    }
+
+    function on_pan_move(event){
+        if((time() - pan_last_point.t) < 50){
+            return;
+        }
+        var cur_point = canvas.relative_point(event);
+
+        var dx = cur_point.x - pan_last_point.x;
+        var dy = cur_point.y - pan_last_point.y;
+
+        var mat = translation_matrix(dx,dy);
+        var ctx = canvas.get_ctx();
+       // ctx.save()
+        //canvas.transform(mat)
+        canvas.clear();
+        ctx.translate(dx,dy);
+        draw_visuals(VISUALS)
+       // ctx.restore();
+
+
+        pan_last_point = cur_point;
+
+
+
+
+        //console.log('panning', canvas.relative_point(event))
+    }
+
+    function on_pan_end(event){
+        return on_pan_move(event);
     }
 
 
