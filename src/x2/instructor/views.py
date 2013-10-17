@@ -81,7 +81,7 @@ def view_layout(request, course_slug, session_slug):
         populate_session_students(session.id, students)
         session_students = SessionStudentData.objects.filter(session_id=session.id)
     except ObjectDoesNotExist:
-        raise Http404
+        raise Http404("No such layout")
     return render_to_response(
         "view_layout.html",
         {"course": course,
@@ -104,7 +104,7 @@ def manage_layout(request, course_slug, session_slug):
         session = Session.objects.get(slug=session_slug)
         blocks = TableBlock.objects.filter(session=session.id)
     except ObjectDoesNotExist:
-        raise Http404
+        raise Http404("No such layout")
     return render_to_response(
         "update_layout.html",
         {"course": course,
@@ -139,7 +139,7 @@ def capture_iframe(request, course_slug, session_slug):
         interaction.l = student
         interaction.save()
     except ObjectDoesNotExist:
-        raise Http404
+        raise Http404("No such layout")
 
     try:    
         help_request = HelpRequest.objects.get(id=hr_id)
@@ -192,7 +192,7 @@ def capture(request, course_slug, session_slug):
         interaction.l = student
         interaction.save()
     except ObjectDoesNotExist:
-        raise Http404
+        raise Http404("Object not found/capture")
 
     try:    
         help_request = HelpRequest.objects.get(id=hr_id)
