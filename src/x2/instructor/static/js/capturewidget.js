@@ -306,12 +306,12 @@ function capture_widget(init){
 
         var mat = translation_matrix(dx,dy);
         var ctx = canvas.get_ctx();
-       // ctx.save()
+        ctx.save()
         //canvas.transform(mat)
         canvas.clear();
         ctx.translate(dx,dy);
         draw_visuals(VISUALS)
-       // ctx.restore();
+        ctx.restore();
 
 
         pan_last_point = cur_point;
