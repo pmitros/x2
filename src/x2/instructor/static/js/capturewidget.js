@@ -400,7 +400,37 @@ function capture_widget(init){
             m22: 1.0,
             m11: 1.0,
             m12: 0.0,
-            time: -100000.0
+            time: -100.0
+        }
+
+        result.cameraTransforms[0] = {
+            tx: 0.0,
+            ty: 0.0,
+            m21: 0.0,
+            m22: 1.0,
+            m11: 1.0,
+            m12: 0.0,
+            time: 3.0
+        }
+
+        result.cameraTransforms[1] = {
+            tx: 250.0,
+            ty: -250.0,
+            m21: 0.0,
+            m22: 1.0,
+            m11: 1.0,
+            m12: 0.0,
+            time: 4.0001
+        }
+
+        result.cameraTransforms[2] = {
+            tx: 500.0,
+            ty: -500.0,
+            m21: 0.0,
+            m22: 1.0,
+            m11: 1.0,
+            m12: 0.0,
+            time: 5.0
         }
 
         //visuals

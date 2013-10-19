@@ -95,7 +95,7 @@ var Capture = function() {
                 },
 
 
-                swf_path: '/static/js/vendor/jRecorder.swf',
+                swf_path: '/static/js/vendor/jRecorder.swf'
 
             }
 
