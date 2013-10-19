@@ -1,8 +1,9 @@
+django
 South==0.8.2
 django-socketio==0.3.6
 django-bootstrap3
 django-jquery
-django-user-accounts
+django-user-accounts==1.0b14
 pinax
-pinax-theme-bootstrap
-pinax-theme-bootstrap-account
+pinax-theme-bootstrap==3.0a12
+pinax-theme-bootstrap-account==1.0b2
