@@ -124,10 +124,15 @@ var Capture = function() {
     }
 
     function resize_video_iframe_to_content(){
+
         var width = $('#video-iframe').contents().find('canvas.video').outerWidth()
-        width += 200
-        console.log('resizing', width)
-        $('#post-capture-dialog').css('width', width)
+
+        if(width<200){
+            setTimeout(resize_video_iframe_to_content,1)
+        }
+        else{
+            $('#post-capture-dialog').css('width', width+200)
+        }
     }
 
     function capture_button_handler(event){
