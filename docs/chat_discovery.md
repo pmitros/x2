@@ -10,7 +10,8 @@ superstudents, or actual course staff.
 Peers
 -----
 
-The system connects peers. 
+The system connects peers (either at random, or working on a common
+problem).
 
 Dynamic TAs 
 -----------
