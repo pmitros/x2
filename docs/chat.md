@@ -78,7 +78,7 @@ Note that the implementation of this functionality is not part of the chat xbloc
 
 **Q:**	What happens if no one 'picks up the call'?
 
-**A:**	If no one picks up within 20 seconds, we send the same request to a larger pool of other eligible helpers. We continue doing this in intervals of 20 seconds while always displaying a status message to the initiator of the call.
+**A:**	If no one picks up within some reasonable time (a few minutes), we send the same request to a larger pool of other eligible helpers. We continue doing this in intervals while always displaying a status message to the initiator of the call.
 
 **Q:**	How do you determine which students to send a notification to?
 
