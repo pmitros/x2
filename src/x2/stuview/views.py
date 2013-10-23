@@ -135,7 +135,7 @@ def qinfo(request):
             print "recreating ", usage_id
             usage = Usage.recreate(usage_id)
     else:
-        raise Http404
+        raise Http404("No such usage")
 
     block = create_xblock(usage, student)
     progress = block.progress()
@@ -302,7 +302,7 @@ def queue(request):
         except KeyError:
             usage = Usage.recreate(usage_id)
     else:
-        raise Http404
+        raise Http404("No such queue")
 
 
     block = create_xblock(usage, student)
@@ -381,10 +381,10 @@ def package_resource(_request, package, resource):
     is not found, raises an Http404 error.
     """
     if ".." in resource:
-        raise Http404
+        raise django.core.exceptions.SuspiciousOperation
     try:
         content = pkg_resources.resource_string(package, "static/" + resource)
     except IOError:
-        raise Http404
+        raise Http404("Resource not found")
     mimetype, _ = mimetypes.guess_type(resource)
     return HttpResponse(content, mimetype=mimetype)

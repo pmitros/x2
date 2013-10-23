@@ -145,7 +145,8 @@ INSTALLED_APPS = (
     'pinax_theme_bootstrap_account',
 )
 
-THEME_ACCOUNT_CONTACT_EMAIL = "piotr@mitros.org"
+THEME_ACCOUNT_CONTACT_EMAIL = "user@host.com"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 

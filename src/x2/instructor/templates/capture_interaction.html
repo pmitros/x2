@@ -112,26 +112,31 @@
 
             <div class="section-header">
                 <span class="section-title col-12 col-sm-6 col-lg-6">Sketchpad</span>
-                <span class="col-12 col-sm-6 col-lg-6">
+                <span class="col-6 col-sm-3 col-lg-3">
             <!--    <audio id="audio" class="menu-item" autoplay loop controls></audio> -->
-                <button id="capture-button" class="menu-item btn btn-medium btn-success">Start Recording</button>
+                    <button id="capture-button" class="menu-item btn btn-medium btn-success">Start Recording</button>
+                    <div id="levelbar" style="height:10px; width:0px;background-color:red;"></div>
                 </span>
-                    <div id="levelbar" style="height:10px; width:0px;background-color:red; float:left;"></div>
+                <span class="col-6 col-sm-3 col-lg-3">
+                    <button id="clear" onclick="CANV.clear();">Clear</button>
+                    <button onclick="CANV.undo()">undo</button>
+                </span>
+
             </div>
             <!-- <iframe src="http://drawonthe.net/newboard.php" width="100%" height="600"></iframe> -->
             <!-- <iframe id="whiteboard" src="http://ls.edx.org:1337/{{ interaction.id }}" width="100%" height="800"></iframe> -->
             <!--<iframe id="whiteboard"></iframe>-->
 
 
-            <div>
-                <button id="clear" onclick="CANV.clear();">Clear</button>
-                <button onclick="CANV.set_active_visual_type('stroke')">Strokes</button>
-                <button onclick="CANV.set_active_visual_type('dots')">Dots</button>
-                <button onclick="CANV.start_collecting()">start collecting</button>
-                <button onclick="CANV.stop_collecting()">stop collecting</button>
-                <button onclick="CANV.draw_all()">draw all</button>
-                <button onclick="CANV.undo()">undo</button>
-            </div>
+            <!--<div>-->
+                <!--<button id="clear" onclick="CANV.clear();">Clear</button>-->
+                <!--<button onclick="CANV.set_active_visual_type('stroke')">Strokes</button>-->
+                <!--<button onclick="CANV.set_active_visual_type('dots')">Dots</button>-->
+                <!--<button onclick="CANV.start_collecting()">start collecting</button>-->
+                <!--<button onclick="CANV.stop_collecting()">stop collecting</button>-->
+                <!--<button onclick="CANV.draw_all()">draw all</button>-->
+                <!--<button onclick="CANV.undo()">undo</button>-->
+            <!--</div>-->
             <canvas id='drawing_board' style="touch-action:none;"></canvas>
         </div>
     </div>
@@ -164,15 +169,15 @@
                         </div>
                     </div>
 
-                    <div id="tag-selector">
-                        <input type="checkbox" id="problem1" /><label for="problem1">Problem 1</label>
-                        <input type="checkbox" id="problem2" /><label for="problem2">Problem 2</label>
-                        <input type="checkbox" id="problem3" /><label for="problem3">Problem 3</label>
-                        <input type="checkbox" id="problem4" /><label for="problem4">Problem 4</label>
-                        <input type="checkbox" id="problem5" /><label for="problem5">Problem 5</label>
-                        <input type="checkbox" id="problem6" /><label for="problem6">Problem 6</label>
+                    <!--<div id="tag-selector">-->
+                        <!--<input type="checkbox" id="problem1" /><label for="problem1">Problem 1</label>-->
+                        <!--<input type="checkbox" id="problem2" /><label for="problem2">Problem 2</label>-->
+                        <!--<input type="checkbox" id="problem3" /><label for="problem3">Problem 3</label>-->
+                        <!--<input type="checkbox" id="problem4" /><label for="problem4">Problem 4</label>-->
+                        <!--<input type="checkbox" id="problem5" /><label for="problem5">Problem 5</label>-->
+                        <!--<input type="checkbox" id="problem6" /><label for="problem6">Problem 6</label>-->
 
-                    </div>
+                    <!--</div>-->
 
                 </div> <!-- modal body -->
                 <div class="modal-footer">
@@ -223,7 +228,7 @@
     <script src="{% static "js/vendor/jquery-ui.min.js" %}"></script>
     <script src="{% static "js/vendor/bootstrap.min.js" %}"></script>
     <script src="{% static "js/vendor/socket.io.js" %}"></script>
-    <script src="{% static "js/vendor/RecordRTC.js" %}"></script>  
+    <script src="{% static "js/vendor/RecordRTC.js" %}"></script>
 
     <script src="{% static "js/layout.js" %}"></script>
     <script src="{% static "js/touch-device.js" %}"></script>
@@ -233,6 +238,7 @@
     <script src="{% static "js/capture.js" %}"></script>
     <script src="{% static "js/capturewidget.js" %}"></script>
     <script src="/static/js/vendor/jRecorder.js"></script>
+
 
 
 

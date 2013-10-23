@@ -11,7 +11,6 @@ function time() {
     return d.getTime();
 }
 
-
 // paint_widget encapsulates drawing primitives for HTML5 canvas
 function paint_widget(canvas_id){
 
@@ -19,6 +18,60 @@ function paint_widget(canvas_id){
     var default_line_color = '#333'
     var default_line_width = 2
     var default_point_color = '#222'
+
+    // a c e          m11  m21  dx         m11  m21  dx     x
+    // b d f          m12  m22  dy         m12  m22  dy     y
+    // 0 0 1           0    0   1          0    0   1       1
+
+    var current_transform = {
+            m11: 1,  //a
+            m12: 0,  //b
+            m21: 0,  //c
+            m22: 1,  //d
+            dx: 0,  //e
+            dy: 0   //f
+     }
+
+
+    function partial_matrix_multiply(A,B){
+
+        var C = {
+            m11: A.m11 * B.m11 + A.m21* B.m12,
+            m21: A.m11 * B.m21 + A.m21* B.m22,
+            m12: A.m12 * B.m11 + A.m22* B.m12,
+            m22: A.m12 * B.m21 + A.m22* B.m22,
+            dx: A.m11* B.dx + A.m21* B.dy + A.dx,
+            dy: A.m12* B.dx + A.m22* B.dy + A.dy,
+        }
+
+        return C;
+    }
+
+    function partial_matrix_inverse(A){
+
+         var inv ={
+
+            m11: A.m22/(A.m11* A.m22- A.m12* A.m21),  //a
+            m21: A.m21/(A.m12* A.m21- A.m11* A.m22),  //b
+            m12: A.m12/(A.m12* A.m21- A.m11* A.m22),  //c
+            m22: A.m11/(A.m11* A.m22- A.m12* A.m21),  //d
+            dx: (A.m22* A.dx- A.m21* A.dy)/(A.m12* A.m21- A.m11* A.m22),  //e
+            dy: (A.m12* A.dx- A.m11* A.dy)/(A.m11* A.m22- A.m12* A.m21)   //f
+        }
+        return inv;
+    }
+
+    function partial_vector_multiply(A,b){
+
+        // b = {x,y}
+
+        var transformed_b = {
+            x: A.m11* b.x + A.m21* b.y+ A.dx,
+            y: A.m12* b.x + A.m22* b.y+ A.dy
+        }
+
+        return transformed_b;
+    }
 
     function get_ctx() {
         return $(canvas_id).get(0).getContext('2d'); // todo replace with static ctx?
@@ -54,33 +107,48 @@ function paint_widget(canvas_id){
 
     this.clear = function(){
         var ctx = get_ctx()
-        ctx.clearRect(0, 0, $(canvas_id).width(), $(canvas_id).height())
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(-100, -100, $(canvas_id).width()+100, $(canvas_id).height()+100)
+        ctx.restore();
     }
 
     this.relative_point = function(event){
-        pt = {
+        var pt = {
             x: event.pageX - $(canvas_id).offset().left, // todo fix if canvas not in corner
             y: event.pageY - $(canvas_id).offset().top,
-            t: time()
         }
 
+        var inv = partial_matrix_inverse(current_transform)
+        pt = partial_vector_multiply(inv,pt)
+
+        pt.t = time()
         return pt
     }
+
+
 
 
     this.resize_canvas = function() {
         var iw = $(window).width();
         var ih = $(window).height();
 
-        $(canvas_id)[0].width = 0.9 * iw
-        $(canvas_id)[0].height = 0.8 * ih
+        $(canvas_id)[0].width = 1 * iw
+        $(canvas_id)[0].height = 0.95 * ih
     }
 
     this.get_ctx = get_ctx;
 
     this.transform = function(mat) {
         var ctx = get_ctx();
-        ctx.transform(mat.m11, mat.m12, mat.m21, mat.m22, mat.dx, mat.dy)
+
+        current_transform = partial_matrix_multiply(current_transform, mat);
+
+        ctx.setTransform(current_transform.m11, current_transform.m12, current_transform.m21, current_transform.m22, current_transform.dx, current_transform.dy)
+    }
+
+    this.get_current_transform = function(){
+        return current_transform;
     }
 }
 
@@ -134,6 +202,7 @@ function smart_paint_widget(canvas_id){
     this.resize_canvas = canvas.resize_canvas
     this.get_ctx = canvas.get_ctx;
     this.transform = canvas.transform;
+    this.get_current_transform = canvas.get_current_transform;
 }
 
 
@@ -155,7 +224,8 @@ function capture_widget(init){
     var MMB = 2;
     var RMB = 3;
 
-    var TOUCH = 2;
+    var MS_POINTER_TOUCH = 2;
+    var MS_POINTER_PEN = 3;
 
     var lmb_down = false
     var inline = false
@@ -173,9 +243,10 @@ function capture_widget(init){
     var PEN = false // pointer enabled device
 
 
-    VISUALS = []
+    var VISUALS = []
     var current_visual;
 
+    var TRANSFORMS = []
 
     function empty_visual(){
         return {
@@ -193,17 +264,18 @@ function capture_widget(init){
         event.preventDefault()
         if (! is_recording){return;}
 
+        if(PEN && event.pointerType == MS_POINTER_TOUCH)
+        {
+            return on_pan_start(event);
+        }
+
         if(event.which == MMB){
             return on_pan_start(event);
         }
 
-        if(PEN && event.pointerType == TOUCH){
-            return on_pan_start(event);
-        }
 
         lmb_down = true
         inline = true
-        //console.log('mousedown')
 
         current_visual = empty_visual()
         current_visual.type = active_visual_type
@@ -217,19 +289,18 @@ function capture_widget(init){
 
     }
     function on_mousemove(event) {
-        //event.preventDefault()
-
-        console.log(event.pointerType)
-
+        event.preventDefault()
         if (! is_recording){return;}
+
+        if(PEN && event.pointerType == MS_POINTER_TOUCH){
+            return on_pan_move(event);
+        }
 
         if(event.which == MMB){
             return on_pan_move(event);
         }
 
-        if(PEN && event.pointerType == TOUCH){
-            return on_pan_move(event);
-        }
+
 
         if (lmb_down) {
             cur_point = canvas.relative_point(event)
@@ -256,13 +327,14 @@ function capture_widget(init){
         event.preventDefault()
         if (! is_recording){return;}
 
+        if(PEN && event.pointerType == MS_POINTER_TOUCH){
+            return on_pan_end(event);
+        }
         if(event.which == MMB){
             return;
         }
 
-        if(PEN && event.pointerType == TOUCH){
-            return on_pan_end(event);
-        }
+
         if (lmb_down) {
             VISUALS.push(current_visual)
         }
@@ -275,8 +347,7 @@ function capture_widget(init){
     }
 
     function on_pan_start(event){
-        pan_last_point = canvas.relative_point(event);
-
+        pan_last_point = {x: event.pageX, y:event.pageY};
     }
 
     function translation_matrix(dx,dy){
@@ -299,20 +370,24 @@ function capture_widget(init){
         if((time() - pan_last_point.t) < 50){
             return;
         }
-        var cur_point = canvas.relative_point(event);
+        var cur_point = {x: event.pageX, y:event.pageY};
 
         var dx = cur_point.x - pan_last_point.x;
         var dy = cur_point.y - pan_last_point.y;
 
         var mat = translation_matrix(dx,dy);
-        var ctx = canvas.get_ctx();
-       // ctx.save()
+        //var ctx = canvas.get_ctx();
+        //ctx.save()
         //canvas.transform(mat)
         canvas.clear();
-        ctx.translate(dx,dy);
+        canvas.transform(mat)
+        //ctx.translate(dx,dy);
         draw_visuals(VISUALS)
-       // ctx.restore();
+        //ctx.restore();
 
+        var transform = canvas.get_current_transform()
+        transform.time = time()
+        TRANSFORMS.push(transform)
 
         pan_last_point = cur_point;
 
@@ -323,8 +398,10 @@ function capture_widget(init){
     }
 
     function on_pan_end(event){
+
         return on_pan_move(event);
     }
+
 
 
     function draw_visuals(visuals){
@@ -400,8 +477,61 @@ function capture_widget(init){
             m22: 1.0,
             m11: 1.0,
             m12: 0.0,
-            time: -100000.0
+            time: -100.0
         }
+
+//        result.cameraTransforms[1] = {
+//            tx: 0.0,
+//            ty: 0.0,
+//            m21: 0.0,
+//            m22: 1.0,
+//            m11: 1.0,
+//            m12: 0.0,
+//            time: 3.0
+//        }
+//
+//        result.cameraTransforms[2] = {
+//            tx: 100.0,
+//            ty: 0.0,
+//            m21: 0.0,
+//            m22: 1.0,
+//            m11: 1.0,
+//            m12: 0.0,
+//            time: 4.1
+//        }
+//
+//         result.cameraTransforms[3] = {
+//            tx: 0.0,
+//            ty: 0.0,
+//            m21: 0.0,
+//            m22: 1.0,
+//            m11: 1.0,
+//            m12: 0.0,
+//            time: 6.0
+//        }
+//         result.cameraTransforms[4] = {
+//            tx: 100.0,
+//            ty: 0.0,
+//            m21: 0.0,
+//            m22: 1.0,
+//            m11: 1.0,
+//            m12: 0.0,
+//            time: 8.0
+//        }
+        for (var i=0; i<TRANSFORMS.length; i++){
+            var tr = {
+                tx: TRANSFORMS[i].dx,
+                ty: - TRANSFORMS[i].dy,
+                m12: TRANSFORMS[i].m12,
+                m21: TRANSFORMS[i].m21,
+                m11: TRANSFORMS[i].m11,
+                m22: TRANSFORMS[i].m22,
+                time: (TRANSFORMS[i].time - recording_start_time)/1000
+            }
+
+            result.cameraTransforms.push(tr);
+        }
+
 
         //visuals
         result.visuals = []
@@ -499,6 +629,9 @@ function capture_widget(init){
             c.addEventListener("MSPointerUp", on_mouseup, false);
             c.addEventListener("MSPointerMove", on_mousemove, false);
             c.addEventListener("MSPointerDown", on_mousedown, false);
+
+
+
         }
         else {
             console.log('Pointer Disabled Device')
