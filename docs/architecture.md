@@ -69,6 +69,7 @@ See the Getting Help with edX doc. Proposed mock:
 ![Getting help in edX mockup](help_mockup.png "Help UX mockup")
 
 This UI connects to the following components:
+
 *  resource recommender system
 *  hints service
 *  live chat/hangout/etc. service
