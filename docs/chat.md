@@ -145,7 +145,7 @@ To run Apache server so that we can get the candy demo
 *  For stuff in sites-enabled/, change AllowOverride None to AllowOverride All
 *  To see logs: tail -f  /var/log/apache2/* where * is error.log or access.log
 
-Install candy
+Install candy:
 
 *  Instructions: http://candy-chat.github.io/candy/
 *  Note that “web directory” means /var/www
