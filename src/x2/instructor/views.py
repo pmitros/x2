@@ -478,7 +478,7 @@ def ajax_capture_interaction_store_media(request):
             for cmd in commands: 
                 print cmd
                 os.system(cmd)
-            sys.exit(-1)
+            #sys.exit(-1)
 
         url = settings.MEDIA_URL + wav_filename
 
