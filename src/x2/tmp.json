@@ -1,0 +1,448 @@
+[
+  {
+    "pk": 1, 
+    "model": "instructor.course", 
+    "fields": {
+      "term": "Fall 2013", 
+      "name": "6.00x Introduction to Computer Science and Programming", 
+      "slug": "6.00x", 
+      "classroom_layout_path": "http://juhokim.com/"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "638,531", 
+      "name": "student1", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "641,153", 
+      "name": "student2", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "362,560", 
+      "name": "student3", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "587,511", 
+      "name": "student4", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "635,208", 
+      "name": "student5", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "158,338", 
+      "name": "student6", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "93,382", 
+      "name": "student7", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "73,475", 
+      "name": "student8", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "818,371", 
+      "name": "student9", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "a@b.com", 
+      "location": "406,505", 
+      "name": "student10", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "instructor.agent", 
+    "fields": {
+      "course": 1, 
+      "email": "juhokim@edx.org", 
+      "location": "", 
+      "name": "Juho Kim", 
+      "level": 0
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "instructor.student", 
+    "fields": {
+      "needs_help": false, 
+      "interaction_in_progress": false, 
+      "profile_img_path": ""
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "instructor.instructor", 
+    "fields": {}
+  }, 
+  {
+    "pk": 1, 
+    "model": "instructor.session", 
+    "fields": {
+      "course": 1, 
+      "started_at": "2013-09-01T18:00:00Z", 
+      "ended_at": "2013-09-01T19:30:00Z", 
+      "name": "Session 1. September 1 2013", 
+      "slug": "sep-1-2013"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group5", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 1, 
+      "progress": "", 
+      "badge": "question"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group6", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 2, 
+      "progress": "", 
+      "badge": "question"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group4", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 3, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group5", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 4, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group3", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 7, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group3", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 8, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group4", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 10, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group6", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 5, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "group3", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 6, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "instructor.sessionstudentdata", 
+    "fields": {
+      "group": "", 
+      "num_help_received": 0, 
+      "num_help_requested": 0, 
+      "session": 1, 
+      "student": 9, 
+      "progress": "", 
+      "badge": ""
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "instructor.tableblock", 
+    "fields": {
+      "session": 1, 
+      "name": "block1", 
+      "location": "153.703125,193.21875"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "instructor.tableblock", 
+    "fields": {
+      "session": 1, 
+      "name": "block2", 
+      "location": "434.3125,264.515625"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "instructor.tableblock", 
+    "fields": {
+      "session": 1, 
+      "name": "block3", 
+      "location": "741.3125,228.484375"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "instructor.tableblock", 
+    "fields": {
+      "session": 1, 
+      "name": "block4", 
+      "location": "98.34375,440.9375"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "instructor.tableblock", 
+    "fields": {
+      "session": 1, 
+      "name": "block5", 
+      "location": "781.859375,481.484375"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "instructor.tableblock", 
+    "fields": {
+      "session": 1, 
+      "name": "block6", 
+      "location": "310.65625,670"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "instructor.tableblock", 
+    "fields": {
+      "session": 1, 
+      "name": "block7", 
+      "location": "613.046875,615.375"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "instructor.interaction", 
+    "fields": {
+      "audio_path": "", 
+      "video_path": "", 
+      "ended_at": "2013-08-12T15:58:08.723Z", 
+      "is_rejected": true, 
+      "agent_teacher": [], 
+      "student_summary": null, 
+      "instructor_summary": null, 
+      "agent_learner": [], 
+      "started_at": "2013-08-12T15:58:08.723Z", 
+      "whiteboard_path": ""
+    }
+  }
+]
